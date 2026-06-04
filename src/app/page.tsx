@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Coins, Target, Trophy } from "lucide-react";
 
+import { Logo } from "@/components/brand/logo";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -32,8 +33,10 @@ export default function Home() {
       />
 
       <div className="animate-in fade-in slide-in-from-bottom-3 flex max-w-2xl flex-col items-center gap-6 duration-700">
+        <Logo className="size-24 drop-shadow-sm sm:size-28" />
+
         <span className="bg-card text-muted-foreground ring-foreground/10 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium tracking-widest uppercase ring-1">
-          ⚽ Daily football predictions
+          <Logo className="size-4" /> Daily football predictions
         </span>
 
         <h1 className="text-5xl font-bold tracking-tight sm:text-7xl">

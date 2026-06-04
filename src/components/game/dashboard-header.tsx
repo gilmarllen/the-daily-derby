@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Coins, Flame, LogOut, Trophy } from "lucide-react";
 
+import { Logo } from "@/components/brand/logo";
 import { buttonVariants } from "@/components/ui/button";
 import { formatFootballMoney } from "@/lib/game/constants";
 import { cn } from "@/lib/utils";
@@ -20,9 +21,7 @@ export function DashboardHeader() {
           href="/dashboard"
           className="flex items-center gap-2 font-bold tracking-tight"
         >
-          <span className="text-xl" aria-hidden>
-            ⚽
-          </span>
+          <Logo className="size-7" />
           <span className="hidden sm:inline">The Daily Derby</span>
         </Link>
 
