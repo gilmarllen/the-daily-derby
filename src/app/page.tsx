@@ -50,13 +50,13 @@ export default function Home() {
 
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link
-            href="/dashboard"
+            href="/signup"
             className={cn(buttonVariants({ size: "lg" }), "px-8")}
           >
             Sign up
           </Link>
           <Link
-            href="/dashboard"
+            href="/login"
             className={cn(
               buttonVariants({ variant: "outline", size: "lg" }),
               "px-8"

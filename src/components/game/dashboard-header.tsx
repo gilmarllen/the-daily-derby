@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { Coins, Flame, LogOut, Trophy } from "lucide-react";
 
+import { signOut } from "@/app/auth/actions";
 import { Logo } from "@/components/brand/logo";
-import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { formatFootballMoney } from "@/lib/game/constants";
-import { cn } from "@/lib/utils";
 
 import { useGame } from "./game-provider";
 import { StatPill } from "./stat-pill";
@@ -45,16 +45,17 @@ export function DashboardHeader() {
             iconClassName="text-orange-500"
             className="hidden sm:flex"
           />
-          <Link
-            href="/"
-            aria-label="Log out"
-            className={cn(
-              buttonVariants({ variant: "ghost", size: "icon" }),
-              "text-muted-foreground"
-            )}
-          >
-            <LogOut />
-          </Link>
+          <form action={signOut}>
+            <Button
+              type="submit"
+              variant="ghost"
+              size="icon"
+              aria-label="Log out"
+              className="text-muted-foreground"
+            >
+              <LogOut />
+            </Button>
+          </form>
         </div>
       </div>
     </header>

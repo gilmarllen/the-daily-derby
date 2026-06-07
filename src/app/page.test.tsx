@@ -12,13 +12,13 @@ describe("Home page", () => {
     ).toBeInTheDocument();
   });
 
-  it("links sign up and log in to the dashboard", () => {
+  it("links sign up and log in to the auth pages", () => {
     render(<Home />);
 
     const signUp = screen.getByRole("link", { name: /sign up/i });
     const logIn = screen.getByRole("link", { name: /log in/i });
 
-    expect(signUp).toHaveAttribute("href", "/dashboard");
-    expect(logIn).toHaveAttribute("href", "/dashboard");
+    expect(signUp).toHaveAttribute("href", "/signup");
+    expect(logIn).toHaveAttribute("href", "/login");
   });
 });
