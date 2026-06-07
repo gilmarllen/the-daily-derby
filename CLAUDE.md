@@ -74,7 +74,9 @@ while spending `< F$ 5.00`).
 ## Planned integrations (not yet wired up)
 
 - **Supabase** — authentication + database (leaderboard, picks, achievements).
-  `SUPABASE_SERVICE_ROLE_KEY` is **server-only**; never expose it to the client.
+  Uses the new API key format: `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+  (`sb_publishable_…`, client-safe) and `SUPABASE_SECRET_KEY` (`sb_secret_…`).
+  The secret key is **server-only**; never expose it to the client.
 - **[odds-api.io](https://odds-api.io/)** — fixtures, odds, and match scores.
 - **Vercel** — hosting.
 
