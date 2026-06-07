@@ -1,12 +1,25 @@
+import { redirect } from "next/navigation";
+
+import { getCurrentPlayer } from "@/lib/game/queries";
+
 import { DashboardHeader } from "./dashboard-header";
 import { DashboardNav } from "./dashboard-nav";
 import { GameProvider } from "./game-provider";
 import { SelectionBanner } from "./selection-banner";
 
 /** Persistent logged-in chrome: header, nav, in-progress banner, and content. */
-export function DashboardShell({ children }: { children: React.ReactNode }) {
+export async function DashboardShell({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const player = await getCurrentPlayer();
+  if (!player) {
+    redirect("/login");
+  }
+
   return (
-    <GameProvider>
+    <GameProvider player={player}>
       <div className="flex min-h-full flex-1 flex-col">
         <DashboardHeader />
         <DashboardNav />

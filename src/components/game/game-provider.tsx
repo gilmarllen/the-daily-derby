@@ -9,7 +9,7 @@ import {
 } from "react";
 
 import { costFromOdds } from "@/lib/game/constants";
-import { matches, player } from "@/lib/game/mock-data";
+import { matches } from "@/lib/game/mock-data";
 import type { Match, Player, Selection, TeamOption } from "@/lib/game/types";
 
 type GameContextValue = {
@@ -26,7 +26,13 @@ type GameContextValue = {
 
 const GameContext = createContext<GameContextValue | null>(null);
 
-export function GameProvider({ children }: { children: React.ReactNode }) {
+export function GameProvider({
+  player,
+  children,
+}: {
+  player: Player;
+  children: React.ReactNode;
+}) {
   // Single pick per day — defaults to "no selection".
   const [selection, setSelection] = useState<Selection>({ kind: "none" });
 
@@ -50,7 +56,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   const canAfford = useCallback(
     (option: TeamOption) => costFromOdds(option.odds) <= player.balance,
-    []
+    [player.balance]
   );
 
   const pickTeam = useCallback(
