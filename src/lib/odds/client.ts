@@ -19,7 +19,6 @@ async function getJson<T>(
   path: string,
   params: Record<string, string>
 ): Promise<T> {
-  console.log(params);
   const url = new URL(`${BASE_URL}${path}`);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
   url.searchParams.set("apiKey", apiKey());
