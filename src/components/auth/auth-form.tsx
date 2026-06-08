@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { useActionState, useState } from "react";
+import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react";
 
 import { login, signup, type AuthState } from "@/app/auth/actions";
 import { Logo } from "@/components/brand/logo";
@@ -45,78 +45,122 @@ export function AuthForm({ mode }: { mode: Mode }) {
   );
   const copy = COPY[mode];
 
-  return (
-    <Card className="animate-in fade-in slide-in-from-bottom-3 w-full max-w-sm duration-500">
-      <CardHeader className="items-center text-center">
-        <Logo className="mx-auto size-12" />
-        <CardTitle className="text-xl">{copy.title}</CardTitle>
-        <CardDescription>{copy.description}</CardDescription>
-      </CardHeader>
+  // Controlled so values survive React 19's post-action form reset (and so
+  // base-ui doesn't warn about a changing uncontrolled default value).
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
 
-      <CardContent>
-        <form action={formAction} className="flex flex-col gap-4">
-          {mode === "signup" && (
+  // When the server echoes values back after a failed submit, repopulate the
+  // fields. This uses React's "adjust state during render" pattern (rather than
+  // an effect) so it applies before paint without an extra render.
+  const [syncedState, setSyncedState] = useState(state);
+  if (state !== syncedState) {
+    setSyncedState(state);
+    if (state?.values?.username !== undefined)
+      setUsername(state.values.username);
+    if (state?.values?.email !== undefined) setEmail(state.values.email);
+  }
+
+  return (
+    <div className="animate-in fade-in slide-in-from-bottom-3 flex w-full max-w-sm flex-col gap-3 duration-500">
+      <Link
+        href="/"
+        className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 self-start text-sm font-medium transition-colors"
+      >
+        <ArrowLeft className="size-4" />
+        Back to home
+      </Link>
+
+      <Card>
+        <CardHeader className="items-center text-center">
+          <Logo className="mx-auto size-12" />
+          <CardTitle className="text-xl">{copy.title}</CardTitle>
+          <CardDescription>{copy.description}</CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <form action={formAction} className="flex flex-col gap-4">
+            {mode === "signup" && (
+              <Field
+                id="username"
+                name="username"
+                label="Username"
+                type="text"
+                autoComplete="username"
+                placeholder="goal_machine"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            )}
+
             <Field
-              id="username"
-              name="username"
-              label="Username"
-              type="text"
-              autoComplete="username"
-              placeholder="goal_machine"
+              id="email"
+              name="email"
+              label="Email"
+              type="email"
+              autoComplete="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
-          )}
 
-          <Field
-            id="email"
-            name="email"
-            label="Email"
-            type="email"
-            autoComplete="email"
-            placeholder="you@example.com"
-            required
-          />
+            <Field
+              id="password"
+              name="password"
+              label="Password"
+              type="password"
+              autoComplete={
+                mode === "login" ? "current-password" : "new-password"
+              }
+              placeholder="••••••••"
+              required
+              minLength={mode === "signup" ? 6 : undefined}
+            />
 
-          <Field
-            id="password"
-            name="password"
-            label="Password"
-            type="password"
-            autoComplete={
-              mode === "login" ? "current-password" : "new-password"
-            }
-            placeholder="••••••••"
-            required
-            minLength={mode === "signup" ? 6 : undefined}
-          />
+            {mode === "login" && (
+              <Link
+                href="/forgot-password"
+                className="text-muted-foreground hover:text-foreground -mt-2 self-end text-sm underline-offset-4 hover:underline"
+              >
+                Forgot password?
+              </Link>
+            )}
 
-          {state?.error && (
-            <p
-              role="alert"
-              className="text-destructive flex items-center gap-1.5 text-sm"
+            {state?.error && (
+              <p
+                role="alert"
+                className="text-destructive flex items-center gap-1.5 text-sm"
+              >
+                <AlertCircle className="size-4 shrink-0" />
+                {state.error}
+              </p>
+            )}
+
+            <Button
+              type="submit"
+              size="lg"
+              disabled={isPending}
+              className="mt-1"
             >
-              <AlertCircle className="size-4 shrink-0" />
-              {state.error}
-            </p>
-          )}
+              {isPending && <Loader2 className="animate-spin" />}
+              {copy.submit}
+            </Button>
+          </form>
 
-          <Button type="submit" size="lg" disabled={isPending} className="mt-1">
-            {isPending && <Loader2 className="animate-spin" />}
-            {copy.submit}
-          </Button>
-        </form>
-
-        <p className="text-muted-foreground mt-4 text-center text-sm">
-          {copy.cta}{" "}
-          <Link
-            href={copy.ctaHref}
-            className="text-primary font-medium underline-offset-4 hover:underline"
-          >
-            {copy.ctaLabel}
-          </Link>
-        </p>
-      </CardContent>
-    </Card>
+          <p className="text-muted-foreground mt-4 text-center text-sm">
+            {copy.cta}{" "}
+            <Link
+              href={copy.ctaHref}
+              className="text-primary font-medium underline-offset-4 hover:underline"
+            >
+              {copy.ctaLabel}
+            </Link>
+          </p>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
