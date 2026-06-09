@@ -2,10 +2,11 @@
 
 import { CircleCheck, Clock, Hourglass } from "lucide-react";
 
-import { DAILY_RESET_LABEL, formatFootballMoney } from "@/lib/game/constants";
+import { formatFootballMoney } from "@/lib/game/constants";
 import { cn } from "@/lib/utils";
 
 import { useGame } from "./game-provider";
+import { ResetCountdown } from "./reset-countdown";
 
 export function SelectionBanner() {
   const { selectedOption, selectedCost } = useGame();
@@ -30,7 +31,7 @@ export function SelectionBanner() {
           ) : (
             <Hourglass className="size-4 text-amber-600" aria-hidden />
           )}
-          {hasPick ? "Pick in progress" : "No pick yet"}
+          {hasPick ? "Picking" : "No selection"}
         </span>
 
         {hasPick ? (
@@ -42,13 +43,13 @@ export function SelectionBanner() {
           </span>
         ) : (
           <span className="text-muted-foreground">
-            Choose a team below to enter today&apos;s derby.
+            Pick a team to enter today&apos;s derby.
           </span>
         )}
 
         <span className="text-muted-foreground ml-auto flex items-center gap-1.5 text-xs">
           <Clock className="size-3.5" aria-hidden />
-          Resets {DAILY_RESET_LABEL}
+          Locks in <ResetCountdown />
         </span>
       </div>
     </div>
