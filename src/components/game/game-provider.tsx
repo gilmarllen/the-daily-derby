@@ -9,7 +9,6 @@ import {
 } from "react";
 
 import { costFromOdds } from "@/lib/game/constants";
-import { matches } from "@/lib/game/mock-data";
 import type { Match, Player, Selection, TeamOption } from "@/lib/game/types";
 
 type GameContextValue = {
@@ -28,9 +27,11 @@ const GameContext = createContext<GameContextValue | null>(null);
 
 export function GameProvider({
   player,
+  matches,
   children,
 }: {
   player: Player;
+  matches: Match[];
   children: React.ReactNode;
 }) {
   // Single pick per day — defaults to "no selection".
@@ -38,7 +39,7 @@ export function GameProvider({
 
   const allOptions = useMemo(
     () => matches.flatMap((m) => [m.home, m.away]),
-    []
+    [matches]
   );
 
   const selectedOption =

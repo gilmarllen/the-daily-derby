@@ -63,6 +63,35 @@ export type Database = {
         };
         Relationships: [];
       };
+      daily_pools: {
+        Row: {
+          created_at: string;
+          match_day: string;
+          match_ids: string[];
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          match_day: string;
+          match_ids: string[];
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          match_day?: string;
+          match_ids?: string[];
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "daily_pools_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       matches: {
         Row: {
           away_odds: number;
