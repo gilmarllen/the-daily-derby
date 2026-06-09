@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Ban,
-  Check,
-  CircleSlash,
-  Clock,
-  Coins,
-  Lock,
-  Shield,
-} from "lucide-react";
+import { Check, CircleSlash, Clock, Coins, Lock, Shield } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -141,11 +133,15 @@ export function MatchSelection() {
         <span className="flex flex-col">
           <span className="flex items-center gap-2 font-semibold">
             No selection
-            {noPick && (
-              <Badge variant="secondary" className="gap-1">
-                <Ban className="size-3" /> Default
-              </Badge>
-            )}
+            <span
+              className={cn(
+                "bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full transition-all",
+                noPick ? "scale-100" : "scale-0"
+              )}
+              aria-hidden
+            >
+              <Check className="size-3.5" />
+            </span>
           </span>
           <span className="text-muted-foreground text-xs">
             Sit today out — costs F$ 0.00 but skipping a day is −2 trophies.
