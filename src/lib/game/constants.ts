@@ -2,7 +2,7 @@
 // product rules these come from.
 
 export const STARTING_BALANCE = 10;
-export const DAILY_INCOME = 3;
+export const DAILY_INCOME = 4;
 export const SELECTION_COST_BASE = 10;
 export const DAILY_RESET_LABEL = "00:00 UTC";
 

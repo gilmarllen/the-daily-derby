@@ -8,6 +8,10 @@
     {
       "path": "/api/cron/generate-default-picks",
       "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/cron/apply-daily-income",
+      "schedule": "0 0 * * *"
     }
   ]
 }

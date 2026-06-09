@@ -30,7 +30,7 @@ deliberate, visible decision rather than an accidental drift.
 - **Match pool:** each player sees **5 random matches** drawn from a global pool
   of **up to 50 matches/day** (the next day's fixtures). The 5 are per-player.
 - **Selection cost:** `cost = 10 / matchOdds` (e.g. odds `1.50` → `F$ 6.66`).
-- **Daily income:** `+F$ 3.00` every day.
+- **Daily income:** `+F$ 4.00` every day.
 - **Daily reset:** the loop restarts at **00:00 UTC**.
 - **Affordability:** options the player can't afford are **disabled**.
 - **No Selection** is always an available option, **selected by default**, and

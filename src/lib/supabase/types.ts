@@ -199,6 +199,7 @@ export type Database = {
           balance: number;
           created_at: string;
           id: string;
+          last_income_on: string | null;
           trophies: number;
           updated_at: string;
           username: string;
@@ -208,6 +209,7 @@ export type Database = {
           balance?: number;
           created_at?: string;
           id: string;
+          last_income_on?: string | null;
           trophies?: number;
           updated_at?: string;
           username: string;
@@ -217,6 +219,7 @@ export type Database = {
           balance?: number;
           created_at?: string;
           id?: string;
+          last_income_on?: string | null;
           trophies?: number;
           updated_at?: string;
           username?: string;
@@ -262,6 +265,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      apply_daily_income: {
+        Args: Record<string, never>;
+        Returns: number;
+      };
       generate_default_picks: {
         Args: Record<string, never>;
         Returns: number;
