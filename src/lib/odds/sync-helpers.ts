@@ -1,5 +1,7 @@
-// Pure, dependency-free helpers for the match sync. Kept apart from sync.ts so
-// they can be unit-tested without pulling in the server-only HTTP/DB clients.
+// Pure helpers for the match sync. Kept apart from sync.ts so they can be
+// unit-tested without pulling in the server-only HTTP/DB clients.
+
+import { utcDateString } from "@/lib/time";
 
 import type { OddsApiEvent, OddsApiEventOdds } from "./types";
 
@@ -20,14 +22,7 @@ export function targetMatchDay(
   now: Date,
   daysAhead: number = TARGET_DAYS_AHEAD
 ): string {
-  const d = new Date(
-    Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate() + daysAhead
-    )
-  );
-  return d.toISOString().slice(0, 10);
+  return utcDateString(now, daysAhead);
 }
 
 /**

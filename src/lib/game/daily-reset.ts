@@ -1,18 +1,11 @@
 // Helpers for the daily reset countdown. The game day is delimited by 00:00 UTC
 // (see CLAUDE.md / DAILY_RESET_LABEL), so the reset is the next UTC midnight.
 
+import { utcDayStart } from "@/lib/time";
+
 /** Milliseconds from `now` until the next 00:00 UTC. */
 export function msUntilNextUtcReset(now: Date = new Date()): number {
-  const next = Date.UTC(
-    now.getUTCFullYear(),
-    now.getUTCMonth(),
-    now.getUTCDate() + 1,
-    0,
-    0,
-    0,
-    0
-  );
-  return next - now.getTime();
+  return utcDayStart(now, 1).getTime() - now.getTime();
 }
 
 /** Formats a duration in ms as `HH:MM:SS`, clamped at zero. */

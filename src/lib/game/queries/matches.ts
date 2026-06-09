@@ -1,9 +1,14 @@
 import "server-only";
 
-import { createClient } from "@/lib/supabase/server";
 import { pickDaily } from "@/lib/game/daily-pool";
+import { pickableDay } from "@/lib/game/day";
+import type { Match } from "@/lib/game/types";
+import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/supabase/types";
-import type { Match, Player, Selection } from "@/lib/game/types";
+import { utcDayStart } from "@/lib/time";
+
+/** How many matches a player sees per day. */
+const DAILY_POOL_SIZE = 5;
 
 /** The match columns the daily-pool UI needs. */
 const MATCH_COLUMNS =
@@ -19,6 +24,8 @@ type MatchRow = Pick<
   | "home_odds"
   | "away_odds"
 >;
+
+type ServerClient = Awaited<ReturnType<typeof createClient>>;
 
 function rowToMatch(m: MatchRow): Match {
   return {
@@ -40,55 +47,6 @@ function rowToMatch(m: MatchRow): Match {
       side: "away",
       odds: Number(m.away_odds),
     },
-  };
-}
-
-/** How many matches a player sees per day. */
-const DAILY_POOL_SIZE = 5;
-
-/** Midnight (00:00:00.000Z) of the UTC day `addDays` from `base`. */
-function utcDayStart(base: Date, addDays: number): Date {
-  return new Date(
-    Date.UTC(
-      base.getUTCFullYear(),
-      base.getUTCMonth(),
-      base.getUTCDate() + addDays
-    )
-  );
-}
-
-/**
- * Loads the signed-in player's profile and maps it to the UI `Player` shape.
- * Returns `null` when there is no authenticated user — callers in protected
- * routes (gated by proxy.ts) should redirect in that case.
- */
-export async function getCurrentPlayer(): Promise<Player | null> {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("username, trophies, balance, win_streak")
-    .eq("id", user.id)
-    .single();
-
-  // The user is authenticated but has no profile row. This shouldn't happen
-  // (the handle_new_user trigger creates one on signup), so fail loudly rather
-  // than returning null — returning null here would bounce an authenticated
-  // user to /login, which sends them back, causing a redirect loop.
-  if (!profile) {
-    throw new Error(`No profile found for authenticated user ${user.id}`);
-  }
-
-  return {
-    name: profile.username,
-    trophies: profile.trophies,
-    balance: profile.balance,
-    winStreak: profile.win_streak,
   };
 }
 
@@ -115,7 +73,7 @@ export async function getDailyMatches(
 
   const start = utcDayStart(now, 1); // tomorrow, 00:00 UTC
   const end = utcDayStart(now, 2); // the following 00:00 UTC (exclusive boundary)
-  const dayKey = start.toISOString().slice(0, 10);
+  const dayKey = pickableDay(now);
 
   const rows = await loadFrozenPool(supabase, user.id, dayKey, start, end);
 
@@ -126,39 +84,6 @@ export async function getDailyMatches(
     .sort((a, b) => a.kickoff.localeCompare(b.kickoff))
     .map(rowToMatch);
 }
-
-/**
- * Loads the signed-in player's current pick for the pickable day, as a UI
- * `Selection`. A team pick maps to its option id (`<matchId>-<side>`); anything
- * else (no row, or a stored No-selection) is `{ kind: "none" }`.
- */
-export async function getCurrentPick(
-  now: Date = new Date()
-): Promise<Selection> {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { kind: "none" };
-
-  const dayKey = utcDayStart(now, 1).toISOString().slice(0, 10);
-
-  const { data, error } = await supabase
-    .from("picks")
-    .select("match_id, picked_side")
-    .eq("user_id", user.id)
-    .eq("match_day", dayKey)
-    .maybeSingle();
-  if (error) {
-    throw new Error(`Failed to load current pick: ${error.message}`);
-  }
-
-  if (!data?.match_id || !data.picked_side) return { kind: "none" };
-  return { kind: "team", optionId: `${data.match_id}-${data.picked_side}` };
-}
-
-type ServerClient = Awaited<ReturnType<typeof createClient>>;
 
 /**
  * Returns the player's frozen 5 matches for the day, freezing them on first

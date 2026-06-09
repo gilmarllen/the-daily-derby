@@ -10,84 +10,10 @@ import {
   Wallet,
 } from "lucide-react";
 
-import type {
-  Achievement,
-  LeaderboardEntry,
-  Match,
-  PastPick,
-  Player,
-} from "./types";
+import type { Achievement, LeaderboardEntry, PastPick } from "./types";
 
-// Placeholder data so the UI is fully explorable before Supabase / odds-api are
-// wired up. Swap these out for live data later.
-
-export const player: Player = {
-  name: "You",
-  trophies: 87,
-  balance: 7,
-  winStreak: 2,
-};
-
-function match(
-  id: string,
-  league: string,
-  kickoff: string,
-  home: [string, number],
-  away: [string, number]
-): Match {
-  return {
-    id,
-    league,
-    kickoff,
-    home: {
-      id: `${id}-home`,
-      matchId: id,
-      team: home[0],
-      side: "home",
-      odds: home[1],
-    },
-    away: {
-      id: `${id}-away`,
-      matchId: id,
-      team: away[0],
-      side: "away",
-      odds: away[1],
-    },
-  };
-}
-
-/** The 5 matches drawn from tomorrow's pool that this player sees today. */
-export const matches: Match[] = [
-  match(
-    "m1",
-    "La Liga",
-    "Tomorrow · 21:00",
-    ["Real Madrid", 1.5],
-    ["Getafe", 6.5]
-  ),
-  match(
-    "m2",
-    "Premier League",
-    "Tomorrow · 17:30",
-    ["Manchester City", 1.4],
-    ["Brentford", 8.0]
-  ),
-  match("m3", "Serie A", "Tomorrow · 19:45", ["Inter", 1.8], ["Napoli", 4.2]),
-  match(
-    "m4",
-    "Bundesliga",
-    "Tomorrow · 18:30",
-    ["Bayern München", 1.3],
-    ["Borussia Dortmund", 9.0]
-  ),
-  match(
-    "m5",
-    "Ligue 1",
-    "Tomorrow · 20:00",
-    ["Paris SG", 1.25],
-    ["Marseille", 11.0]
-  ),
-];
+// Placeholder data for surfaces not yet wired to Supabase (achievements,
+// leaderboard, past picks). Swap these out for live data later.
 
 export const achievements: Achievement[] = [
   {
