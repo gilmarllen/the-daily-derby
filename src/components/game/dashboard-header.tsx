@@ -6,7 +6,12 @@ import { Coins, Flame, LogOut, Trophy } from "lucide-react";
 import { signOut } from "@/app/auth/actions";
 import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
-import { formatFootballMoney } from "@/lib/game/constants";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { DAILY_INCOME, formatFootballMoney } from "@/lib/game/constants";
 
 import { useGame } from "./game-provider";
 import { StatPill } from "./stat-pill";
@@ -32,12 +37,20 @@ export function DashboardHeader() {
             value={player.trophies}
             iconClassName="text-amber-500"
           />
-          <StatPill
-            icon={Coins}
-            label="Football Money"
-            value={formatFootballMoney(player.balance)}
-            iconClassName="text-emerald-500"
-          />
+          <Tooltip>
+            <TooltipTrigger className="cursor-help rounded-full border-0 bg-transparent p-0">
+              <StatPill
+                icon={Coins}
+                label="Football Money"
+                value={formatFootballMoney(player.balance)}
+                iconClassName="text-emerald-500"
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              Daily income: +{formatFootballMoney(DAILY_INCOME)} added every day
+              between 00:00 UTC - 01:00 UTC
+            </TooltipContent>
+          </Tooltip>
           <StatPill
             icon={Flame}
             label="Win streak"
