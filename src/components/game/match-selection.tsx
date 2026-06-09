@@ -10,13 +10,25 @@ import {
   formatFootballMoney,
 } from "@/lib/game/constants";
 import type { TeamOption } from "@/lib/game/types";
+import { utcDayStart } from "@/lib/time";
 import { cn } from "@/lib/utils";
 
 import { useGame } from "./game-provider";
 
-/** Kickoff time in the viewer's local timezone, e.g. "21:00". */
+/** The next 00:00 UTC reset, rendered in the viewer's local time. */
+function ResetLocalTime() {
+  const localTime = new Intl.DateTimeFormat(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(utcDayStart(new Date(), 1));
+  return <span suppressHydrationWarning>{localTime}</span>;
+}
+
+/** Kickoff date + time in the viewer's local timezone, e.g. "Jun 9, 21:00". */
 function formatLocal(iso: string): string {
   return new Intl.DateTimeFormat(undefined, {
+    month: "short",
+    day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date(iso));
@@ -106,7 +118,7 @@ export function MatchSelection() {
         <p className="text-muted-foreground text-sm">
           Pick one team to win from your five matches. Each option shows its{" "}
           <span className="text-foreground font-medium">F$ price</span> — you
-          can change your pick until {DAILY_RESET_LABEL}.
+          can change your pick until <ResetLocalTime /> ({DAILY_RESET_LABEL}).
         </p>
       </div>
 
