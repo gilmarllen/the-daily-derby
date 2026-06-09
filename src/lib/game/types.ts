@@ -15,6 +15,7 @@ export type TeamOption = {
 export type Match = {
   id: string;
   league: string;
+  /** ISO 8601 kickoff timestamp (UTC); formatted to the viewer's timezone. */
   kickoff: string;
   home: TeamOption;
   away: TeamOption;
