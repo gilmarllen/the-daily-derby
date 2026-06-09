@@ -262,7 +262,17 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      generate_default_picks: {
+        Args: Record<string, never>;
+        Returns: number;
+      };
+      set_daily_pick: {
+        Args: {
+          p_match_id: string | null;
+          p_side: Database["public"]["Enums"]["match_result"] | null;
+        };
+        Returns: number;
+      };
     };
     Enums: {
       match_result: "home" | "draw" | "away";

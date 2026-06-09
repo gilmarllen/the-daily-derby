@@ -1,6 +1,10 @@
 import { redirect } from "next/navigation";
 
-import { getCurrentPlayer, getDailyMatches } from "@/lib/game/queries";
+import {
+  getCurrentPick,
+  getCurrentPlayer,
+  getDailyMatches,
+} from "@/lib/game/queries";
 
 import { DashboardHeader } from "./dashboard-header";
 import { DashboardNav } from "./dashboard-nav";
@@ -13,16 +17,21 @@ export async function DashboardShell({
 }: {
   children: React.ReactNode;
 }) {
-  const [player, matches] = await Promise.all([
+  const [player, matches, currentPick] = await Promise.all([
     getCurrentPlayer(),
     getDailyMatches(),
+    getCurrentPick(),
   ]);
   if (!player) {
     redirect("/login");
   }
 
   return (
-    <GameProvider player={player} matches={matches}>
+    <GameProvider
+      player={player}
+      matches={matches}
+      initialSelection={currentPick}
+    >
       <div className="flex min-h-full flex-1 flex-col">
         <DashboardHeader />
         <DashboardNav />

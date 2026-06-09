@@ -94,7 +94,7 @@ function OptionButton({ option }: { option: TeamOption }) {
 }
 
 export function MatchSelection() {
-  const { matches, selection, clearPick } = useGame();
+  const { matches, selection, clearPick, error } = useGame();
   const noPick = selection.kind === "none";
 
   return (
@@ -109,6 +109,15 @@ export function MatchSelection() {
           can change your pick until {DAILY_RESET_LABEL}.
         </p>
       </div>
+
+      {error && (
+        <p
+          role="alert"
+          className="border-destructive/30 bg-destructive/10 text-destructive rounded-lg border px-3 py-2 text-sm"
+        >
+          {error}
+        </p>
+      )}
 
       {/* No-selection option — default, and deliberately distinct. */}
       <button
