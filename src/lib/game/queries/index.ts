@@ -1,3 +1,3 @@
 export { getCurrentPlayer } from "./player";
 export { getDailyMatches } from "./matches";
-export { getCurrentPick } from "./picks";
+export { getCurrentPick, getTodayPick } from "./picks";

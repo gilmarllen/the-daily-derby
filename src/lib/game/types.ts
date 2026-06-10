@@ -60,3 +60,26 @@ export type PastPick = {
   result: PickResult;
   trophyDelta: number;
 };
+
+/**
+ * The player's locked-in pick for the current day (made the day before). Used by
+ * the "today's pick" banner. `none` covers both an explicit No-selection and a
+ * seeded default that was never changed.
+ */
+export type TodayPick =
+  | { kind: "none" }
+  | {
+      kind: "team";
+      league: string;
+      /** ISO 8601 kickoff timestamp (UTC). */
+      kickoff: string;
+      home: string;
+      away: string;
+      pickedSide: Side;
+      cost: number;
+      status: "scheduled" | "finished";
+      /** Settlement result; null until the match is settled. */
+      result: PickResult | null;
+      homeScore: number | null;
+      awayScore: number | null;
+    };
