@@ -150,7 +150,6 @@ export type Database = {
           picked_side: Database["public"]["Enums"]["match_result"] | null;
           result: Database["public"]["Enums"]["pick_result"] | null;
           settled_at: string | null;
-          trophy_delta: number | null;
           user_id: string;
         };
         Insert: {
@@ -162,7 +161,6 @@ export type Database = {
           picked_side?: Database["public"]["Enums"]["match_result"] | null;
           result?: Database["public"]["Enums"]["pick_result"] | null;
           settled_at?: string | null;
-          trophy_delta?: number | null;
           user_id: string;
         };
         Update: {
@@ -174,7 +172,6 @@ export type Database = {
           picked_side?: Database["public"]["Enums"]["match_result"] | null;
           result?: Database["public"]["Enums"]["pick_result"] | null;
           settled_at?: string | null;
-          trophy_delta?: number | null;
           user_id?: string;
         };
         Relationships: [
