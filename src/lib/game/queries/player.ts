@@ -16,24 +16,26 @@ export async function getCurrentPlayer(): Promise<Player | null> {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const { data: profile } = await supabase
-    .from("profiles")
+  // trophies + win_streak are derived (see the player_stats view); balance is a
+  // real column surfaced through the same view.
+  const { data: stats } = await supabase
+    .from("player_stats")
     .select("username, trophies, balance, win_streak")
-    .eq("id", user.id)
+    .eq("user_id", user.id)
     .single();
 
   // The user is authenticated but has no profile row. This shouldn't happen
   // (the handle_new_user trigger creates one on signup), so fail loudly rather
   // than returning null — returning null here would bounce an authenticated
   // user to /login, which sends them back, causing a redirect loop.
-  if (!profile) {
+  if (!stats) {
     throw new Error(`No profile found for authenticated user ${user.id}`);
   }
 
   return {
-    name: profile.username,
-    trophies: profile.trophies,
-    balance: profile.balance,
-    winStreak: profile.win_streak,
+    name: stats.username ?? "",
+    trophies: stats.trophies ?? 0,
+    balance: stats.balance ?? 0,
+    winStreak: stats.win_streak ?? 0,
   };
 }

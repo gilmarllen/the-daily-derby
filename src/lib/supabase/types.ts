@@ -197,30 +197,24 @@ export type Database = {
           created_at: string;
           id: string;
           last_income_on: string | null;
-          trophies: number;
           updated_at: string;
           username: string;
-          win_streak: number;
         };
         Insert: {
           balance?: number;
           created_at?: string;
           id: string;
           last_income_on?: string | null;
-          trophies?: number;
           updated_at?: string;
           username: string;
-          win_streak?: number;
         };
         Update: {
           balance?: number;
           created_at?: string;
           id?: string;
           last_income_on?: string | null;
-          trophies?: number;
           updated_at?: string;
           username?: string;
-          win_streak?: number;
         };
         Relationships: [];
       };
@@ -259,7 +253,17 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      player_stats: {
+        Row: {
+          user_id: string | null;
+          username: string | null;
+          balance: number | null;
+          trophies: number | null;
+          money_spent: number | null;
+          win_streak: number | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       apply_daily_income: {
@@ -268,6 +272,14 @@ export type Database = {
       };
       generate_default_picks: {
         Args: Record<string, never>;
+        Returns: number;
+      };
+      settle_match: {
+        Args: {
+          p_match_id: string;
+          p_home_score: number;
+          p_away_score: number;
+        };
         Returns: number;
       };
       set_daily_pick: {

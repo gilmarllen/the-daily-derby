@@ -9,6 +9,9 @@ const BASE_URL = "https://api.odds-api.io/v3";
 /** `/odds/multi` accepts at most 10 event ids per call. */
 export const ODDS_MULTI_BATCH_SIZE = 10;
 
+/** `/events` returns at most 5000 events per response (use `skip` to paginate). */
+export const ODDS_EVENTS_PAGE_SIZE = 5000;
+
 function apiKey(): string {
   const key = process.env.ODDS_API_KEY;
   if (!key) throw new Error("ODDS_API_KEY is not set");
@@ -44,6 +47,8 @@ function unwrap<T>(payload: T[] | { data: T[] }): T[] {
  *
  * `bookmaker` restricts results to events that have odds from that single book
  * (the API only accepts one — a comma-separated list returns nothing).
+ *
+ * `limit` (capped at 5000 by the API) and `skip` paginate the result set.
  */
 export async function fetchEvents(opts: {
   sport: string;
@@ -52,6 +57,8 @@ export async function fetchEvents(opts: {
   status?: string;
   league?: string;
   bookmaker?: string;
+  limit?: number;
+  skip?: number;
 }): Promise<OddsApiEvent[]> {
   const params: Record<string, string> = {
     sport: opts.sport,
@@ -61,6 +68,8 @@ export async function fetchEvents(opts: {
   };
   if (opts.league) params.league = opts.league;
   if (opts.bookmaker) params.bookmaker = opts.bookmaker;
+  if (opts.limit != null) params.limit = String(opts.limit);
+  if (opts.skip != null) params.skip = String(opts.skip);
   return unwrap(
     await getJson<OddsApiEvent[] | { data: OddsApiEvent[] }>("/events", params)
   );

@@ -14,6 +14,11 @@ export type OddsApiEvent = {
   status: string;
   sport: { name: string; slug: string };
   league: { name: string; slug: string };
+  /** Final/current scores; populated for settled (and live) events. */
+  scores?: {
+    home: number | null;
+    away: number | null;
+  };
 };
 
 /** A single market line, e.g. the moneyline ("ML") 1X2 market. */
@@ -37,6 +42,11 @@ export type OddsApiEventOdds = {
   status: string;
   sport: { name: string; slug: string };
   league: { name: string; slug: string };
+  /** Final/current scores; populated for settled (and live) events. */
+  scores?: {
+    home: number | null;
+    away: number | null;
+  };
   /** Keyed by bookmaker name; each holds that book's markets. */
   bookmakers: Record<string, OddsApiMarket[]>;
 };
