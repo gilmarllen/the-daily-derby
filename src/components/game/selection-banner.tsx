@@ -47,8 +47,8 @@ export function SelectionBanner() {
           </span>
         )}
 
-        <span className="text-muted-foreground ml-auto flex items-center gap-1.5 text-xs">
-          <Clock className="size-3.5" aria-hidden />
+        <span className="text-muted-foreground flex w-full items-center gap-1.5 text-xs sm:ml-auto sm:w-auto">
+          <Clock className="size-3.5 shrink-0" aria-hidden />
           Locks in <ResetCountdown />
         </span>
       </div>

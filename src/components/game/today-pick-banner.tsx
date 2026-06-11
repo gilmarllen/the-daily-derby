@@ -90,42 +90,46 @@ export function TodayPickBanner({ pick }: { pick: TodayPick | null }) {
 
   return (
     <Card className="border-primary/30 bg-primary/5">
-      <CardContent className="flex flex-wrap items-center gap-x-4 gap-y-2 py-4">
-        <span className="flex items-center gap-2">
-          <CalendarClock className="text-primary size-5 shrink-0" aria-hidden />
-          <Badge variant="secondary">Today&apos;s pick</Badge>
-        </span>
+      <CardContent className="flex flex-col gap-2 py-4">
+        <div className="flex items-center justify-between gap-2">
+          <Badge variant="secondary" className="gap-1.5">
+            <CalendarClock className="size-3.5" aria-hidden />
+            Today&apos;s pick
+          </Badge>
 
-        <span className="flex flex-1 flex-wrap items-baseline gap-x-2 gap-y-0.5">
-          <span className="font-semibold">{pickedTeam}</span>
-          <span className="text-muted-foreground text-xs">vs {opponent}</span>
-          <span className="text-muted-foreground text-xs">· {pick.league}</span>
-        </span>
-
-        {settled && pick.result ? (
-          <span className="flex items-center gap-2">
-            {hasScore && (
-              <span className="text-sm font-semibold tabular-nums">
-                {pick.homeScore}–{pick.awayScore}
+          {settled && pick.result ? (
+            <span className="flex items-center gap-2">
+              {hasScore && (
+                <span className="text-sm font-semibold tabular-nums">
+                  {pick.homeScore}–{pick.awayScore}
+                </span>
+              )}
+              <Badge className={cn("border-0", RESULT_CLASS[pick.result])}>
+                {RESULT_LABEL[pick.result]}
+              </Badge>
+              <TrophyDelta delta={TROPHY_DELTAS[pick.result]} />
+            </span>
+          ) : (
+            <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+              <Clock className="size-3.5 shrink-0" aria-hidden />
+              <span className="tabular-nums" suppressHydrationWarning>
+                {formatKickoff(pick.kickoff)}
               </span>
-            )}
-            <Badge className={cn("border-0", RESULT_CLASS[pick.result])}>
-              {RESULT_LABEL[pick.result]}
-            </Badge>
-            <TrophyDelta delta={TROPHY_DELTAS[pick.result]} />
-          </span>
-        ) : (
-          <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
-            <Clock className="size-3.5" aria-hidden />
-            <span className="tabular-nums" suppressHydrationWarning>
-              {formatKickoff(pick.kickoff)}
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-0.5">
+          <span className="font-semibold">
+            {pickedTeam}{" "}
+            <span className="text-muted-foreground text-sm font-normal">
+              vs {opponent}
             </span>
           </span>
-        )}
-
-        <span className="text-muted-foreground text-xs">
-          Paid {formatFootballMoney(pick.cost)}
-        </span>
+          <span className="text-muted-foreground text-xs">
+            {pick.league} · Paid {formatFootballMoney(pick.cost)}
+          </span>
+        </div>
       </CardContent>
     </Card>
   );

@@ -6,6 +6,9 @@ export const DAILY_INCOME = 4;
 export const SELECTION_COST_BASE = 10;
 export const DAILY_RESET_LABEL = "00:00 UTC";
 
+/** Non-breaking space — keeps `F$` glued to the amount so it can't wrap. */
+const NBSP = String.fromCharCode(160);
+
 export const TROPHY_DELTAS = {
   win: 3,
   draw: 0,
@@ -19,9 +22,9 @@ export function costFromOdds(odds: number): number {
   return SELECTION_COST_BASE / odds;
 }
 
-/** Formats an F$ amount with two decimals, e.g. `F$ 6.67`. */
+/** Formats an F$ amount with two decimals, e.g. `F$ 6.67` (non-breaking). */
 export function formatFootballMoney(amount: number): string {
-  return `F$ ${amount.toFixed(2)}`;
+  return `F$${NBSP}${amount.toFixed(2)}`;
 }
 
 /** Formats a trophy delta with an explicit sign, e.g. `+3`, `0`, `-2`. */
