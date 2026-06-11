@@ -4,9 +4,6 @@ A daily football prediction game. Players pick winning teams from real matches,
 manage their **F$** (Football Money), earn trophies, and compete on a global
 leaderboard.
 
-> **Status:** Project foundation only. Gameplay, auth, and data integrations are
-> coming later.
-
 ## Tech Stack
 
 - **[Next.js](https://nextjs.org) 16** (App Router) + **React 19**
