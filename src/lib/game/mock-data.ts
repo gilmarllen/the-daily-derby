@@ -10,10 +10,10 @@ import {
   Wallet,
 } from "lucide-react";
 
-import type { Achievement, LeaderboardEntry } from "./types";
+import type { Achievement } from "./types";
 
-// Placeholder data for surfaces not yet wired to Supabase (achievements,
-// leaderboard). Swap these out for live data later.
+// Placeholder data for surfaces not yet wired to Supabase (achievements).
+// Swap these out for live data later.
 
 export const achievements: Achievement[] = [
   {
@@ -79,46 +79,4 @@ export const achievements: Achievement[] = [
     icon: Award,
     earned: false,
   },
-];
-
-export const leaderboard: LeaderboardEntry[] = [
-  {
-    rank: 1,
-    name: "Goal Machine",
-    trophies: 142,
-    moneySpent: 612.4,
-    winStreak: 9,
-  },
-  { rank: 2, name: "La Pulga", trophies: 128, moneySpent: 540.1, winStreak: 6 },
-  {
-    rank: 3,
-    name: "NetBuster",
-    trophies: 119,
-    moneySpent: 498.75,
-    winStreak: 4,
-  },
-  { rank: 4, name: "TikiTaka", trophies: 101, moneySpent: 455.0, winStreak: 3 },
-  {
-    rank: 5,
-    name: "You",
-    trophies: 87,
-    moneySpent: 312.66,
-    winStreak: 2,
-    isCurrentUser: true,
-  },
-  {
-    rank: 6,
-    name: "ParkTheBus",
-    trophies: 80,
-    moneySpent: 401.2,
-    winStreak: 1,
-  },
-  {
-    rank: 7,
-    name: "OffsideKing",
-    trophies: 74,
-    moneySpent: 380.55,
-    winStreak: 0,
-  },
-  { rank: 8, name: "OwnGoal", trophies: 61, moneySpent: 290.0, winStreak: 0 },
 ];

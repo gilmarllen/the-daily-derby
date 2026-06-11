@@ -274,6 +274,16 @@ export type Database = {
         Args: Record<string, never>;
         Returns: number;
       };
+      get_leaderboard: {
+        Args: Record<string, never>;
+        Returns: {
+          user_id: string;
+          username: string;
+          trophies: number;
+          money_spent: number;
+          win_streak: number;
+        }[];
+      };
       settle_match: {
         Args: {
           p_match_id: string;
