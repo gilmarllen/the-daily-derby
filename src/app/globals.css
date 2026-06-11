@@ -128,3 +128,27 @@
     @apply font-sans;
   }
 }
+
+/* Pulsing ring used to flash the player's current pick when they jump to the
+   Pick page from the in-progress banner. */
+@keyframes pick-highlight {
+  0% {
+    box-shadow: 0 0 0 0 var(--primary);
+  }
+  70% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.animate-pick-highlight {
+  animation: pick-highlight 0.65s ease-out 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pick-highlight {
+    animation: none;
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, CircleSlash, Clock, Coins, Lock, Shield } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -47,7 +48,15 @@ function KickoffTime({ iso }: { iso: string }) {
   );
 }
 
-function OptionButton({ option }: { option: TeamOption }) {
+function OptionButton({
+  option,
+  innerRef,
+  flash,
+}: {
+  option: TeamOption;
+  innerRef?: React.Ref<HTMLButtonElement>;
+  flash?: boolean;
+}) {
   const { canAfford, isSelected, pickTeam } = useGame();
   const cost = costFromOdds(option.odds);
   const affordable = canAfford(option);
@@ -55,6 +64,7 @@ function OptionButton({ option }: { option: TeamOption }) {
 
   return (
     <button
+      ref={innerRef}
       type="button"
       disabled={!affordable}
       aria-pressed={selected}
@@ -67,7 +77,8 @@ function OptionButton({ option }: { option: TeamOption }) {
           "border-border hover:border-primary/50 hover:bg-muted/60 active:scale-[0.98]",
         selected &&
           "border-primary bg-primary/10 ring-primary/20 scale-[1.02] shadow-sm ring-2",
-        !affordable && "cursor-not-allowed border-dashed opacity-55"
+        !affordable && "cursor-not-allowed border-dashed opacity-55",
+        flash && "animate-pick-highlight"
       )}
     >
       {/* Selected check — floats in the corner so it doesn't shift the layout. */}
@@ -106,8 +117,35 @@ function OptionButton({ option }: { option: TeamOption }) {
 }
 
 export function MatchSelection() {
-  const { matches, selection, clearPick, error } = useGame();
+  const {
+    matches,
+    selection,
+    isSelected,
+    clearPick,
+    error,
+    highlightSignal,
+    consumeHighlight,
+  } = useGame();
   const noPick = selection.kind === "none";
+
+  // When the in-progress banner requests it, scroll the current selection into
+  // view and flash it. `selectedRef` is attached to whichever button is the
+  // active pick (a team option, or the No-selection button).
+  const selectedRef = useRef<HTMLButtonElement>(null);
+  const [flashing, setFlashing] = useState(false);
+  useEffect(() => {
+    if (!consumeHighlight()) return;
+    selectedRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+    const raf = requestAnimationFrame(() => setFlashing(true));
+    const timer = setTimeout(() => setFlashing(false), 1500);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(timer);
+    };
+  }, [highlightSignal, consumeHighlight]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -133,6 +171,7 @@ export function MatchSelection() {
 
       {/* No-selection option — default, and deliberately distinct. */}
       <button
+        ref={noPick ? selectedRef : undefined}
         type="button"
         aria-pressed={noPick}
         onClick={clearPick}
@@ -141,7 +180,8 @@ export function MatchSelection() {
           "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
           noPick
             ? "border-muted-foreground/60 bg-muted"
-            : "border-border opacity-70 hover:opacity-100"
+            : "border-border opacity-70 hover:opacity-100",
+          flashing && noPick && "animate-pick-highlight"
         )}
       >
         <CircleSlash
@@ -186,34 +226,53 @@ export function MatchSelection() {
         </Card>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
-          {matches.map((m, i) => (
-            <Card
-              key={m.id}
-              className="animate-in fade-in slide-in-from-bottom-2 fill-mode-both gap-3 overflow-hidden duration-500"
-              style={{ animationDelay: `${i * 70}ms` }}
-            >
-              <CardHeader className="flex-row items-center justify-between gap-2">
-                <Badge variant="outline" className="gap-1.5">
-                  <Shield className="size-3.5" aria-hidden />
-                  {m.league}
-                </Badge>
-                <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
-                  <Clock className="size-3.5" aria-hidden />
-                  <KickoffTime iso={m.kickoff} />
-                </span>
-              </CardHeader>
-              <CardContent className="grid grid-cols-[1fr_auto_1fr] items-stretch gap-2">
-                <OptionButton option={m.home} />
-                <span
-                  className="text-muted-foreground bg-muted/60 m-auto flex size-7 items-center justify-center rounded-full text-[10px] font-bold"
-                  aria-hidden
-                >
-                  VS
-                </span>
-                <OptionButton option={m.away} />
-              </CardContent>
-            </Card>
-          ))}
+          {matches.map((m, i) => {
+            // An odd number of matches leaves the last card alone on its row.
+            // Center it at one-column width so it reads as intentional instead
+            // of stranded in the bottom-left with a dead gap beside it.
+            const isLoneLast =
+              matches.length % 2 === 1 && i === matches.length - 1;
+            return (
+              <Card
+                key={m.id}
+                className={cn(
+                  "animate-in fade-in slide-in-from-bottom-2 fill-mode-both gap-3 overflow-hidden duration-500",
+                  isLoneLast &&
+                    "sm:col-span-2 sm:mx-auto sm:w-[calc(50%-0.5rem)]"
+                )}
+                style={{ animationDelay: `${i * 70}ms` }}
+              >
+                <CardHeader className="flex-row items-center justify-between gap-2">
+                  <Badge variant="outline" className="gap-1.5">
+                    <Shield className="size-3.5" aria-hidden />
+                    {m.league}
+                  </Badge>
+                  <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
+                    <Clock className="size-3.5" aria-hidden />
+                    <KickoffTime iso={m.kickoff} />
+                  </span>
+                </CardHeader>
+                <CardContent className="grid grid-cols-[1fr_auto_1fr] items-stretch gap-2">
+                  <OptionButton
+                    option={m.home}
+                    innerRef={isSelected(m.home.id) ? selectedRef : undefined}
+                    flash={flashing && isSelected(m.home.id)}
+                  />
+                  <span
+                    className="text-muted-foreground bg-muted/60 m-auto flex size-7 items-center justify-center rounded-full text-[10px] font-bold"
+                    aria-hidden
+                  >
+                    VS
+                  </span>
+                  <OptionButton
+                    option={m.away}
+                    innerRef={isSelected(m.away.id) ? selectedRef : undefined}
+                    flash={flashing && isSelected(m.away.id)}
+                  />
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>

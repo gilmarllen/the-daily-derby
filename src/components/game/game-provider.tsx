@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
   useCallback,
@@ -66,6 +66,12 @@ type GameContextValue = {
   pending: boolean;
   /** Last error from persisting a pick, if any. */
   error: string | null;
+  /** Jump to the Pick page and flash the current selection. */
+  requestHighlight: () => void;
+  /** Bumped on each highlight request, so the Pick page can react. */
+  highlightSignal: number;
+  /** Returns true once per request; the Pick page calls it to claim a flash. */
+  consumeHighlight: () => boolean;
 };
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -81,11 +87,32 @@ export function GameProvider({
   initialSelection: Selection;
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [selection, setSelection] = useState<Selection>(initialSelection);
   // Balance changes as picks are made/changed; the header reads it from here.
   const [balance, setBalance] = useState(player.balance);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+
+  // Lets the in-progress banner send the player to the Pick page and flash
+  // their current selection. The flag survives cross-page navigation because
+  // this provider lives in the dashboard layout; the signal re-fires the flash
+  // when the Pick page is already mounted.
+  const highlightPendingRef = useRef(false);
+  const [highlightSignal, setHighlightSignal] = useState(0);
+  const requestHighlight = useCallback(() => {
+    highlightPendingRef.current = true;
+    setHighlightSignal((n) => n + 1);
+    if (pathname !== "/dashboard") {
+      router.push("/dashboard");
+    }
+  }, [pathname, router]);
+  const consumeHighlight = useCallback(() => {
+    if (!highlightPendingRef.current) return false;
+    highlightPendingRef.current = false;
+    return true;
+  }, []);
 
   // Revalidate the server state when the tab regains focus, but never while a
   // pick is being persisted.
@@ -207,6 +234,9 @@ export function GameProvider({
     clearPick,
     pending,
     error,
+    requestHighlight,
+    highlightSignal,
+    consumeHighlight,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
