@@ -12,13 +12,15 @@ leaderboard.
 - **[Vitest](https://vitest.dev)** + **React Testing Library**
 - **ESLint** + **Prettier**
 - **Husky** + **lint-staged** (pre-commit checks)
-- Planned: **Supabase** (auth + DB), **Vercel** (hosting), [odds-api.io](https://odds-api.io/) (fixtures & odds)
+- **Supabase** (auth + DB)
+- **Vercel** (hosting)
+- [odds-api.io](https://odds-api.io/) (fixtures & odds)
 
 ## Getting Started
 
 ```bash
 npm install
-cp .env.example .env.local   # fill in values when integrations are wired up
+cp .env.example .env.local   # fill in values
 npm run dev
 ```
 
