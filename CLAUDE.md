@@ -71,16 +71,43 @@ while spending `< F$ 5.00`).
 - **Animate interactions** — selecting a match option, and transitions between
   pages. Selected options get a clear indication (color change + icon).
 
-## Planned integrations (not yet wired up)
+## Integrations
 
 - **Supabase** — authentication + database (leaderboard, picks, achievements).
   Uses the new API key format: `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
   (`sb_publishable_…`, client-safe) and `SUPABASE_SECRET_KEY` (`sb_secret_…`).
   The secret key is **server-only**; never expose it to the client.
 - **[odds-api.io](https://odds-api.io/)** — fixtures, odds, and match scores.
-- **Vercel** — hosting.
+  Match sync runs nightly via Vercel Cron. Settlement uses
+  `/events?status=settled` — **not** `/odds/multi`, which only returns
+  pending/live matches and silently omits finished ones.
+  `ODDS_API_BOOKMAKER` is a **singular** param (the API rejects CSV).
+- **Vercel** — hosting + cron jobs. The Hobby plan caps each cron at once per
+  day; the hourly settle-matches job is replicated 24 times in `vercel.json`.
 
 See `.env.example` for the expected environment variables.
+
+## Non-obvious implementation decisions
+
+These are choices that look arbitrary in code but have a specific reason:
+
+- **`pickableDay` = today + 1 UTC.** Players pick for tomorrow's matches, not
+  today's. "Today" in the game is the day you're picking _for_, not the
+  calendar date.
+- **Sat-out detection: `match_id IS NULL`, not `result IS NULL`.** A row in
+  `picks` with `match_id IS NULL` is a sat-out (no selection made). A row with
+  a team pick that hasn't settled yet also has `result IS NULL`, so using
+  `result IS NULL` would incorrectly penalise unsettled team picks.
+- **Win streak only breaks on `loss`.** Draws and sat-out days are neutral —
+  they don't extend or break the streak.
+- **Trophies and win streak are derived at read time** from the `player_stats`
+  view (not stored columns). Never write trophies directly to `profiles`.
+- **Daily pool is frozen in `daily_pools`.** After the first time a player's
+  pool is generated it is persisted so mid-day changes to global matches don't
+  change what a player sees.
+- **`apply_daily_income` uses a relative update** (`balance + 4.00` inside
+  `UPDATE`), not a read-then-write. This is intentional — it avoids races with
+  `set_daily_pick`'s `FOR UPDATE` lock. Do not refactor it to read first.
 
 ## Working conventions
 
