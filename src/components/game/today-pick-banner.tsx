@@ -127,7 +127,7 @@ export function TodayPickBanner({ pick }: { pick: TodayPick | null }) {
             </span>
           </span>
           <span className="text-muted-foreground text-xs">
-            {pick.league} · Paid {formatFootballMoney(pick.cost)}
+            {pick.league} · {formatFootballMoney(pick.cost)}
           </span>
         </div>
       </CardContent>
