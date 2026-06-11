@@ -10,10 +10,10 @@ import {
   Wallet,
 } from "lucide-react";
 
-import type { Achievement, LeaderboardEntry, PastPick } from "./types";
+import type { Achievement, LeaderboardEntry } from "./types";
 
 // Placeholder data for surfaces not yet wired to Supabase (achievements,
-// leaderboard, past picks). Swap these out for live data later.
+// leaderboard). Swap these out for live data later.
 
 export const achievements: Achievement[] = [
   {
@@ -121,61 +121,4 @@ export const leaderboard: LeaderboardEntry[] = [
     winStreak: 0,
   },
   { rank: 8, name: "OwnGoal", trophies: 61, moneySpent: 290.0, winStreak: 0 },
-];
-
-export const pastPicks: PastPick[] = [
-  {
-    id: "p1",
-    date: "Jun 02",
-    league: "La Liga",
-    pick: "Real Madrid",
-    cost: 6.67,
-    result: "win",
-    trophyDelta: 3,
-  },
-  {
-    id: "p2",
-    date: "Jun 01",
-    league: "Premier League",
-    pick: "Arsenal",
-    cost: 5.0,
-    result: "loss",
-    trophyDelta: -1,
-  },
-  {
-    id: "p3",
-    date: "May 31",
-    league: "Serie A",
-    pick: "Juventus",
-    cost: 4.0,
-    result: "draw",
-    trophyDelta: 0,
-  },
-  {
-    id: "p4",
-    date: "May 30",
-    league: "—",
-    pick: null,
-    cost: 0,
-    result: "none",
-    trophyDelta: -2,
-  },
-  {
-    id: "p5",
-    date: "May 29",
-    league: "Bundesliga",
-    pick: "Bayern München",
-    cost: 7.69,
-    result: "win",
-    trophyDelta: 3,
-  },
-  {
-    id: "p6",
-    date: "May 28",
-    league: "Ligue 1",
-    pick: "Paris SG",
-    cost: 8.0,
-    result: "win",
-    trophyDelta: 3,
-  },
 ];

@@ -56,8 +56,9 @@ export type PastPick = {
   league: string;
   /** Team name, or null when the player made no selection. */
   pick: string | null;
+  /** "pending" when a team pick's match hasn't been settled yet. */
+  result: PickResult | "pending";
   cost: number;
-  result: PickResult;
   trophyDelta: number;
 };
 
