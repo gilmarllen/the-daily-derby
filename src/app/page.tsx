@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Coins, Target, Trophy } from "lucide-react";
+import { BookOpen, Coins, Target, Trophy } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
 import { buttonVariants } from "@/components/ui/button";
@@ -65,6 +65,14 @@ export default function Home() {
             Log in
           </Link>
         </div>
+
+        <Link
+          href="/guide"
+          className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm font-medium underline-offset-4 transition-colors hover:underline"
+        >
+          <BookOpen className="size-4" aria-hidden />
+          How to play
+        </Link>
       </div>
 
       <div className="animate-in fade-in slide-in-from-bottom-4 mt-16 grid w-full max-w-3xl gap-4 duration-700 sm:grid-cols-3">

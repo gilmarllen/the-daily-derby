@@ -10,6 +10,7 @@ import { DashboardHeader } from "./dashboard-header";
 import { DashboardNav } from "./dashboard-nav";
 import { GameProvider } from "./game-provider";
 import { SelectionBanner } from "./selection-banner";
+import { WelcomeDialogProvider } from "./welcome-dialog";
 
 /** Persistent logged-in chrome: header, nav, in-progress banner, and content. */
 export async function DashboardShell({
@@ -32,14 +33,16 @@ export async function DashboardShell({
       matches={matches}
       initialSelection={currentPick}
     >
-      <div className="flex min-h-full flex-1 flex-col">
-        <DashboardHeader />
-        <DashboardNav />
-        <SelectionBanner />
-        <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-6">
-          {children}
-        </main>
-      </div>
+      <WelcomeDialogProvider>
+        <div className="flex min-h-full flex-1 flex-col">
+          <DashboardHeader />
+          <DashboardNav />
+          <SelectionBanner />
+          <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-6">
+            {children}
+          </main>
+        </div>
+      </WelcomeDialogProvider>
     </GameProvider>
   );
 }
