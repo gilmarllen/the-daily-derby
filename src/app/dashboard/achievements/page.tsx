@@ -1,5 +1,6 @@
 import { Lock } from "lucide-react";
 
+import { ComingSoonWatermark } from "@/components/layout/coming-soon-watermark";
 import { Badge } from "@/components/ui/badge";
 import { achievements } from "@/lib/game/mock-data";
 import { cn } from "@/lib/utils";
@@ -7,6 +8,10 @@ import { cn } from "@/lib/utils";
 export const metadata = {
   title: "Achievements · The Daily Derby",
 };
+
+// Flip the watermark on in deployed environments; leave the env var unset
+// locally to develop the real page.
+const COMING_SOON = process.env.NEXT_PUBLIC_ACHIEVEMENTS_COMING_SOON === "true";
 
 export default function AchievementsPage() {
   const earnedCount = achievements.filter((a) => a.earned).length;
@@ -21,47 +26,54 @@ export default function AchievementsPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-        {achievements.map(({ id, title, description, icon: Icon, earned }) => (
-          <div
-            key={id}
-            className={cn(
-              "flex flex-col items-center gap-3 rounded-xl border p-5 text-center transition-all",
-              earned
-                ? "bg-card ring-foreground/10 ring-1"
-                : "bg-muted/40 opacity-60 grayscale hover:opacity-80"
-            )}
-          >
-            <div
-              className={cn(
-                "relative flex size-20 items-center justify-center rounded-full",
-                earned
-                  ? "bg-primary/10 text-primary"
-                  : "bg-muted text-muted-foreground"
-              )}
-            >
-              <Icon className="size-10" aria-hidden />
-              {!earned && (
-                <span className="bg-background ring-border absolute -right-1 -bottom-1 flex size-6 items-center justify-center rounded-full ring-1">
-                  <Lock
-                    className="text-muted-foreground size-3.5"
-                    aria-hidden
-                  />
-                </span>
-              )}
-            </div>
+      <ComingSoonWatermark
+        enabled={COMING_SOON}
+        description="Achievements are under development — check back soon."
+      >
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+          {achievements.map(
+            ({ id, title, description, icon: Icon, earned }) => (
+              <div
+                key={id}
+                className={cn(
+                  "flex flex-col items-center gap-3 rounded-xl border p-5 text-center transition-all",
+                  earned
+                    ? "bg-card ring-foreground/10 ring-1"
+                    : "bg-muted/40 opacity-60 grayscale hover:opacity-80"
+                )}
+              >
+                <div
+                  className={cn(
+                    "relative flex size-20 items-center justify-center rounded-full",
+                    earned
+                      ? "bg-primary/10 text-primary"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  <Icon className="size-10" aria-hidden />
+                  {!earned && (
+                    <span className="bg-background ring-border absolute -right-1 -bottom-1 flex size-6 items-center justify-center rounded-full ring-1">
+                      <Lock
+                        className="text-muted-foreground size-3.5"
+                        aria-hidden
+                      />
+                    </span>
+                  )}
+                </div>
 
-            <div className="flex flex-col gap-1">
-              <h2 className="text-sm font-semibold">{title}</h2>
-              <p className="text-muted-foreground text-xs">{description}</p>
-            </div>
+                <div className="flex flex-col gap-1">
+                  <h2 className="text-sm font-semibold">{title}</h2>
+                  <p className="text-muted-foreground text-xs">{description}</p>
+                </div>
 
-            <Badge variant={earned ? "default" : "outline"}>
-              {earned ? "Unlocked" : "Locked"}
-            </Badge>
-          </div>
-        ))}
-      </div>
+                <Badge variant={earned ? "default" : "outline"}>
+                  {earned ? "Unlocked" : "Locked"}
+                </Badge>
+              </div>
+            )
+          )}
+        </div>
+      </ComingSoonWatermark>
     </div>
   );
 }
