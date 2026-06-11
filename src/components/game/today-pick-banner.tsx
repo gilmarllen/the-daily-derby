@@ -92,7 +92,7 @@ export function TodayPickBanner({ pick }: { pick: TodayPick | null }) {
     <Card className="border-primary/30 bg-primary/5">
       <CardContent className="flex flex-col gap-2 py-4">
         <div className="flex items-center justify-between gap-2">
-          <Badge variant="secondary" className="gap-1.5">
+          <Badge variant="secondary" className="gap-1.5 p-0">
             <CalendarClock className="size-3.5" aria-hidden />
             Today&apos;s pick
           </Badge>

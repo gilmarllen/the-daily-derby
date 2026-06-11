@@ -4,7 +4,7 @@ import { Check, CircleSlash, Clock, Coins, Lock, Shield } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   DAILY_RESET_LABEL,
   costFromOdds,
@@ -70,36 +70,47 @@ function OptionButton({
       aria-pressed={selected}
       onClick={() => pickTeam(option.id)}
       className={cn(
-        "group relative flex flex-col items-center gap-2 rounded-xl border-2 p-4 text-center transition-all duration-200",
+        "group flex min-w-0 items-center gap-3 rounded-xl border-2 p-3 text-left transition-all duration-200",
         "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
         affordable &&
           !selected &&
-          "border-border hover:border-primary/50 hover:bg-muted/60 active:scale-[0.98]",
+          "border-border hover:border-primary/50 hover:bg-muted/60 active:scale-[0.99]",
         selected &&
-          "border-primary bg-primary/10 ring-primary/20 scale-[1.02] shadow-sm ring-2",
+          "border-primary bg-primary/10 ring-primary/20 shadow-sm ring-2",
         !affordable && "cursor-not-allowed border-dashed opacity-55",
         flash && "animate-pick-highlight"
       )}
     >
-      {/* Selected check — floats in the corner so it doesn't shift the layout. */}
+      {/* Leading radio-style indicator that fills in when selected. */}
       <span
         className={cn(
-          "absolute top-2 right-2 flex size-5 items-center justify-center rounded-full transition-all",
-          selected ? "bg-primary text-primary-foreground scale-100" : "scale-0"
+          "flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+          selected
+            ? "border-primary bg-primary text-primary-foreground"
+            : "border-muted-foreground/30"
         )}
         aria-hidden
       >
-        <Check className="size-3.5" />
+        <Check
+          className={cn(
+            "size-3 transition-transform",
+            selected ? "scale-100" : "scale-0"
+          )}
+        />
       </span>
 
-      <span className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">
-        {option.side}
+      <span className="flex min-w-0 flex-col">
+        <span className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">
+          {option.side}
+        </span>
+        <span className="truncate leading-tight font-semibold">
+          {option.team}
+        </span>
       </span>
-      <span className="leading-tight font-semibold">{option.team}</span>
 
       <span
         className={cn(
-          "mt-1 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold tabular-nums",
+          "ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold tabular-nums",
           affordable
             ? "bg-muted text-foreground group-hover:bg-background"
             : "bg-destructive/10 text-destructive"
@@ -205,7 +216,8 @@ export function MatchSelection() {
             </span>
           </span>
           <span className="text-muted-foreground text-xs">
-            Sit today out — costs F$ 0.00 but skipping a day is −2 trophies.
+            Sit today out — costs {formatFootballMoney(0)} but skipping a day is
+            −2 trophies.
           </span>
         </span>
         <span className="text-muted-foreground ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-semibold tabular-nums">
@@ -225,24 +237,17 @@ export function MatchSelection() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {matches.map((m, i) => {
-            // An odd number of matches leaves the last card alone on its row.
-            // Center it at one-column width so it reads as intentional instead
-            // of stranded in the bottom-left with a dead gap beside it.
-            const isLoneLast =
-              matches.length % 2 === 1 && i === matches.length - 1;
-            return (
-              <Card
-                key={m.id}
-                className={cn(
-                  "animate-in fade-in slide-in-from-bottom-2 fill-mode-both gap-3 overflow-hidden duration-500",
-                  isLoneLast &&
-                    "sm:col-span-2 sm:mx-auto sm:w-[calc(50%-0.5rem)]"
-                )}
-                style={{ animationDelay: `${i * 70}ms` }}
-              >
-                <CardHeader className="flex-row items-center justify-between gap-2">
+        <div className="flex flex-col gap-4">
+          {matches.map((m, i) => (
+            <Card
+              key={m.id}
+              className="animate-in fade-in slide-in-from-bottom-2 fill-mode-both overflow-hidden p-4 duration-500"
+              style={{ animationDelay: `${i * 70}ms` }}
+            >
+              <div className="flex flex-col gap-3">
+                {/* Match meta header — league left, kickoff right on desktop;
+                    stacked (kickoff under the league) on mobile. */}
+                <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
                   <Badge variant="outline" className="gap-1.5">
                     <Shield className="size-3.5" aria-hidden />
                     {m.league}
@@ -251,15 +256,17 @@ export function MatchSelection() {
                     <Clock className="size-3.5" aria-hidden />
                     <KickoffTime iso={m.kickoff} />
                   </span>
-                </CardHeader>
-                <CardContent className="grid grid-cols-[1fr_auto_1fr] items-stretch gap-2">
+                </div>
+
+                {/* Team options — stacked on mobile, side-by-side on desktop. */}
+                <div className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-3">
                   <OptionButton
                     option={m.home}
                     innerRef={isSelected(m.home.id) ? selectedRef : undefined}
                     flash={flashing && isSelected(m.home.id)}
                   />
                   <span
-                    className="text-muted-foreground bg-muted/60 m-auto flex size-7 items-center justify-center rounded-full text-[10px] font-bold"
+                    className="text-muted-foreground bg-muted/60 m-auto hidden size-7 items-center justify-center rounded-full text-[10px] font-bold sm:flex"
                     aria-hidden
                   >
                     VS
@@ -269,10 +276,10 @@ export function MatchSelection() {
                     innerRef={isSelected(m.away.id) ? selectedRef : undefined}
                     flash={flashing && isSelected(m.away.id)}
                   />
-                </CardContent>
-              </Card>
-            );
-          })}
+                </div>
+              </div>
+            </Card>
+          ))}
         </div>
       )}
     </div>
