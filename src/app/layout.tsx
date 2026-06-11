@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { Footer } from "@/components/layout/footer";
+import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -15,10 +16,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const DESCRIPTION =
+  "A daily football prediction game — pick winners, manage your F$, earn trophies, and climb the global leaderboard.";
+
 export const metadata: Metadata = {
+  // Base for resolving the relative OG/Twitter image URLs to absolute ones.
+  metadataBase: new URL(SITE_URL),
   title: "The Daily Derby",
-  description:
-    "A daily football prediction game — pick winners, manage your F$, earn trophies, and climb the global leaderboard.",
+  description: DESCRIPTION,
+  openGraph: {
+    type: "website",
+    siteName: "The Daily Derby",
+    title: "The Daily Derby",
+    description: DESCRIPTION,
+    url: SITE_URL,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Daily Derby",
+    description: DESCRIPTION,
+  },
 };
 
 export default function RootLayout({
