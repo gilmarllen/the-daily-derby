@@ -105,6 +105,7 @@ export type Database = {
           id: string;
           kickoff: string;
           league: string;
+          league_slug: string | null;
           result: Database["public"]["Enums"]["match_result"] | null;
           status: Database["public"]["Enums"]["match_status"];
         };
@@ -120,6 +121,7 @@ export type Database = {
           id?: string;
           kickoff: string;
           league: string;
+          league_slug?: string | null;
           result?: Database["public"]["Enums"]["match_result"] | null;
           status?: Database["public"]["Enums"]["match_status"];
         };
@@ -135,6 +137,7 @@ export type Database = {
           id?: string;
           kickoff?: string;
           league?: string;
+          league_slug?: string | null;
           result?: Database["public"]["Enums"]["match_result"] | null;
           status?: Database["public"]["Enums"]["match_status"];
         };

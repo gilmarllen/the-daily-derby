@@ -3,6 +3,10 @@ import "server-only";
 import { pickDaily } from "@/lib/game/daily-pool";
 import { pickableDay } from "@/lib/game/day";
 import type { Match } from "@/lib/game/types";
+import {
+  weightForLeague,
+  weightForLeagueName,
+} from "@/lib/odds/league-weights";
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/supabase/types";
 import { utcDayStart } from "@/lib/time";
@@ -10,14 +14,15 @@ import { utcDayStart } from "@/lib/time";
 /** How many matches a player sees per day. */
 const DAILY_POOL_SIZE = 5;
 
-/** The match columns the daily-pool UI needs. */
+/** The match columns the daily-pool UI + weighted draw need. */
 const MATCH_COLUMNS =
-  "id, league, kickoff, home_team, away_team, home_odds, away_odds";
+  "id, league, league_slug, kickoff, home_team, away_team, home_odds, away_odds";
 
 type MatchRow = Pick<
   Tables<"matches">,
   | "id"
   | "league"
+  | "league_slug"
   | "kickoff"
   | "home_team"
   | "away_team"
@@ -120,7 +125,10 @@ async function loadFrozenPool(
   }
 
   // 2. Not frozen yet: draw deterministically from the whole day's pool, in a
-  // stable order so the seeded shuffle is reproducible (kickoff, then id).
+  // stable order so the seeded draw is reproducible (kickoff, then id). The draw
+  // is league-weighted, so marquee leagues are likelier to land in a player's
+  // five — keyed on the slug stored at sync time, falling back to the display
+  // name only for legacy rows synced before `league_slug` existed.
   const { data, error } = await supabase
     .from("matches")
     .select(MATCH_COLUMNS)
@@ -132,7 +140,15 @@ async function loadFrozenPool(
     throw new Error(`Failed to load daily matches: ${error.message}`);
   }
 
-  const picked = pickDaily(data ?? [], `${userId}:${dayKey}`, DAILY_POOL_SIZE);
+  const picked = pickDaily(
+    data ?? [],
+    `${userId}:${dayKey}`,
+    DAILY_POOL_SIZE,
+    (row) =>
+      row.league_slug
+        ? weightForLeague(row.league_slug)
+        : weightForLeagueName(row.league)
+  );
   if (picked.length === 0) return [];
 
   // 3. Freeze it. ignoreDuplicates makes concurrent first-loads a no-op (and the

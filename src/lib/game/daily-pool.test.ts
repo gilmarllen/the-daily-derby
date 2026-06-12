@@ -86,3 +86,43 @@ describe("pickDaily", () => {
     expect(input).toEqual([1, 2, 3, 4, 5]);
   });
 });
+
+describe("pickDaily (league-weighted)", () => {
+  // One heavy league among many light ones, mirroring the daily pool.
+  const weighted = [
+    { id: "marquee", weight: 75 },
+    ...Array.from({ length: 24 }, (_, i) => ({ id: `minor-${i}`, weight: 6 })),
+  ];
+  const weightOf = (m: { weight: number }) => m.weight;
+
+  it("stays stable for the same seed (reload-safe)", () => {
+    const seed = "user-a:2026-06-13";
+    expect(pickDaily(weighted, seed, 5, weightOf)).toEqual(
+      pickDaily(weighted, seed, 5, weightOf)
+    );
+  });
+
+  it("does not mutate the input pool", () => {
+    const input = [...weighted];
+    pickDaily(input, "seed", 5, weightOf);
+    expect(input).toEqual(weighted);
+  });
+
+  it("returns `count` distinct items from the pool", () => {
+    const picked = pickDaily(weighted, "seed", 5, weightOf);
+    expect(picked).toHaveLength(5);
+    expect(new Set(picked).size).toBe(5);
+    for (const m of picked) expect(weighted).toContain(m);
+  });
+
+  it("draws the heavy league far more often than a uniform draw would", () => {
+    let hits = 0;
+    const TRIALS = 2000;
+    for (let t = 0; t < TRIALS; t++) {
+      const picked = pickDaily(weighted, `user-${t}:day`, 5, weightOf);
+      if (picked.some((m) => m.id === "marquee")) hits++;
+    }
+    // Uniform would be ~5/25 = 20%; weighting should push it well past 50%.
+    expect(hits / TRIALS).toBeGreaterThan(0.5);
+  });
+});

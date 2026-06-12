@@ -3,7 +3,9 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_LEAGUE_WEIGHT,
   LEAGUE_WEIGHTS,
+  leagueNameToSlug,
   weightForLeague,
+  weightForLeagueName,
 } from "./league-weights";
 
 describe("weightForLeague", () => {
@@ -44,5 +46,50 @@ describe("weightForLeague", () => {
     const values = Object.values(LEAGUE_WEIGHTS);
     expect(values.length).toBeGreaterThan(1000);
     expect(values.every((w) => w >= 1)).toBe(true);
+  });
+});
+
+describe("leagueNameToSlug", () => {
+  it("reproduces the odds-api slug from the display name", () => {
+    expect(leagueNameToSlug("England - Premier League")).toBe(
+      "england-premier-league"
+    );
+    expect(leagueNameToSlug("USA - USL, Championship")).toBe(
+      "usa-usl-championship"
+    );
+    expect(leagueNameToSlug("International - FIFA World Cup")).toBe(
+      "international-fifa-world-cup"
+    );
+    expect(leagueNameToSlug("Australia - U20 NSW League One")).toBe(
+      "australia-u20-nsw-league-one"
+    );
+  });
+
+  it("strips diacritics and apostrophes", () => {
+    expect(leagueNameToSlug("Türkiye - Süper Lig")).toBe("turkiye-super-lig");
+    expect(leagueNameToSlug("USA - National Women's Soccer League")).toBe(
+      "usa-national-womens-soccer-league"
+    );
+  });
+});
+
+describe("weightForLeagueName", () => {
+  it("weights by the catalogued slug derived from the name", () => {
+    expect(weightForLeagueName("England - Premier League")).toBe(
+      weightForLeague("england-premier-league")
+    );
+    expect(weightForLeagueName("Australia - U20 NSW League One")).toBe(
+      weightForLeague("australia-u20-nsw-league-one")
+    );
+    expect(weightForLeagueName("England - Premier League")).toBeGreaterThan(
+      weightForLeagueName("Australia - U20 NSW League One")
+    );
+  });
+
+  it("falls back to the default for an unknown or empty name", () => {
+    expect(weightForLeagueName("Some Made Up League")).toBe(
+      DEFAULT_LEAGUE_WEIGHT
+    );
+    expect(weightForLeagueName(null)).toBe(DEFAULT_LEAGUE_WEIGHT);
   });
 });

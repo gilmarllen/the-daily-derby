@@ -64,6 +64,7 @@ function toMatchRow(
   return {
     external_id: String(event.id),
     league: event.league.name,
+    league_slug: event.league.slug,
     kickoff: event.date,
     home_team: event.home,
     away_team: event.away,

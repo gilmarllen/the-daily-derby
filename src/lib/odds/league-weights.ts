@@ -20,3 +20,28 @@ export function weightForLeague(slug: string | undefined | null): number {
   if (!slug) return DEFAULT_LEAGUE_WEIGHT;
   return LEAGUE_WEIGHTS[slug] ?? DEFAULT_LEAGUE_WEIGHT;
 }
+
+/**
+ * Slugify a league display name to its odds-api slug form. The provider derives
+ * the slug from the name by the same normalisation, so e.g. "USA - USL,
+ * Championship" -> "usa-usl-championship" and "Australia - U20 NSW League One"
+ * -> "australia-u20-nsw-league-one".
+ */
+export function leagueNameToSlug(name: string): string {
+  return name
+    .normalize("NFKD") // split accented letters into base + combining mark
+    .replace(/[^\x20-\x7e]/g, "") // drop non-ASCII (combining marks, curly quotes)
+    .toLowerCase()
+    .replace(/'/g, "") // drop apostrophes (women's -> womens)
+    .replace(/[^a-z0-9]+/g, "-") // any other run -> single hyphen
+    .replace(/^-+|-+$/g, "");
+}
+
+/**
+ * Relevancy weight for a stored league display name (the `matches.league`
+ * column holds the name, not the slug). Used by the per-player daily draw.
+ */
+export function weightForLeagueName(name: string | undefined | null): number {
+  if (!name) return DEFAULT_LEAGUE_WEIGHT;
+  return weightForLeague(leagueNameToSlug(name));
+}

@@ -82,11 +82,15 @@ while spending `< F$ 5.00`).
   `/events?status=settled` — **not** `/odds/multi`, which only returns
   pending/live matches and silently omits finished ones.
   `ODDS_API_BOOKMAKER` is a **singular** param (the API rejects CSV).
-  The nightly pool pick is **league-weighted**: the random draw uses
+  The pool pick is **league-weighted** at two stages, both using
   `src/lib/odds/league-weights.json` (slug → relevancy weight) so marquee
   leagues are likelier and obscure ones (women/youth/reserves/amateur/regional/
-  simulated) are down-weighted. Weights are static JSON for zero-latency cron
-  lookups; tune a league's priority by editing its number there.
+  simulated) are down-weighted: the nightly sync (keyed on the API slug) and the
+  per-player draw of 5. Sync stores both the display name (`matches.league`) and
+  the API slug (`matches.league_slug`); the per-player draw weights on the stored
+  slug, falling back to name-derived slugging (`leagueNameToSlug`) only for
+  legacy rows synced before the column existed. Weights are static JSON for
+  zero-latency lookups; tune a league's priority by editing its number there.
 - **Vercel** — hosting + cron jobs. The Hobby plan caps each cron at once per
   day; the hourly settle-matches job is replicated 24 times in `vercel.json`.
 
