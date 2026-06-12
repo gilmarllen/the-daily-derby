@@ -44,15 +44,15 @@ deliberate, visible decision rather than an accidental drift.
 | Draw              | `0`      |
 | Loss              | `-1`     |
 | No selection made | `-2`     |
-| New achievement   | `+1`     |
+| New mission       | `+1`     |
 
 ### Leaderboard stats
 
 Total trophies, total money spent, win streak.
 
-### Achievements
+### Missions
 
-Each has a **title** and a **large SVG**. Show **grayed out** until earned.
+Each has a **title** and a **large SVG**. Show **grayed out** until completed.
 Examples: "Win 3 days in La Liga", "10-day win streak", "Budget player" (win
 while spending `< F$ 5.00`).
 
@@ -61,7 +61,7 @@ while spending `< F$ 5.00`).
 - **Home (logged out):** hero section + login / sign-up.
 - **Dashboard (logged in):** trophy + money counts; the day's 5-match selection
   screen (two team options each with F$ cost); an "in-progress" banner showing
-  the current day's pick; plus pages for **Achievements**, **Leaderboard**, and
+  the current day's pick; plus pages for **Missions**, **Leaderboard**, and
   **Past Picks**. Logout reachable from somewhere in the shell.
 
 ## UX standards
@@ -73,7 +73,7 @@ while spending `< F$ 5.00`).
 
 ## Integrations
 
-- **Supabase** — authentication + database (leaderboard, picks, achievements).
+- **Supabase** — authentication + database (leaderboard, picks, missions).
   Uses the new API key format: `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
   (`sb_publishable_…`, client-safe) and `SUPABASE_SECRET_KEY` (`sb_secret_…`).
   The secret key is **server-only**; never expose it to the client.

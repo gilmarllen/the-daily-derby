@@ -1,7 +1,7 @@
 -- Seed data applied on `supabase db reset` (local) and runnable against any
 -- environment. Idempotent: safe to re-run.
 
-insert into achievements (key, title, description, sort_order) values
+insert into missions (key, title, description, sort_order) values
   ('la-liga-3',   'La Liga Loyalist', 'Win on 3 days in La Liga.',                 1),
   ('win-streak-10', '10-Day Streak',  'Win 10 days in a row.',                     2),
   ('budget-player', 'Budget Player',  'Win a day while spending less than F$ 5.00.', 3),

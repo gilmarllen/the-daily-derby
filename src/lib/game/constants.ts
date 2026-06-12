@@ -14,7 +14,7 @@ export const TROPHY_DELTAS = {
   draw: 0,
   loss: -1,
   none: -2,
-  achievement: 1,
+  mission: 1,
 } as const;
 
 /** Selection cost for a team given its decimal odds: `10 / odds`. */

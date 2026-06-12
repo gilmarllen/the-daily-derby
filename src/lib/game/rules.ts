@@ -32,9 +32,9 @@ export const SCORING_RULES: ScoringRule[] = [
     detail: "You sat the day out and made no pick.",
   },
   {
-    outcome: "New achievement",
-    trophies: TROPHY_DELTAS.achievement,
-    detail: "Bonus trophy each time you unlock an achievement.",
+    outcome: "New mission",
+    trophies: TROPHY_DELTAS.mission,
+    detail: "Bonus trophy each time you complete a mission.",
   },
 ];
 

@@ -31,12 +31,12 @@ export type Player = {
   winStreak: number;
 };
 
-export type Achievement = {
+export type Mission = {
   id: string;
   title: string;
   description: string;
   icon: LucideIcon;
-  earned: boolean;
+  completed: boolean;
 };
 
 export type LeaderboardEntry = {

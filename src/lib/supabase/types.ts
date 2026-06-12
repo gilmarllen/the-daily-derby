@@ -39,7 +39,7 @@ export type Database = {
   };
   public: {
     Tables: {
-      achievements: {
+      missions: {
         Row: {
           description: string;
           id: string;
@@ -221,32 +221,32 @@ export type Database = {
         };
         Relationships: [];
       };
-      user_achievements: {
+      user_missions: {
         Row: {
-          achievement_id: string;
-          earned_at: string;
+          completed_at: string;
+          mission_id: string;
           user_id: string;
         };
         Insert: {
-          achievement_id: string;
-          earned_at?: string;
+          completed_at?: string;
+          mission_id: string;
           user_id: string;
         };
         Update: {
-          achievement_id?: string;
-          earned_at?: string;
+          completed_at?: string;
+          mission_id?: string;
           user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "user_achievements_achievement_id_fkey";
-            columns: ["achievement_id"];
+            foreignKeyName: "user_missions_mission_id_fkey";
+            columns: ["mission_id"];
             isOneToOne: false;
-            referencedRelation: "achievements";
+            referencedRelation: "missions";
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "user_achievements_user_id_fkey";
+            foreignKeyName: "user_missions_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "profiles";

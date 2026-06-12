@@ -14,7 +14,7 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Pick", icon: Goal },
-  { href: "/dashboard/achievements", label: "Achievements", icon: Medal },
+  { href: "/dashboard/missions", label: "Missions", icon: Medal },
   { href: "/dashboard/leaderboard", label: "Leaderboard", icon: Trophy },
   { href: "/dashboard/past-picks", label: "Past Picks", icon: ListChecks },
 ];

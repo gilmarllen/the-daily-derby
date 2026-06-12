@@ -93,23 +93,23 @@ export function WelcomeDialogProvider({
             </Fact>
             <Fact icon={Trophy} title="Earn trophies">
               <span className="mt-1 flex flex-wrap gap-1.5">
-                {SCORING_RULES.filter(
-                  (r) => r.outcome !== "New achievement"
-                ).map((rule) => (
-                  <span
-                    key={rule.outcome}
-                    className={cn(
-                      "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums",
-                      rule.trophies > 0
-                        ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
-                        : rule.trophies < 0
-                          ? "bg-destructive/15 text-destructive"
-                          : "bg-muted text-muted-foreground"
-                    )}
-                  >
-                    {rule.outcome} {formatTrophyDelta(rule.trophies)}
-                  </span>
-                ))}
+                {SCORING_RULES.filter((r) => r.outcome !== "New mission").map(
+                  (rule) => (
+                    <span
+                      key={rule.outcome}
+                      className={cn(
+                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums",
+                        rule.trophies > 0
+                          ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                          : rule.trophies < 0
+                            ? "bg-destructive/15 text-destructive"
+                            : "bg-muted text-muted-foreground"
+                      )}
+                    >
+                      {rule.outcome} {formatTrophyDelta(rule.trophies)}
+                    </span>
+                  )
+                )}
               </span>
             </Fact>
           </ul>
