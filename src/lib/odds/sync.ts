@@ -4,9 +4,10 @@
 // What it does, for the UTC day two days out (so a run "now" fills the pool for
 // the day after tomorrow):
 //   1. Count how many matches that day already has in `matches`.
-//   2. Work out how many more are needed to reach MATCH_POOL_TARGET (<= 50).
+//   2. Work out how many more are needed to reach MATCH_POOL_TARGET (<= 25).
 //   3. Fetch that day's fixtures from odds-api, drop any already stored, pick a
-//      random subset, attach 1X2 odds, and insert them.
+//      league-weighted random subset (marquee leagues are likelier — see
+//      league-weights.json), attach 1X2 odds, and insert them.
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -15,14 +16,15 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { Database, TablesInsert } from "@/lib/supabase/types";
 
 import { fetchEvents, fetchOddsMulti, ODDS_MULTI_BATCH_SIZE } from "./client";
+import { weightForLeague } from "./league-weights";
 import {
   MATCH_POOL_TARGET,
   dayWindow,
   extractMoneyline,
   isOnMatchDay,
   matchesNeeded,
-  shuffle,
   targetMatchDay,
+  weightedShuffle,
 } from "./sync-helpers";
 import type { OddsApiEvent } from "./types";
 
@@ -119,10 +121,15 @@ export async function syncMatches(
     (e) => isOnMatchDay(e, matchDay) && !existingIds.has(String(e.id))
   );
 
-  // 3b. Shuffle all candidates so the picked subset is random. We walk the full
+  // 3b. Order candidates by a league-weighted random shuffle so marquee leagues
+  // are likelier to be picked (weights in league-weights.json). We walk the full
   // list (not just `requested`) because a fixture can still lack a clean 1X2
   // line; the odds loop early-stops once enough rows are built.
-  const shortlist = shuffle(candidates, rng);
+  const shortlist = weightedShuffle(
+    candidates,
+    (e) => weightForLeague(e.league.slug),
+    rng
+  );
 
   // 3c. Attach odds in batches (max 10 events per /odds/multi call), stopping
   // once we have enough rows.

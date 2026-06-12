@@ -9,7 +9,7 @@ import type { OddsApiEvent, OddsApiEventOdds } from "./types";
 export const TARGET_DAYS_AHEAD = 2;
 
 /** Maximum matches the pool holds for a single match day. */
-export const MATCH_POOL_TARGET = 50;
+export const MATCH_POOL_TARGET = 25;
 
 /** The 1X2 / moneyline market name in odds-api responses. */
 export const MONEYLINE_MARKET = "ML";
@@ -68,6 +68,30 @@ export function pickRandom<T>(
 ): T[] {
   if (n <= 0) return [];
   return shuffle(items, rng).slice(0, n);
+}
+
+/**
+ * Weighted random ordering (Efraimidis–Spirakis A-Res): returns a copy of
+ * `items` ordered by a random key `rng()^(1/weight)` descending, so a higher
+ * weight makes an item likelier to land near the front (and thus inside a picked
+ * prefix). Weights are floored to a tiny epsilon so a zero/negative weight is
+ * merely very unlikely, never NaN or excluded. Does not mutate `items`.
+ */
+export function weightedShuffle<T>(
+  items: readonly T[],
+  weightOf: (item: T) => number,
+  rng: () => number = Math.random
+): T[] {
+  const EPSILON = 1e-9;
+  return items
+    .map((item) => {
+      const weight = Math.max(weightOf(item), EPSILON);
+      // u^(1/w): a larger weight pushes the key toward 1 (earlier in the sort).
+      const key = rng() ** (1 / weight);
+      return { item, key };
+    })
+    .sort((a, b) => b.key - a.key)
+    .map((entry) => entry.item);
 }
 
 /**

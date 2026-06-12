@@ -28,7 +28,7 @@ deliberate, visible decision rather than an accidental drift.
 - **Starting balance:** `F$ 10.00` at day 0.
 - **One pick per day.** Players pick exactly one team to win.
 - **Match pool:** each player sees **5 random matches** drawn from a global pool
-  of **up to 50 matches/day** (the next day's fixtures). The 5 are per-player.
+  of **up to 25 matches/day** (the next day's fixtures). The 5 are per-player.
 - **Selection cost:** `cost = 10 / matchOdds` (e.g. odds `1.50` → `F$ 6.66`).
 - **Daily income:** `+F$ 4.00` every day.
 - **Daily reset:** the loop restarts at **00:00 UTC**.
@@ -82,6 +82,11 @@ while spending `< F$ 5.00`).
   `/events?status=settled` — **not** `/odds/multi`, which only returns
   pending/live matches and silently omits finished ones.
   `ODDS_API_BOOKMAKER` is a **singular** param (the API rejects CSV).
+  The nightly pool pick is **league-weighted**: the random draw uses
+  `src/lib/odds/league-weights.json` (slug → relevancy weight) so marquee
+  leagues are likelier and obscure ones (women/youth/reserves/amateur/regional/
+  simulated) are down-weighted. Weights are static JSON for zero-latency cron
+  lookups; tune a league's priority by editing its number there.
 - **Vercel** — hosting + cron jobs. The Hobby plan caps each cron at once per
   day; the hourly settle-matches job is replicated 24 times in `vercel.json`.
 

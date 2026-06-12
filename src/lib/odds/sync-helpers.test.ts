@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { mulberry32 } from "@/lib/game/daily-pool";
+
 import {
   MATCH_POOL_TARGET,
   dayWindow,
@@ -9,6 +11,7 @@ import {
   pickRandom,
   shuffle,
   targetMatchDay,
+  weightedShuffle,
 } from "./sync-helpers";
 import type { OddsApiEvent, OddsApiEventOdds } from "./types";
 
@@ -44,12 +47,12 @@ describe("dayWindow", () => {
 
 describe("matchesNeeded", () => {
   it("returns the gap to the target", () => {
-    expect(matchesNeeded(30)).toBe(MATCH_POOL_TARGET - 30);
+    expect(matchesNeeded(10)).toBe(MATCH_POOL_TARGET - 10);
   });
 
   it("never goes negative when the pool is full or over", () => {
-    expect(matchesNeeded(50)).toBe(0);
-    expect(matchesNeeded(60)).toBe(0);
+    expect(matchesNeeded(MATCH_POOL_TARGET)).toBe(0);
+    expect(matchesNeeded(MATCH_POOL_TARGET + 10)).toBe(0);
   });
 
   it("respects a custom target", () => {
@@ -94,6 +97,60 @@ describe("shuffle / pickRandom", () => {
 
   it("caps at the input length", () => {
     expect(pickRandom([1, 2], 10, zeroRng)).toHaveLength(2);
+  });
+});
+
+describe("weightedShuffle", () => {
+  const equalWeight = () => 1;
+
+  it("does not mutate the input", () => {
+    const input = [1, 2, 3, 4];
+    weightedShuffle(input, equalWeight, () => 0.5);
+    expect(input).toEqual([1, 2, 3, 4]);
+  });
+
+  it("keeps every element", () => {
+    expect(
+      [...weightedShuffle([1, 2, 3, 4], equalWeight, Math.random)].sort()
+    ).toEqual([1, 2, 3, 4]);
+  });
+
+  it("orders a heavy item ahead of light ones for a fixed rng", () => {
+    // With a constant u, key = u^(1/w) is monotonic in w, so the heaviest
+    // league sorts first regardless of input order.
+    const items = [
+      { id: "light-a", weight: 1 },
+      { id: "heavy", weight: 100 },
+      { id: "light-b", weight: 2 },
+    ];
+    const ordered = weightedShuffle(
+      items,
+      (i) => i.weight,
+      () => 0.5
+    );
+    expect(ordered[0].id).toBe("heavy");
+  });
+
+  it("lands a high-weight item in the picked prefix far more often", () => {
+    // One elite league among many obscure ones: over many seeds it should be
+    // selected (top-N) the large majority of the time.
+    const items = [
+      { id: "elite", weight: 100 },
+      ...Array.from({ length: 24 }, (_, i) => ({
+        id: `obscure-${i}`,
+        weight: 2,
+      })),
+    ];
+    const PICK = 5;
+    const TRIALS = 1000;
+    let hits = 0;
+    for (let t = 0; t < TRIALS; t++) {
+      const rng = mulberry32(t);
+      const top = weightedShuffle(items, (i) => i.weight, rng).slice(0, PICK);
+      if (top.some((i) => i.id === "elite")) hits++;
+    }
+    // Uniformly it'd be ~5/25 = 20%; weighting should push it well past 80%.
+    expect(hits / TRIALS).toBeGreaterThan(0.8);
   });
 });
 
