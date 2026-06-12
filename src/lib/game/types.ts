@@ -45,7 +45,28 @@ export type LeaderboardEntry = {
   trophies: number;
   moneySpent: number;
   winStreak: number;
+  /** This player's locked team pick for today, or null when none/sat-out. */
+  todayPick: string | null;
   isCurrentUser?: boolean;
+};
+
+/**
+ * Public stats for another player's profile. Money/balance exclude the
+ * in-progress pick so the active selection can't be inferred (balance is the
+ * pre-pick value). `bestLeague` is null until the player has a settled pick.
+ */
+export type PlayerProfile = {
+  name: string;
+  trophies: number;
+  winStreak: number;
+  moneySpent: number;
+  balance: number;
+  totalPredictions: number;
+  wins: number;
+  /** 0–1 fraction of settled team picks that were wins. */
+  winRate: number;
+  bestLeague: string | null;
+  bestLeagueWins: number;
 };
 
 export type PickResult = "win" | "draw" | "loss" | "none";

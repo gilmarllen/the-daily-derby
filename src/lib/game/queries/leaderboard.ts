@@ -26,6 +26,7 @@ export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
     trophies: row.trophies ?? 0,
     moneySpent: Number(row.money_spent ?? 0),
     winStreak: row.win_streak ?? 0,
+    todayPick: row.today_pick ?? null,
     isCurrentUser: user?.id === row.user_id,
   }));
 }

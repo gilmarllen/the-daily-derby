@@ -1,22 +1,13 @@
 import "server-only";
 
-import { TROPHY_DELTAS } from "@/lib/game/constants";
 import { pickableDay } from "@/lib/game/day";
+import { toPastPick } from "@/lib/game/past-pick";
 import type { PastPick, Selection, Side, TodayPick } from "@/lib/game/types";
 import { createClient } from "@/lib/supabase/server";
 import { utcDateString } from "@/lib/time";
 
 /** How many past picks the history page shows. */
 const PAST_PICKS_LIMIT = 30;
-
-/** A match day (YYYY-MM-DD) as a short label, e.g. "Jun 9". */
-function formatDay(matchDay: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(`${matchDay}T00:00:00Z`));
-}
 
 /**
  * Loads the signed-in player's current pick for the pickable day, as a UI
@@ -125,29 +116,15 @@ export async function getPastPicks(
 
   return (data ?? []).map((row): PastPick => {
     const match = Array.isArray(row.matches) ? row.matches[0] : row.matches;
-
-    // No team chosen → a skipped day.
-    if (!row.picked_side || !match) {
-      return {
-        id: row.id,
-        date: formatDay(row.match_day),
-        league: "—",
-        pick: null,
-        cost: Number(row.cost),
-        result: "none",
-        trophyDelta: TROPHY_DELTAS.none,
-      };
-    }
-
-    const result = row.result ?? "pending";
-    return {
+    return toPastPick({
       id: row.id,
-      date: formatDay(row.match_day),
-      league: match.league,
-      pick: row.picked_side === "home" ? match.home_team : match.away_team,
-      cost: Number(row.cost),
-      result,
-      trophyDelta: result === "pending" ? 0 : TROPHY_DELTAS[result],
-    };
+      match_day: row.match_day,
+      picked_side: row.picked_side as Side | null,
+      cost: row.cost,
+      result: row.result,
+      home_team: match?.home_team ?? null,
+      away_team: match?.away_team ?? null,
+      league: match?.league ?? null,
+    });
   });
 }

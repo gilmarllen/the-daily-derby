@@ -285,6 +285,35 @@ export type Database = {
           trophies: number;
           money_spent: number;
           win_streak: number;
+          today_pick: string | null;
+        }[];
+      };
+      get_player_profile: {
+        Args: { p_username: string };
+        Returns: {
+          username: string;
+          trophies: number;
+          win_streak: number;
+          money_spent: number;
+          adjusted_balance: number;
+          total_predictions: number;
+          wins: number;
+          win_rate: number;
+          best_league: string | null;
+          best_league_wins: number;
+        }[];
+      };
+      get_player_picks: {
+        Args: { p_username: string };
+        Returns: {
+          id: string;
+          match_day: string;
+          picked_side: Database["public"]["Enums"]["match_result"] | null;
+          cost: number;
+          result: Database["public"]["Enums"]["pick_result"] | null;
+          home_team: string | null;
+          away_team: string | null;
+          league: string | null;
         }[];
       };
       settle_match: {

@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   ChevronLeft,
   ChevronRight,
   Coins,
   Flame,
+  Goal,
   Locate,
   Trophy,
 } from "lucide-react";
@@ -62,6 +64,9 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
             <tr className="bg-muted/50 text-muted-foreground border-b text-xs">
               <th className="px-3 py-2 text-left font-medium">#</th>
               <th className="px-3 py-2 text-left font-medium">Player</th>
+              <th className="hidden px-3 py-2 text-left font-medium sm:table-cell">
+                <Goal className="size-4" aria-label="Today's pick" />
+              </th>
               <th className="px-3 py-2 text-right font-medium">
                 <Trophy className="ml-auto size-4" aria-label="Trophies" />
               </th>
@@ -95,19 +100,25 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
                   </span>
                 </td>
                 <td className="px-3 py-3">
-                  <div className="flex items-center gap-2">
+                  <Link
+                    href={`/dashboard/players/${encodeURIComponent(entry.name)}`}
+                    className="group flex items-center gap-2"
+                  >
                     <Avatar className="size-7">
                       <AvatarFallback className="text-xs">
                         {initials(entry.name)}
                       </AvatarFallback>
                     </Avatar>
-                    <span>{entry.name}</span>
+                    <span className="group-hover:underline">{entry.name}</span>
                     {entry.isCurrentUser && (
                       <span className="text-muted-foreground text-xs">
                         (you)
                       </span>
                     )}
-                  </div>
+                  </Link>
+                </td>
+                <td className="text-muted-foreground hidden max-w-[10rem] truncate px-3 py-3 sm:table-cell">
+                  {entry.todayPick ?? "—"}
                 </td>
                 <td className="px-3 py-3 text-right font-semibold tabular-nums">
                   {entry.trophies}
