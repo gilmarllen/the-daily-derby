@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ChevronLeft,
   ChevronRight,
@@ -44,6 +45,7 @@ function initials(name: string): string {
 }
 
 export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
+  const router = useRouter();
   const currentIndex = entries.findIndex((e) => e.isCurrentUser);
   const myPage = currentIndex >= 0 ? Math.floor(currentIndex / PAGE_SIZE) : 0;
   const pageCount = Math.max(1, Math.ceil(entries.length / PAGE_SIZE));
@@ -90,8 +92,13 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
             {rows.map((entry) => (
               <tr
                 key={entry.rank}
+                onClick={() =>
+                  router.push(
+                    `/dashboard/players/${encodeURIComponent(entry.name)}`
+                  )
+                }
                 className={cn(
-                  "border-b transition-colors last:border-0",
+                  "cursor-pointer border-b transition-colors last:border-0",
                   entry.isCurrentUser
                     ? "bg-primary/10 font-medium"
                     : "hover:bg-muted/40"

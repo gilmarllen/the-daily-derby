@@ -37,23 +37,27 @@ export function SelectionBanner() {
           {hasPick ? "Picking" : "No selection"}
         </span>
 
-        {hasPick ? (
-          <span className="text-muted-foreground flex items-center gap-1.5">
-            <CircleCheck className="text-primary size-4" aria-hidden />
-            <span className="text-foreground">{selectedOption.team}</span>
-            <span aria-hidden>·</span>
-            {formatFootballMoney(selectedCost)}
-          </span>
-        ) : (
-          <span className="text-muted-foreground">
-            Pick a team to enter today&apos;s derby.
-          </span>
-        )}
+        {/* Message + arrow: forced onto its own (second) row on mobile, inline
+            from sm up. */}
+        <span className="flex w-full items-center gap-1.5 sm:w-auto">
+          {hasPick ? (
+            <span className="text-muted-foreground flex items-center gap-1.5">
+              <CircleCheck className="text-primary size-4" aria-hidden />
+              <span className="text-foreground">{selectedOption.team}</span>
+              <span aria-hidden>·</span>
+              {formatFootballMoney(selectedCost)}
+            </span>
+          ) : (
+            <span className="text-muted-foreground">
+              Pick a team to enter today&apos;s derby.
+            </span>
+          )}
 
-        <ChevronRight
-          className="text-muted-foreground size-4 shrink-0 transition-transform group-hover:translate-x-0.5"
-          aria-hidden
-        />
+          <ChevronRight
+            className="text-muted-foreground size-4 shrink-0 transition-transform group-hover:translate-x-0.5"
+            aria-hidden
+          />
+        </span>
 
         <span className="text-muted-foreground flex w-full items-center gap-1.5 text-xs sm:ml-auto sm:w-auto">
           <Clock className="size-3.5 shrink-0" aria-hidden />
