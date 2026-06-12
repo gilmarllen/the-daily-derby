@@ -47,6 +47,8 @@ export type LeaderboardEntry = {
   winStreak: number;
   /** This player's locked team pick for today, or null when none/sat-out. */
   todayPick: string | null;
+  /** Settlement result of that today pick; null until the match is settled. */
+  todayResult: PickResult | null;
   isCurrentUser?: boolean;
 };
 

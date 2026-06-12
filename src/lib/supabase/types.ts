@@ -286,6 +286,7 @@ export type Database = {
           money_spent: number;
           win_streak: number;
           today_pick: string | null;
+          today_result: string | null;
         }[];
       };
       get_player_profile: {

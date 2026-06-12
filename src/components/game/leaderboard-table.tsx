@@ -15,10 +15,18 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { formatFootballMoney } from "@/lib/game/constants";
-import type { LeaderboardEntry } from "@/lib/game/types";
+import type { LeaderboardEntry, PickResult } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 10;
+
+// Colour the today pick by its settled result; pending (null) stays muted.
+const TODAY_RESULT_STYLE: Record<PickResult, string> = {
+  win: "text-emerald-600 dark:text-emerald-400",
+  draw: "text-black",
+  loss: "text-destructive",
+  none: "text-muted-foreground",
+};
 
 const RANK_ACCENT: Record<number, string> = {
   1: "text-amber-500",
@@ -117,7 +125,14 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
                     )}
                   </Link>
                 </td>
-                <td className="text-muted-foreground hidden max-w-[10rem] truncate px-3 py-3 sm:table-cell">
+                <td
+                  className={cn(
+                    "hidden max-w-[10rem] truncate px-3 py-3 sm:table-cell",
+                    entry.todayPick && entry.todayResult
+                      ? cn("font-medium", TODAY_RESULT_STYLE[entry.todayResult])
+                      : "text-muted-foreground"
+                  )}
+                >
                   {entry.todayPick ?? "—"}
                 </td>
                 <td className="px-3 py-3 text-right font-semibold tabular-nums">

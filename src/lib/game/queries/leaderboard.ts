@@ -27,6 +27,7 @@ export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
     moneySpent: Number(row.money_spent ?? 0),
     winStreak: row.win_streak ?? 0,
     todayPick: row.today_pick ?? null,
+    todayResult: (row.today_result as LeaderboardEntry["todayResult"]) ?? null,
     isCurrentUser: user?.id === row.user_id,
   }));
 }
