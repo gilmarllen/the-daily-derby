@@ -181,39 +181,43 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
         </table>
       </div>
 
-      <div className="flex items-center justify-between gap-2 text-sm">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setPage(current - 1)}
-          disabled={current === 0}
-        >
-          <ChevronLeft className="size-4" /> {t.prev}
-        </Button>
+      <div className="flex flex-col text-sm">
+        <div className="flex items-center justify-between gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setPage(current - 1)}
+            disabled={current === 0}
+          >
+            <ChevronLeft className="size-4" /> {t.prev}
+          </Button>
 
-        <span className="text-muted-foreground flex items-center gap-3 text-xs">
-          <span className="tabular-nums">{t.page(current + 1, pageCount)}</span>
-          {currentIndex >= 0 && current !== myPage && (
-            <button
-              type="button"
-              onClick={() => setPage(myPage)}
-              className="text-foreground inline-flex items-center gap-1 font-medium hover:underline"
-            >
-              <Locate className="size-3.5" /> {t.jumpToMe}
-            </button>
-          )}
-        </span>
+          <span className="text-muted-foreground flex items-center gap-3 text-xs">
+            <span className="tabular-nums">
+              {t.page(current + 1, pageCount)}
+            </span>
+          </span>
 
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setPage(current + 1)}
-          disabled={current >= pageCount - 1}
-        >
-          {t.next} <ChevronRight className="size-4" />
-        </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setPage(current + 1)}
+            disabled={current >= pageCount - 1}
+          >
+            {t.next} <ChevronRight className="size-4" />
+          </Button>
+        </div>
+        {currentIndex >= 0 && current !== myPage && (
+          <button
+            type="button"
+            onClick={() => setPage(myPage)}
+            className="text-foreground mx-auto inline-flex items-center gap-1 font-medium hover:underline"
+          >
+            <Locate className="size-3.5" /> {t.jumpToMe}
+          </button>
+        )}
       </div>
     </div>
   );
