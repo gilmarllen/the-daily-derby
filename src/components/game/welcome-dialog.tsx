@@ -92,12 +92,13 @@ export function WelcomeDialogProvider({
               {t.fact2Post}
             </Fact>
             <Fact icon={Trophy} title={t.fact3Title}>
+              {t.fact3Body}
               <span className="mt-1 flex flex-wrap gap-1.5">
                 {SCORING_RULES.filter((r) => r.id !== "mission").map((rule) => (
                   <span
                     key={rule.id}
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums",
+                      "inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold tabular-nums",
                       rule.trophies > 0
                         ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
                         : rule.trophies < 0
@@ -107,6 +108,7 @@ export function WelcomeDialogProvider({
                   >
                     {dict.scoring[rule.id].outcome}{" "}
                     {formatTrophyDelta(rule.trophies)}
+                    <Trophy className="size-3.5" aria-hidden />
                   </span>
                 ))}
               </span>

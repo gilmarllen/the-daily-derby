@@ -211,6 +211,8 @@ const es: Dictionary = {
     fact2Mid: " y gana ",
     fact2Post: " al día. Los favoritos más fuertes cuestan más.",
     fact3Title: "Gana trofeos",
+    fact3Body:
+      "Los resultados de las elecciones no te devuelven dinero, sino trofeos.",
     readGuide: "Leer la guía completa",
     gotIt: "Entendido",
   },

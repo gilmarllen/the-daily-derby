@@ -208,6 +208,7 @@ const en = {
     fact2Mid: " and earn ",
     fact2Post: " daily. Stronger favourites cost more to back.",
     fact3Title: "Earn trophies",
+    fact3Body: "Picks results don't give you money back, but trophies instead.",
     readGuide: "Read the full guide",
     gotIt: "Got it",
   },

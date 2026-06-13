@@ -208,6 +208,8 @@ const pt: Dictionary = {
     fact2Mid: " e ganhe ",
     fact2Post: " por dia. Favoritos mais fortes custam mais para apostar.",
     fact3Title: "Ganhe troféus",
+    fact3Body:
+      "Os resultados dos palpites não te devolvem dinheiro, mas sim troféus.",
     readGuide: "Ler o guia completo",
     gotIt: "Entendi",
   },
