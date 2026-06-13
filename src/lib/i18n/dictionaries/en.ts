@@ -9,6 +9,7 @@ const en = {
     signup: "Sign up",
     backToHome: "Back to home",
     backToLogin: "Back to log in",
+    backToGame: "Back to the game",
   },
 
   language: {

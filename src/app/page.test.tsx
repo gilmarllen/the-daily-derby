@@ -16,6 +16,14 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }),
 }));
 
+// Home reads the session to pick its CTA; stub a logged-out visitor so the
+// sign up / log in buttons render.
+vi.mock("@/lib/supabase/server", () => ({
+  createClient: async () => ({
+    auth: { getUser: async () => ({ data: { user: null } }) },
+  }),
+}));
+
 async function renderHome() {
   render(<LocaleProvider locale="en">{await Home()}</LocaleProvider>);
 }
