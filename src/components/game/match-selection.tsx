@@ -1,6 +1,13 @@
 "use client";
 
-import { Check, CircleSlash, Clock, Coins, Lock, Shield } from "lucide-react";
+import {
+  Check,
+  CircleSlash,
+  Clock,
+  Coins,
+  Lock,
+  CircleStar,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { useDictionary } from "@/components/i18n/locale-provider";
@@ -15,6 +22,7 @@ import type { TeamOption } from "@/lib/game/types";
 import { utcDayStart } from "@/lib/time";
 import { cn } from "@/lib/utils";
 
+import { Crest } from "./crest";
 import { useGame } from "./game-provider";
 
 /** The next 00:00 UTC reset, rendered in the viewer's local time. */
@@ -63,6 +71,10 @@ function OptionButton({
   const affordable = canAfford(option);
   const selected = isSelected(option.id);
 
+  // When selected, tint the border with the club's primary colour if known.
+  const accent =
+    selected && option.primaryColor ? option.primaryColor : undefined;
+
   return (
     <button
       ref={innerRef}
@@ -70,6 +82,7 @@ function OptionButton({
       disabled={!affordable}
       aria-pressed={selected}
       onClick={() => pickTeam(option.id)}
+      style={accent ? { borderColor: accent } : undefined}
       className={cn(
         "group flex min-w-0 items-center gap-3 rounded-xl border-2 p-3 text-left transition-all duration-200",
         "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
@@ -99,6 +112,13 @@ function OptionButton({
           )}
         />
       </span>
+
+      <Crest
+        url={option.crestUrl}
+        alt={option.team}
+        color={option.primaryColor}
+        className="size-7"
+      />
 
       <span className="flex min-w-0 flex-col">
         <span className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">
@@ -248,8 +268,17 @@ export function MatchSelection() {
                 {/* Match meta header — league left, kickoff right on desktop;
                     stacked (kickoff under the league) on mobile. */}
                 <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-                  <Badge variant="outline" className="gap-1.5">
-                    <Shield className="size-3.5" aria-hidden />
+                  <Badge variant="outline" className="gap-1.5 pl-1">
+                    {m.leagueCrestUrl ? (
+                      <Crest
+                        url={m.leagueCrestUrl}
+                        alt={m.league}
+                        color={m.leagueColor}
+                        className="size-4"
+                      />
+                    ) : (
+                      <CircleStar className="size-3.5" aria-hidden />
+                    )}
                     {m.league}
                   </Badge>
                   <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">

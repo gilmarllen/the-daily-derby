@@ -96,15 +96,15 @@ export type Database = {
         Row: {
           away_odds: number;
           away_score: number | null;
-          away_team: string;
+          away_team_id: string | null;
           created_at: string;
           external_id: string | null;
           home_odds: number;
           home_score: number | null;
-          home_team: string;
+          home_team_id: string | null;
           id: string;
           kickoff: string;
-          league: string;
+          league_id: string | null;
           league_slug: string | null;
           result: Database["public"]["Enums"]["match_result"] | null;
           status: Database["public"]["Enums"]["match_status"];
@@ -112,15 +112,15 @@ export type Database = {
         Insert: {
           away_odds: number;
           away_score?: number | null;
-          away_team: string;
+          away_team_id?: string | null;
           created_at?: string;
           external_id?: string | null;
           home_odds: number;
           home_score?: number | null;
-          home_team: string;
+          home_team_id?: string | null;
           id?: string;
           kickoff: string;
-          league: string;
+          league_id?: string | null;
           league_slug?: string | null;
           result?: Database["public"]["Enums"]["match_result"] | null;
           status?: Database["public"]["Enums"]["match_status"];
@@ -128,18 +128,97 @@ export type Database = {
         Update: {
           away_odds?: number;
           away_score?: number | null;
-          away_team?: string;
+          away_team_id?: string | null;
           created_at?: string;
           external_id?: string | null;
           home_odds?: number;
           home_score?: number | null;
-          home_team?: string;
+          home_team_id?: string | null;
           id?: string;
           kickoff?: string;
-          league?: string;
+          league_id?: string | null;
           league_slug?: string | null;
           result?: Database["public"]["Enums"]["match_result"] | null;
           status?: Database["public"]["Enums"]["match_status"];
+        };
+        Relationships: [
+          {
+            foreignKeyName: "matches_home_team_id_fkey";
+            columns: ["home_team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "matches_away_team_id_fkey";
+            columns: ["away_team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "matches_league_id_fkey";
+            columns: ["league_id"];
+            isOneToOne: false;
+            referencedRelation: "leagues";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      leagues: {
+        Row: {
+          created_at: string;
+          crest_url: string | null;
+          id: string;
+          name: string;
+          primary_color: string | null;
+          slug: string;
+        };
+        Insert: {
+          created_at?: string;
+          crest_url?: string | null;
+          id?: string;
+          name: string;
+          primary_color?: string | null;
+          slug: string;
+        };
+        Update: {
+          created_at?: string;
+          crest_url?: string | null;
+          id?: string;
+          name?: string;
+          primary_color?: string | null;
+          slug?: string;
+        };
+        Relationships: [];
+      };
+      teams: {
+        Row: {
+          created_at: string;
+          crest_url: string | null;
+          external_id: string | null;
+          id: string;
+          name: string;
+          primary_color: string | null;
+          secondary_color: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          crest_url?: string | null;
+          external_id?: string | null;
+          id?: string;
+          name: string;
+          primary_color?: string | null;
+          secondary_color?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          crest_url?: string | null;
+          external_id?: string | null;
+          id?: string;
+          name?: string;
+          primary_color?: string | null;
+          secondary_color?: string | null;
         };
         Relationships: [];
       };
@@ -287,6 +366,7 @@ export type Database = {
           win_streak: number;
           today_pick: string | null;
           today_result: string | null;
+          today_pick_crest: string | null;
         }[];
       };
       get_player_profile: {

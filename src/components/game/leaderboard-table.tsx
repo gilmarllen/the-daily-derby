@@ -20,6 +20,8 @@ import { formatFootballMoney } from "@/lib/game/constants";
 import type { LeaderboardEntry, PickResult } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 
+import { Crest } from "./crest";
+
 const PAGE_SIZE = 10;
 
 // Colour the today pick by its settled result; pending (null) stays muted.
@@ -145,13 +147,24 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
                 </td>
                 <td
                   className={cn(
-                    "hidden max-w-[10rem] truncate px-3 py-3 sm:table-cell",
+                    "hidden max-w-[10rem] px-3 py-3 sm:table-cell",
                     entry.todayPick && entry.todayResult
                       ? cn("font-medium", TODAY_RESULT_STYLE[entry.todayResult])
                       : "text-muted-foreground"
                   )}
                 >
-                  {entry.todayPick ?? "—"}
+                  {entry.todayPick ? (
+                    <span className="flex items-center gap-1.5">
+                      <Crest
+                        url={entry.todayPickCrestUrl}
+                        alt={entry.todayPick}
+                        className="size-5"
+                      />
+                      <span className="truncate">{entry.todayPick}</span>
+                    </span>
+                  ) : (
+                    "—"
+                  )}
                 </td>
                 <td className="px-3 py-3 text-right font-semibold tabular-nums">
                   {entry.trophies}

@@ -9,6 +9,12 @@ import { utcDateString } from "@/lib/time";
 /** How many past picks the history page shows. */
 const PAST_PICKS_LIMIT = 30;
 
+/** A to-one embed can arrive as an object or a single-element array. */
+function embedOne<T>(ref: T | T[] | null | undefined): T | null {
+  if (Array.isArray(ref)) return ref[0] ?? null;
+  return ref ?? null;
+}
+
 /**
  * Loads the signed-in player's current pick for the pickable day, as a UI
  * `Selection`. A team pick maps to its option id (`<matchId>-<side>`); anything
@@ -56,7 +62,7 @@ export async function getTodayPick(
   const { data, error } = await supabase
     .from("picks")
     .select(
-      "picked_side, cost, result, matches(home_team, away_team, league, kickoff, status, home_score, away_score)"
+      "picked_side, cost, result, matches(kickoff, status, home_score, away_score, home_ref:teams!matches_home_team_id_fkey(name, crest_url), away_ref:teams!matches_away_team_id_fkey(name, crest_url), league_ref:leagues!matches_league_id_fkey(name, crest_url))"
     )
     .eq("user_id", user.id)
     .eq("match_day", utcDateString(now, 0))
@@ -67,17 +73,25 @@ export async function getTodayPick(
   if (!data) return null;
 
   // matches is a to-one embed; tolerate either object or single-element array.
-  const match = Array.isArray(data.matches) ? data.matches[0] : data.matches;
+  const match = embedOne(data.matches);
   if (!data.picked_side || !match) return { kind: "none" };
+
+  const pickedSide = data.picked_side as Side;
+  const home = embedOne(match.home_ref);
+  const away = embedOne(match.away_ref);
+  const league = embedOne(match.league_ref);
 
   return {
     kind: "team",
-    league: match.league,
+    league: league?.name ?? "",
     kickoff: match.kickoff,
-    home: match.home_team,
-    away: match.away_team,
+    home: home?.name ?? "",
+    away: away?.name ?? "",
     // picks only ever store home/away (never draw).
-    pickedSide: data.picked_side as Side,
+    pickedSide,
+    crestUrl:
+      (pickedSide === "home" ? home?.crest_url : away?.crest_url) ?? null,
+    leagueCrestUrl: league?.crest_url ?? null,
     cost: Number(data.cost),
     status: match.status,
     result: data.result,
@@ -104,7 +118,7 @@ export async function getPastPicks(
   const { data, error } = await supabase
     .from("picks")
     .select(
-      "id, match_day, picked_side, cost, result, matches(home_team, away_team, league)"
+      "id, match_day, picked_side, cost, result, matches(home_ref:teams!matches_home_team_id_fkey(name, crest_url), away_ref:teams!matches_away_team_id_fkey(name, crest_url), league_ref:leagues!matches_league_id_fkey(name, crest_url))"
     )
     .eq("user_id", user.id)
     .lt("match_day", utcDateString(now, 0))
@@ -115,16 +129,22 @@ export async function getPastPicks(
   }
 
   return (data ?? []).map((row): PastPick => {
-    const match = Array.isArray(row.matches) ? row.matches[0] : row.matches;
+    const match = embedOne(row.matches);
+    const home = embedOne(match?.home_ref);
+    const away = embedOne(match?.away_ref);
+    const league = embedOne(match?.league_ref);
     return toPastPick({
       id: row.id,
       match_day: row.match_day,
       picked_side: row.picked_side as Side | null,
       cost: row.cost,
       result: row.result,
-      home_team: match?.home_team ?? null,
-      away_team: match?.away_team ?? null,
-      league: match?.league ?? null,
+      home_team: home?.name ?? null,
+      away_team: away?.name ?? null,
+      league: league?.name ?? null,
+      home_crest: home?.crest_url ?? null,
+      away_crest: away?.crest_url ?? null,
+      league_crest: league?.crest_url ?? null,
     });
   });
 }

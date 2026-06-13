@@ -56,22 +56,144 @@ export type SyncMatchesOptions = {
   rng?: () => number;
 };
 
-/** Map an odds-api event + its 1X2 odds to a `matches` insert row. */
+/**
+ * Map an odds-api event + its 1X2 odds to a `matches` insert row. Team/league
+ * names live in the catalog tables now, not on matches; the FK ids are attached
+ * later by {@link attachCatalogIds}.
+ */
 function toMatchRow(
   event: OddsApiEvent,
   odds: { home: number; away: number }
 ): TablesInsert<"matches"> {
   return {
     external_id: String(event.id),
-    league: event.league.name,
     league_slug: event.league.slug,
     kickoff: event.date,
-    home_team: event.home,
-    away_team: event.away,
     home_odds: odds.home,
     away_odds: odds.away,
     status: "scheduled",
   };
+}
+
+/**
+ * Ensures the leagues + teams referenced by `rows` exist (names/slugs only —
+ * crest/colour columns stay null) and writes the resulting ids back onto each
+ * row's `league_id` / `home_team_id` / `away_team_id`. A failure here is
+ * non-fatal: matches still insert with null FKs and fall back to default icons.
+ *
+ * Identity:
+ *  - Leagues are keyed by slug (the odds-api exposes no league id).
+ *  - A team side carrying an odds-api id (`homeId`/`awayId`) is keyed on
+ *    `external_id`, creating a new row on miss — it never falls back to a
+ *    name match, so a club already present as a name-only row gets a second,
+ *    id-keyed row (reconciled by hand later).
+ *  - A side with no id is reused by name (created with a null `external_id`).
+ */
+async function attachCatalogIds(
+  supabase: SupabaseClient<Database>,
+  rows: TablesInsert<"matches">[],
+  eventsById: Map<number, OddsApiEvent>
+): Promise<void> {
+  if (rows.length === 0) return;
+
+  // Pair each row with its source event (names + odds-api team ids).
+  const paired = rows
+    .map((row) => ({ row, event: eventsById.get(Number(row.external_id)) }))
+    .filter(
+      (p): p is { row: TablesInsert<"matches">; event: OddsApiEvent } =>
+        p.event != null
+    );
+
+  // --- Leagues: keyed by slug. ---
+  const leagueBySlug = new Map<string, string>();
+  for (const { event } of paired) {
+    if (event.league.slug)
+      leagueBySlug.set(event.league.slug, event.league.name);
+  }
+  const leagueIdBySlug = new Map<string, string>();
+  if (leagueBySlug.size > 0) {
+    const { error } = await supabase.from("leagues").upsert(
+      [...leagueBySlug].map(([slug, name]) => ({ slug, name })),
+      { onConflict: "slug", ignoreDuplicates: true }
+    );
+    if (error) throw new Error(`Failed to upsert leagues: ${error.message}`);
+    // ignoreDuplicates omits pre-existing rows, so read back the full set.
+    const { data, error: readError } = await supabase
+      .from("leagues")
+      .select("id, slug")
+      .in("slug", [...leagueBySlug.keys()]);
+    if (readError)
+      throw new Error(`Failed to read leagues: ${readError.message}`);
+    for (const l of data ?? []) leagueIdBySlug.set(l.slug, l.id);
+  }
+
+  // --- Teams: split into id-keyed and name-keyed sides. ---
+  const teamNameByExternalId = new Map<string, string>();
+  const nameOnlyTeams = new Set<string>();
+  for (const { event } of paired) {
+    if (event.homeId != null)
+      teamNameByExternalId.set(String(event.homeId), event.home);
+    else nameOnlyTeams.add(event.home);
+    if (event.awayId != null)
+      teamNameByExternalId.set(String(event.awayId), event.away);
+    else nameOnlyTeams.add(event.away);
+  }
+
+  const teamIdByExternalId = new Map<string, string>();
+  if (teamNameByExternalId.size > 0) {
+    const { error } = await supabase.from("teams").upsert(
+      [...teamNameByExternalId].map(([external_id, name]) => ({
+        external_id,
+        name,
+      })),
+      { onConflict: "external_id", ignoreDuplicates: true }
+    );
+    if (error) throw new Error(`Failed to upsert teams: ${error.message}`);
+    const { data, error: readError } = await supabase
+      .from("teams")
+      .select("id, external_id")
+      .in("external_id", [...teamNameByExternalId.keys()]);
+    if (readError)
+      throw new Error(`Failed to read teams: ${readError.message}`);
+    for (const t of data ?? [])
+      if (t.external_id) teamIdByExternalId.set(t.external_id, t.id);
+  }
+
+  const teamIdByName = new Map<string, string>();
+  if (nameOnlyTeams.size > 0) {
+    // Reuse any existing row with this name; create (null external_id) for misses.
+    const { data: existing, error: readError } = await supabase
+      .from("teams")
+      .select("id, name")
+      .in("name", [...nameOnlyTeams]);
+    if (readError)
+      throw new Error(`Failed to read teams: ${readError.message}`);
+    for (const t of existing ?? [])
+      if (!teamIdByName.has(t.name)) teamIdByName.set(t.name, t.id);
+    const missing = [...nameOnlyTeams].filter((n) => !teamIdByName.has(n));
+    if (missing.length > 0) {
+      const { data: created, error } = await supabase
+        .from("teams")
+        .insert(missing.map((name) => ({ name })))
+        .select("id, name");
+      if (error) throw new Error(`Failed to insert teams: ${error.message}`);
+      for (const t of created ?? []) teamIdByName.set(t.name, t.id);
+    }
+  }
+
+  // --- Write ids back. ---
+  for (const { row, event } of paired) {
+    if (event.league.slug)
+      row.league_id = leagueIdBySlug.get(event.league.slug) ?? null;
+    row.home_team_id =
+      event.homeId != null
+        ? (teamIdByExternalId.get(String(event.homeId)) ?? null)
+        : (teamIdByName.get(event.home) ?? null);
+    row.away_team_id =
+      event.awayId != null
+        ? (teamIdByExternalId.get(String(event.awayId)) ?? null)
+        : (teamIdByName.get(event.away) ?? null);
+  }
 }
 
 export async function syncMatches(
@@ -157,7 +279,12 @@ export async function syncMatches(
     }
   }
 
-  // 3d. Insert. Ignore conflicts on external_id in case a concurrent run raced us.
+  // 3d. Auto-populate the teams/leagues catalogs from the names/slugs on the
+  // rows, then attach the resulting ids. Crest/colour columns are left null and
+  // filled in by hand later; the UI falls back to a default icon until then.
+  await attachCatalogIds(supabase, rows, eventsById);
+
+  // 3e. Insert. Ignore conflicts on external_id in case a concurrent run raced us.
   let inserted = 0;
   if (rows.length > 0) {
     const { data, error } = await supabase

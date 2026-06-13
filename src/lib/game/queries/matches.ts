@@ -3,10 +3,7 @@ import "server-only";
 import { pickDaily } from "@/lib/game/daily-pool";
 import { pickableDay } from "@/lib/game/day";
 import type { Match } from "@/lib/game/types";
-import {
-  weightForLeague,
-  weightForLeagueName,
-} from "@/lib/odds/league-weights";
+import { weightForLeague } from "@/lib/odds/league-weights";
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/supabase/types";
 import { utcDayStart } from "@/lib/time";
@@ -14,43 +11,71 @@ import { utcDayStart } from "@/lib/time";
 /** How many matches a player sees per day. */
 const DAILY_POOL_SIZE = 5;
 
-/** The match columns the daily-pool UI + weighted draw need. */
+/**
+ * The match columns the daily-pool UI + weighted draw need. Team/league names
+ * (and crest + colour) come from embedded catalog lookups, disambiguated by FK
+ * constraint name since two FKs point at `teams`. The refs are null until their
+ * catalog row exists / is filled.
+ */
 const MATCH_COLUMNS =
-  "id, league, league_slug, kickoff, home_team, away_team, home_odds, away_odds";
+  "id, league_slug, kickoff, home_odds, away_odds, home_ref:teams!matches_home_team_id_fkey(name, crest_url, primary_color, secondary_color), away_ref:teams!matches_away_team_id_fkey(name, crest_url, primary_color, secondary_color), league_ref:leagues!matches_league_id_fkey(name, crest_url, primary_color)";
+
+type TeamRef = Pick<
+  Tables<"teams">,
+  "name" | "crest_url" | "primary_color" | "secondary_color"
+> | null;
+type LeagueRef = Pick<
+  Tables<"leagues">,
+  "name" | "crest_url" | "primary_color"
+> | null;
 
 type MatchRow = Pick<
   Tables<"matches">,
-  | "id"
-  | "league"
-  | "league_slug"
-  | "kickoff"
-  | "home_team"
-  | "away_team"
-  | "home_odds"
-  | "away_odds"
->;
+  "id" | "league_slug" | "kickoff" | "home_odds" | "away_odds"
+> & {
+  home_ref: TeamRef;
+  away_ref: TeamRef;
+  league_ref: LeagueRef;
+};
 
 type ServerClient = Awaited<ReturnType<typeof createClient>>;
 
+/** A to-one embed can arrive as an object or a single-element array. */
+function one<T>(ref: T | T[] | null | undefined): T | null {
+  if (Array.isArray(ref)) return ref[0] ?? null;
+  return ref ?? null;
+}
+
 function rowToMatch(m: MatchRow): Match {
+  const home = one(m.home_ref);
+  const away = one(m.away_ref);
+  const league = one(m.league_ref);
   return {
     id: m.id,
-    league: m.league,
+    league: league?.name ?? "",
+    leagueCrestUrl: league?.crest_url ?? null,
+    leagueColor: league?.primary_color ?? null,
     // Raw ISO timestamp — formatted to the viewer's timezone on the client.
     kickoff: m.kickoff,
     home: {
       id: `${m.id}-home`,
       matchId: m.id,
-      team: m.home_team,
+      team: home?.name ?? "",
       side: "home",
       odds: Number(m.home_odds),
+      crestUrl: home?.crest_url ?? null,
+      primaryColor: home?.primary_color ?? null,
+      secondaryColor: home?.secondary_color ?? null,
     },
     away: {
       id: `${m.id}-away`,
       matchId: m.id,
-      team: m.away_team,
+      team: away?.name ?? "",
       side: "away",
       odds: Number(m.away_odds),
+      crestUrl: away?.crest_url ?? null,
+      primaryColor: away?.primary_color ?? null,
+      secondaryColor: away?.secondary_color ?? null,
     },
   };
 }
@@ -121,14 +146,14 @@ async function loadFrozenPool(
     if (error) {
       throw new Error(`Failed to load frozen matches: ${error.message}`);
     }
-    return data ?? [];
+    return (data ?? []) as unknown as MatchRow[];
   }
 
   // 2. Not frozen yet: draw deterministically from the whole day's pool, in a
   // stable order so the seeded draw is reproducible (kickoff, then id). The draw
   // is league-weighted, so marquee leagues are likelier to land in a player's
-  // five — keyed on the slug stored at sync time, falling back to the display
-  // name only for legacy rows synced before `league_slug` existed.
+  // five — keyed on the slug stored at sync time (legacy/unmapped rows fall back
+  // to the default weight).
   const { data, error } = await supabase
     .from("matches")
     .select(MATCH_COLUMNS)
@@ -141,13 +166,11 @@ async function loadFrozenPool(
   }
 
   const picked = pickDaily(
-    data ?? [],
+    (data ?? []) as unknown as MatchRow[],
     `${userId}:${dayKey}`,
     DAILY_POOL_SIZE,
-    (row) =>
-      row.league_slug
-        ? weightForLeague(row.league_slug)
-        : weightForLeagueName(row.league)
+    // weightForLeague defaults when the slug is null (legacy/unmapped rows).
+    (row) => weightForLeague(row.league_slug)
   );
   if (picked.length === 0) return [];
 

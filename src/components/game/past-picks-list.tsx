@@ -5,6 +5,8 @@ import type { PastPick } from "@/lib/game/types";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { cn } from "@/lib/utils";
 
+import { Crest } from "./crest";
+
 // Colours per result; the human label comes from the dictionary.
 const RESULT_STYLES: Record<
   PastPick["result"],
@@ -82,7 +84,14 @@ export async function PastPicksList({
                     {t.noSelection}
                   </>
                 ) : (
-                  pick.pick
+                  <>
+                    <Crest
+                      url={pick.crestUrl}
+                      alt={pick.pick ?? ""}
+                      className="size-5"
+                    />
+                    {pick.pick}
+                  </>
                 )}
               </span>
               <span className="text-muted-foreground text-xs">

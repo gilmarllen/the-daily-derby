@@ -6,6 +6,7 @@ import { useDictionary } from "@/components/i18n/locale-provider";
 import { formatFootballMoney } from "@/lib/game/constants";
 import { cn } from "@/lib/utils";
 
+import { Crest } from "./crest";
 import { useGame } from "./game-provider";
 import { ResetCountdown } from "./reset-countdown";
 
@@ -45,6 +46,12 @@ export function SelectionBanner() {
           {hasPick ? (
             <span className="text-muted-foreground flex items-center gap-1.5">
               <CircleCheck className="text-primary size-4" aria-hidden />
+              <Crest
+                url={selectedOption.crestUrl}
+                alt={selectedOption.team}
+                color={selectedOption.primaryColor}
+                className="size-5"
+              />
               <span className="text-foreground">{selectedOption.team}</span>
               <span aria-hidden>·</span>
               {formatFootballMoney(selectedCost)}

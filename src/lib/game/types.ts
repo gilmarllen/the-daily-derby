@@ -12,6 +12,12 @@ export type TeamOption = {
   side: Side;
   /** Decimal odds for this team to win. */
   odds: number;
+  /** Club crest URL; null until filled in the `teams` table. */
+  crestUrl?: string | null;
+  /** Club primary colour (hex); null until filled. */
+  primaryColor?: string | null;
+  /** Club secondary colour (hex); null until filled. */
+  secondaryColor?: string | null;
 };
 
 export type Match = {
@@ -21,6 +27,10 @@ export type Match = {
   kickoff: string;
   home: TeamOption;
   away: TeamOption;
+  /** League crest URL; null until filled in the `leagues` table. */
+  leagueCrestUrl?: string | null;
+  /** League primary colour (hex); null until filled. */
+  leagueColor?: string | null;
 };
 
 /** A player picks at most one team per day; "none" is the default skip. */
@@ -50,6 +60,8 @@ export type LeaderboardEntry = {
   winStreak: number;
   /** This player's locked team pick for today, or null when none/sat-out. */
   todayPick: string | null;
+  /** Picked team's crest URL; null until filled / for none. */
+  todayPickCrestUrl?: string | null;
   /** Settlement result of that today pick; null until the match is settled. */
   todayResult: PickResult | null;
   isCurrentUser?: boolean;
@@ -82,6 +94,10 @@ export type PastPick = {
   league: string;
   /** Team name, or null when the player made no selection. */
   pick: string | null;
+  /** Picked team's crest URL; null until filled / for sat-out days. */
+  crestUrl?: string | null;
+  /** League crest URL; null until filled. */
+  leagueCrestUrl?: string | null;
   /** "pending" when a team pick's match hasn't been settled yet. */
   result: PickResult | "pending";
   cost: number;
@@ -103,6 +119,10 @@ export type TodayPick =
       home: string;
       away: string;
       pickedSide: Side;
+      /** Picked team's crest URL; null until filled. */
+      crestUrl?: string | null;
+      /** League crest URL; null until filled. */
+      leagueCrestUrl?: string | null;
       cost: number;
       status: "scheduled" | "finished";
       /** Settlement result; null until the match is settled. */
