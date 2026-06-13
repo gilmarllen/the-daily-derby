@@ -6,6 +6,8 @@ import {
   getDailyMatches,
 } from "@/lib/game/queries";
 
+import { ToastProvider } from "@/components/ui/toast";
+
 import { DashboardHeader } from "./dashboard-header";
 import { DashboardNav } from "./dashboard-nav";
 import { GameProvider } from "./game-provider";
@@ -28,21 +30,23 @@ export async function DashboardShell({
   }
 
   return (
-    <GameProvider
-      player={player}
-      matches={matches}
-      initialSelection={currentPick}
-    >
-      <WelcomeDialogProvider>
-        <div className="flex min-h-full flex-1 flex-col">
-          <DashboardHeader />
-          <DashboardNav />
-          <SelectionBanner />
-          <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-6">
-            {children}
-          </main>
-        </div>
-      </WelcomeDialogProvider>
-    </GameProvider>
+    <ToastProvider>
+      <GameProvider
+        player={player}
+        matches={matches}
+        initialSelection={currentPick}
+      >
+        <WelcomeDialogProvider>
+          <div className="flex min-h-full flex-1 flex-col">
+            <DashboardHeader />
+            <DashboardNav />
+            <SelectionBanner />
+            <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-6">
+              {children}
+            </main>
+          </div>
+        </WelcomeDialogProvider>
+      </GameProvider>
+    </ToastProvider>
   );
 }

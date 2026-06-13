@@ -12,9 +12,20 @@ import {
   useTransition,
 } from "react";
 
+import { useDictionary } from "@/components/i18n/locale-provider";
+import { useToastManager } from "@/components/ui/toast";
 import { setPick } from "@/lib/game/actions";
 import { costFromOdds } from "@/lib/game/constants";
 import type { Match, Player, Selection, TeamOption } from "@/lib/game/types";
+import { utcDayStart } from "@/lib/time";
+
+/** The next 00:00 UTC reset, formatted in the viewer's local timezone. */
+function localResetTime(): string {
+  return new Intl.DateTimeFormat(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(utcDayStart(new Date(), 1));
+}
 
 /**
  * Refreshes the route (re-running the server loaders behind the game state) when
@@ -89,6 +100,8 @@ export function GameProvider({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const toast = useToastManager();
+  const t = useDictionary().selection;
   const [selection, setSelection] = useState<Selection>(initialSelection);
   // Balance changes as picks are made/changed; the header reads it from here.
   const [balance, setBalance] = useState(player.balance);
@@ -170,7 +183,8 @@ export function GameProvider({
     (
       next: Selection,
       input: Parameters<typeof setPick>[0],
-      optimisticBalance: number
+      optimisticBalance: number,
+      savedTitle: string
     ) => {
       const prevSelection = selection;
       const prevBalance = balance;
@@ -187,10 +201,16 @@ export function GameProvider({
           setError(result.error);
         } else {
           setBalance(result.balance);
+          // Confirm the save, and remind the player picks stay editable until
+          // the daily reset (shown in their local time).
+          toast.add({
+            title: savedTitle,
+            description: t.savedDesc(localResetTime()),
+          });
         }
       });
     },
-    [selection, balance]
+    [selection, balance, toast, t]
   );
 
   const pickTeam = useCallback(
@@ -207,10 +227,11 @@ export function GameProvider({
       commit(
         { kind: "team", optionId },
         { matchId: option.matchId, side: option.side },
-        optimisticBalance
+        optimisticBalance,
+        t.savedTitle
       );
     },
-    [allOptions, selection, balance, selectedCost, commit]
+    [allOptions, selection, balance, selectedCost, commit, t]
   );
 
   const clearPick = useCallback(() => {
@@ -218,9 +239,10 @@ export function GameProvider({
     commit(
       { kind: "none" },
       { matchId: null, side: null },
-      balance + selectedCost
+      balance + selectedCost,
+      t.clearedTitle
     );
-  }, [selection, balance, selectedCost, commit]);
+  }, [selection, balance, selectedCost, commit, t]);
 
   const value: GameContextValue = {
     player: { ...player, balance },

@@ -66,6 +66,9 @@ const en = {
     emptyTitle: "No matches yet for tomorrow",
     emptyDesc: "The pool is filled daily — check back soon.",
     vs: "VS",
+    savedTitle: "Pick saved",
+    clearedTitle: "Sitting today out",
+    savedDesc: (time: string) => `You can change it until ${time}`,
   },
 
   selectionBanner: {

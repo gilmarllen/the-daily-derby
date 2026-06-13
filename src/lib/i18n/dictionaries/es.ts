@@ -65,6 +65,9 @@ const es: Dictionary = {
     emptyTitle: "Aún no hay partidos para mañana",
     emptyDesc: "El grupo se llena cada día — vuelve pronto.",
     vs: "VS",
+    savedTitle: "Elección guardada",
+    clearedTitle: "Hoy te quedas fuera",
+    savedDesc: (time: string) => `Puedes cambiarla hasta las ${time}`,
   },
 
   selectionBanner: {
