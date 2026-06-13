@@ -5,11 +5,18 @@ import { Logo } from "@/components/brand/logo";
 import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { buttonVariants } from "@/components/ui/button";
 import { getServerDictionary } from "@/lib/i18n/server";
+import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
 export default async function Home() {
   const dict = await getServerDictionary();
   const t = dict.home;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isLoggedIn = Boolean(user);
   const features = [
     { icon: Target, title: t.features.pickTitle, text: t.features.pickText },
     { icon: Coins, title: t.features.moneyTitle, text: t.features.moneyText },
@@ -42,21 +49,32 @@ export default async function Home() {
         <p className="text-muted-foreground max-w-md text-lg">{t.tagline}</p>
 
         <div className="flex flex-col gap-3 sm:flex-row">
-          <Link
-            href="/signup"
-            className={cn(buttonVariants({ size: "lg" }), "px-8")}
-          >
-            {dict.common.signup}
-          </Link>
-          <Link
-            href="/login"
-            className={cn(
-              buttonVariants({ variant: "outline", size: "lg" }),
-              "px-8"
-            )}
-          >
-            {dict.common.login}
-          </Link>
+          {isLoggedIn ? (
+            <Link
+              href="/dashboard"
+              className={cn(buttonVariants({ size: "lg" }), "px-8")}
+            >
+              {dict.common.backToGame}
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/signup"
+                className={cn(buttonVariants({ size: "lg" }), "px-8")}
+              >
+                {dict.common.signup}
+              </Link>
+              <Link
+                href="/login"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "lg" }),
+                  "px-8"
+                )}
+              >
+                {dict.common.login}
+              </Link>
+            </>
+          )}
         </div>
 
         <Link

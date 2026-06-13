@@ -23,6 +23,7 @@ import {
 } from "@/lib/game/constants";
 import { DAILY_LOOP, SCORING_RULES } from "@/lib/game/rules";
 import { getServerDictionary } from "@/lib/i18n/server";
+import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -57,6 +58,12 @@ export default async function GuidePage() {
   const dict = await getServerDictionary();
   const t = dict.guide;
 
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isLoggedIn = Boolean(user);
+
   return (
     <main className="flex flex-1 flex-col">
       <header className="bg-background/80 sticky top-0 z-20 border-b backdrop-blur">
@@ -71,10 +78,10 @@ export default async function GuidePage() {
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <Link
-              href="/login"
+              href={isLoggedIn ? "/dashboard" : "/login"}
               className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
             >
-              {dict.common.login}
+              {isLoggedIn ? dict.common.backToGame : dict.common.login}
             </Link>
           </div>
         </div>
@@ -228,21 +235,32 @@ export default async function GuidePage() {
           <h2 className="text-2xl font-bold tracking-tight">{t.ctaTitle}</h2>
           <p className="text-muted-foreground max-w-sm">{t.ctaDesc}</p>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="/signup"
-              className={cn(buttonVariants({ size: "lg" }), "px-8")}
-            >
-              {dict.common.signup}
-            </Link>
-            <Link
-              href="/login"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "px-8"
-              )}
-            >
-              {dict.common.login}
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href="/dashboard"
+                className={cn(buttonVariants({ size: "lg" }), "px-8")}
+              >
+                {dict.common.backToGame}
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/signup"
+                  className={cn(buttonVariants({ size: "lg" }), "px-8")}
+                >
+                  {dict.common.signup}
+                </Link>
+                <Link
+                  href="/login"
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "lg" }),
+                    "px-8"
+                  )}
+                >
+                  {dict.common.login}
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

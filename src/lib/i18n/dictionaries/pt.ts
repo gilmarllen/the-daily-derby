@@ -8,6 +8,7 @@ const pt: Dictionary = {
     signup: "Cadastrar",
     backToHome: "Voltar ao início",
     backToLogin: "Voltar ao login",
+    backToGame: "Voltar ao jogo",
   },
 
   language: {
