@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
 import { createClient } from "@/lib/supabase/server";
+import { getServerDictionary } from "@/lib/i18n/server";
 
 export type AuthState = {
   error: string;
@@ -26,7 +27,8 @@ export async function login(
 ): Promise<AuthState> {
   const { email, password } = readCredentials(formData);
   if (!email || !password) {
-    return { error: "Enter your email and password.", values: { email } };
+    const errors = (await getServerDictionary()).auth.errors;
+    return { error: errors.missingCredentials, values: { email } };
   }
 
   const supabase = await createClient();
@@ -48,14 +50,16 @@ export async function signup(
   const username = String(formData.get("username") ?? "").trim();
 
   if (!username || !email || !password) {
+    const errors = (await getServerDictionary()).auth.errors;
     return {
-      error: "Pick a username and enter your email and password.",
+      error: errors.missingSignupCredentials,
       values: { username, email },
     };
   }
   if (password.length < 6) {
+    const errors = (await getServerDictionary()).auth.errors;
     return {
-      error: "Password must be at least 6 characters.",
+      error: errors.passwordTooShort,
       values: { username, email },
     };
   }
@@ -94,7 +98,8 @@ export async function requestPasswordReset(
 ): Promise<ResetRequestState> {
   const email = String(formData.get("email") ?? "").trim();
   if (!email) {
-    return { error: "Enter your email." };
+    const errors = (await getServerDictionary()).auth.errors;
+    return { error: errors.missingEmail };
   }
 
   const origin = (await headers()).get("origin") ?? "";
@@ -124,10 +129,12 @@ export async function updatePassword(
   const confirm = String(formData.get("confirm") ?? "");
 
   if (password.length < 6) {
-    return { error: "Password must be at least 6 characters." };
+    const errors = (await getServerDictionary()).auth.errors;
+    return { error: errors.passwordTooShort };
   }
   if (password !== confirm) {
-    return { error: "Those passwords don't match." };
+    const errors = (await getServerDictionary()).auth.errors;
+    return { error: errors.passwordMismatch };
   }
 
   const supabase = await createClient();
@@ -135,7 +142,8 @@ export async function updatePassword(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    return { error: "Your reset link is invalid or has expired." };
+    const errors = (await getServerDictionary()).auth.errors;
+    return { error: errors.invalidResetLink };
   }
 
   const { error } = await supabase.auth.updateUser({ password });

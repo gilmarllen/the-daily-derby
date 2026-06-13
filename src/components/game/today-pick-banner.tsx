@@ -2,6 +2,7 @@
 
 import { CalendarClock, CircleSlash, Clock, Trophy } from "lucide-react";
 
+import { useDictionary } from "@/components/i18n/locale-provider";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -41,13 +42,6 @@ function formatKickoff(iso: string): string {
   }).format(new Date(iso));
 }
 
-const RESULT_LABEL: Record<PickResult, string> = {
-  win: "Won",
-  draw: "Draw",
-  loss: "Lost",
-  none: "No result",
-};
-
 const RESULT_CLASS: Record<PickResult, string> = {
   win: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
   draw: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
@@ -56,6 +50,8 @@ const RESULT_CLASS: Record<PickResult, string> = {
 };
 
 export function TodayPickBanner({ pick }: { pick: TodayPick | null }) {
+  const t = useDictionary().todayPick;
+
   // No pick row for today (e.g. a brand-new player) — nothing to show.
   if (!pick) return null;
 
@@ -68,11 +64,9 @@ export function TodayPickBanner({ pick }: { pick: TodayPick | null }) {
             aria-hidden
           />
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">
-              No pick locked for today
-            </span>
+            <span className="text-sm font-semibold">{t.noPickTitle}</span>
             <span className="text-muted-foreground text-xs">
-              You sat today out — no team to cheer for.
+              {t.noPickDesc}
             </span>
           </div>
           <span className="ml-auto">
@@ -94,7 +88,7 @@ export function TodayPickBanner({ pick }: { pick: TodayPick | null }) {
         <div className="flex items-center justify-between gap-2">
           <Badge variant="secondary" className="gap-1.5 p-0">
             <CalendarClock className="size-3.5" aria-hidden />
-            Today&apos;s pick
+            {t.badge}
           </Badge>
 
           {settled && pick.result ? (
@@ -105,7 +99,7 @@ export function TodayPickBanner({ pick }: { pick: TodayPick | null }) {
                 </span>
               )}
               <Badge className={cn("border-0", RESULT_CLASS[pick.result])}>
-                {RESULT_LABEL[pick.result]}
+                {t.results[pick.result]}
               </Badge>
               <TrophyDelta delta={TROPHY_DELTAS[pick.result]} />
             </span>
@@ -123,7 +117,7 @@ export function TodayPickBanner({ pick }: { pick: TodayPick | null }) {
           <span className="font-semibold">
             {pickedTeam}{" "}
             <span className="text-muted-foreground text-sm font-normal">
-              vs {opponent}
+              {t.vs} {opponent}
             </span>
           </span>
           <span className="text-muted-foreground text-xs">

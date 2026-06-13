@@ -5,6 +5,7 @@ import { AlertCircle, Loader2 } from "lucide-react";
 
 import { updatePassword, type UpdatePasswordState } from "@/app/auth/actions";
 import { Logo } from "@/components/brand/logo";
+import { useDictionary } from "@/components/i18n/locale-provider";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,22 +21,21 @@ export function UpdatePasswordForm() {
     UpdatePasswordState,
     FormData
   >(updatePassword, null);
+  const t = useDictionary().auth.update;
 
   return (
     <Card className="animate-in fade-in slide-in-from-bottom-3 w-full max-w-sm duration-500">
       <CardHeader className="items-center text-center">
         <Logo className="mx-auto size-12" />
-        <CardTitle className="text-xl">Set a new password</CardTitle>
-        <CardDescription>
-          Choose a new password for your account.
-        </CardDescription>
+        <CardTitle className="text-xl">{t.title}</CardTitle>
+        <CardDescription>{t.description}</CardDescription>
       </CardHeader>
 
       <CardContent>
         <form action={formAction} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
             <label htmlFor="password" className="text-sm font-medium">
-              New password
+              {t.newPasswordLabel}
             </label>
             <Input
               id="password"
@@ -50,7 +50,7 @@ export function UpdatePasswordForm() {
 
           <div className="flex flex-col gap-1.5">
             <label htmlFor="confirm" className="text-sm font-medium">
-              Confirm new password
+              {t.confirmLabel}
             </label>
             <Input
               id="confirm"
@@ -75,7 +75,7 @@ export function UpdatePasswordForm() {
 
           <Button type="submit" size="lg" disabled={isPending} className="mt-1">
             {isPending && <Loader2 className="animate-spin" />}
-            Update password
+            {t.submit}
           </Button>
         </form>
       </CardContent>

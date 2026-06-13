@@ -15,6 +15,7 @@ import { StatPill } from "@/components/game/stat-pill";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { formatFootballMoney } from "@/lib/game/constants";
 import { getPlayerPicks, getPlayerProfile } from "@/lib/game/queries";
+import { getServerDictionary } from "@/lib/i18n/server";
 
 export const metadata = {
   title: "Player · The Daily Derby",
@@ -35,15 +36,17 @@ export default async function PlayerProfilePage(props: {
   const { username: raw } = await props.params;
   const username = decodeURIComponent(raw);
 
-  const [profile, picks] = await Promise.all([
+  const [profile, picks, dict] = await Promise.all([
     getPlayerProfile(username),
     getPlayerPicks(username),
+    getServerDictionary(),
   ]);
 
   if (!profile) {
     notFound();
   }
 
+  const t = dict.profile;
   const winRatePct =
     profile.totalPredictions === 0
       ? "—"
@@ -55,7 +58,7 @@ export default async function PlayerProfilePage(props: {
         href="/dashboard/leaderboard"
         className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm font-medium"
       >
-        <ArrowLeft className="size-4" /> Leaderboard
+        <ArrowLeft className="size-4" /> {t.backToLeaderboard}
       </Link>
 
       <div className="bg-card ring-foreground/10 flex flex-col gap-4 rounded-xl p-5 ring-1">
@@ -69,25 +72,25 @@ export default async function PlayerProfilePage(props: {
         <div className="flex flex-wrap gap-2">
           <StatPill
             icon={Trophy}
-            label="Trophies"
+            label={t.trophies}
             value={profile.trophies}
             iconClassName="text-amber-500"
           />
           <StatPill
             icon={Flame}
-            label="Win streak"
+            label={t.winStreak}
             value={profile.winStreak}
             iconClassName="text-orange-500"
           />
           <StatPill
             icon={Wallet}
-            label="Balance"
+            label={t.balance}
             value={formatFootballMoney(profile.balance)}
             iconClassName="text-emerald-500"
           />
           <StatPill
             icon={Coins}
-            label="Money spent"
+            label={t.moneySpent}
             value={formatFootballMoney(profile.moneySpent)}
             iconClassName="text-sky-500"
           />
@@ -97,31 +100,33 @@ export default async function PlayerProfilePage(props: {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <StatTile
           icon={Target}
-          label="Win rate"
+          label={t.winRate}
           value={winRatePct}
-          sub={`${profile.wins} of ${profile.totalPredictions} wins`}
+          sub={t.winRateSub(profile.wins, profile.totalPredictions)}
         />
         <StatTile
           icon={Target}
-          label="Predictions"
+          label={t.predictions}
           value={profile.totalPredictions}
-          sub="settled picks"
+          sub={t.predictionsSub}
         />
         <StatTile
           icon={MapPin}
-          label="Best league"
+          label={t.bestLeague}
           value={profile.bestLeague ?? "—"}
           sub={
             profile.bestLeague
-              ? `${profile.bestLeagueWins} ${profile.bestLeagueWins === 1 ? "win" : "wins"}`
-              : "no settled picks"
+              ? t.bestLeagueSub(profile.bestLeagueWins)
+              : t.noSettledPicksSub
           }
         />
       </div>
 
       <div className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold tracking-tight">Past picks</h2>
-        <PastPicksList picks={picks} emptyLabel="No settled picks yet." />
+        <h2 className="text-lg font-semibold tracking-tight">
+          {t.pastPicksTitle}
+        </h2>
+        <PastPicksList picks={picks} emptyLabel={t.emptyPicks} />
       </div>
     </div>
   );

@@ -2,34 +2,31 @@ import { CircleSlash, Trophy } from "lucide-react";
 
 import { formatFootballMoney, formatTrophyDelta } from "@/lib/game/constants";
 import type { PastPick } from "@/lib/game/types";
+import { getServerDictionary } from "@/lib/i18n/server";
 import { cn } from "@/lib/utils";
 
+// Colours per result; the human label comes from the dictionary.
 const RESULT_STYLES: Record<
   PastPick["result"],
-  { label: string; badge: string; delta: string }
+  { badge: string; delta: string }
 > = {
   win: {
-    label: "Win",
     badge: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
     delta: "text-emerald-600 dark:text-emerald-400",
   },
   draw: {
-    label: "Draw",
     badge: "bg-muted text-muted-foreground",
     delta: "text-muted-foreground",
   },
   loss: {
-    label: "Loss",
     badge: "bg-destructive/15 text-destructive",
     delta: "text-destructive",
   },
   none: {
-    label: "Skipped",
     badge: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
     delta: "text-amber-600 dark:text-amber-400",
   },
   pending: {
-    label: "Pending",
     badge: "bg-muted text-muted-foreground",
     delta: "text-muted-foreground",
   },
@@ -40,13 +37,15 @@ const RESULT_STYLES: Record<
  * player's history page and other players' profiles so both look identical.
  * `emptyLabel` lets each surface word the empty state itself.
  */
-export function PastPicksList({
+export async function PastPicksList({
   picks,
   emptyLabel,
 }: {
   picks: PastPick[];
   emptyLabel: string;
 }) {
+  const t = (await getServerDictionary()).pastPicks;
+
   if (picks.length === 0) {
     return (
       <p className="text-muted-foreground rounded-xl border border-dashed p-8 text-center text-sm">
@@ -80,7 +79,7 @@ export function PastPicksList({
                       className="text-muted-foreground size-4"
                       aria-hidden
                     />
-                    No selection
+                    {t.noSelection}
                   </>
                 ) : (
                   pick.pick
@@ -97,7 +96,7 @@ export function PastPicksList({
                 style.badge
               )}
             >
-              {style.label}
+              {t.results[pick.result]}
             </span>
 
             <span

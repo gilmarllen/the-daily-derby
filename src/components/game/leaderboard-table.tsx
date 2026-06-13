@@ -13,6 +13,7 @@ import {
   Trophy,
 } from "lucide-react";
 
+import { useDictionary } from "@/components/i18n/locale-provider";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { formatFootballMoney } from "@/lib/game/constants";
@@ -46,6 +47,7 @@ function initials(name: string): string {
 
 export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
   const router = useRouter();
+  const t = useDictionary().leaderboard;
   const currentIndex = entries.findIndex((e) => e.isCurrentUser);
   const myPage = currentIndex >= 0 ? Math.floor(currentIndex / PAGE_SIZE) : 0;
   const pageCount = Math.max(1, Math.ceil(entries.length / PAGE_SIZE));
@@ -61,7 +63,7 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
   if (entries.length === 0) {
     return (
       <p className="text-muted-foreground rounded-xl border border-dashed p-8 text-center text-sm">
-        No players on the board yet — be the first to make a pick.
+        {t.empty}
       </p>
     );
   }
@@ -73,18 +75,27 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
           <thead>
             <tr className="bg-muted/50 text-muted-foreground border-b text-xs">
               <th className="px-3 py-2 text-left font-medium">#</th>
-              <th className="px-3 py-2 text-left font-medium">Player</th>
+              <th className="px-3 py-2 text-left font-medium">{t.player}</th>
               <th className="hidden px-3 py-2 text-left font-medium sm:table-cell">
-                <Goal className="size-4" aria-label="Today's pick" />
+                <Goal className="size-4" aria-label={t.ariaTodayPick} />
               </th>
               <th className="px-3 py-2 text-right font-medium">
-                <Trophy className="ml-auto size-4" aria-label="Trophies" />
+                <Trophy
+                  className="ml-auto size-4"
+                  aria-label={t.ariaTrophies}
+                />
               </th>
               <th className="hidden px-3 py-2 text-right font-medium sm:table-cell">
-                <Coins className="ml-auto size-4" aria-label="Money spent" />
+                <Coins
+                  className="ml-auto size-4"
+                  aria-label={t.ariaMoneySpent}
+                />
               </th>
               <th className="hidden px-3 py-2 text-right font-medium sm:table-cell">
-                <Flame className="ml-auto size-4" aria-label="Win streak" />
+                <Flame
+                  className="ml-auto size-4"
+                  aria-label={t.ariaWinStreak}
+                />
               </th>
             </tr>
           </thead>
@@ -127,7 +138,7 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
                     <span className="group-hover:underline">{entry.name}</span>
                     {entry.isCurrentUser && (
                       <span className="text-muted-foreground text-xs">
-                        (you)
+                        {t.you}
                       </span>
                     )}
                   </Link>
@@ -165,20 +176,18 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
           onClick={() => setPage(current - 1)}
           disabled={current === 0}
         >
-          <ChevronLeft className="size-4" /> Prev
+          <ChevronLeft className="size-4" /> {t.prev}
         </Button>
 
         <span className="text-muted-foreground flex items-center gap-3 text-xs">
-          <span className="tabular-nums">
-            Page {current + 1} of {pageCount}
-          </span>
+          <span className="tabular-nums">{t.page(current + 1, pageCount)}</span>
           {currentIndex >= 0 && current !== myPage && (
             <button
               type="button"
               onClick={() => setPage(myPage)}
               className="text-foreground inline-flex items-center gap-1 font-medium hover:underline"
             >
-              <Locate className="size-3.5" /> Jump to me
+              <Locate className="size-3.5" /> {t.jumpToMe}
             </button>
           )}
         </span>
@@ -190,7 +199,7 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
           onClick={() => setPage(current + 1)}
           disabled={current >= pageCount - 1}
         >
-          Next <ChevronRight className="size-4" />
+          {t.next} <ChevronRight className="size-4" />
         </Button>
       </div>
     </div>

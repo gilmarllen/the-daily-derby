@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Goal, ListChecks, Medal, Trophy, type LucideIcon } from "lucide-react";
 
+import { useDictionary } from "@/components/i18n/locale-provider";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
@@ -12,20 +13,21 @@ type NavItem = {
   icon: LucideIcon;
 };
 
-const NAV_ITEMS: NavItem[] = [
-  { href: "/dashboard", label: "Pick", icon: Goal },
-  { href: "/dashboard/missions", label: "Missions", icon: Medal },
-  { href: "/dashboard/leaderboard", label: "Leaderboard", icon: Trophy },
-  { href: "/dashboard/past-picks", label: "Past Picks", icon: ListChecks },
-];
-
 export function DashboardNav() {
   const pathname = usePathname();
+  const t = useDictionary().nav;
+
+  const navItems: NavItem[] = [
+    { href: "/dashboard", label: t.pick, icon: Goal },
+    { href: "/dashboard/missions", label: t.missions, icon: Medal },
+    { href: "/dashboard/leaderboard", label: t.leaderboard, icon: Trophy },
+    { href: "/dashboard/past-picks", label: t.pastPicks, icon: ListChecks },
+  ];
 
   return (
     <nav className="bg-background/60 border-b">
       <ul className="mx-auto flex w-full max-w-5xl gap-1 overflow-x-auto px-2">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+        {navItems.map(({ href, label, icon: Icon }) => {
           const active =
             href === "/dashboard"
               ? pathname === href

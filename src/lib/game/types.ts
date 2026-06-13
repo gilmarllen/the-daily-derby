@@ -1,5 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 
+import type { Dictionary } from "@/lib/i18n/dictionary";
+
 export type Side = "home" | "away";
 
 export type TeamOption = {
@@ -31,10 +33,11 @@ export type Player = {
   winStreak: number;
 };
 
+/** Mission ids are the keys of the localized mission copy. */
+export type MissionId = keyof Dictionary["missions"]["items"];
+
 export type Mission = {
-  id: string;
-  title: string;
-  description: string;
+  id: MissionId;
   icon: LucideIcon;
   completed: boolean;
 };

@@ -10,6 +10,7 @@ import {
 } from "react";
 import { BookOpen, Coins, ListChecks, Trophy } from "lucide-react";
 
+import { useDictionary } from "@/components/i18n/locale-provider";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
@@ -51,6 +52,8 @@ export function WelcomeDialogProvider({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const dict = useDictionary();
+  const t = dict.welcome;
 
   // First visit on this device pops the summary once. We record the flag
   // immediately so a refresh mid-view doesn't re-trigger it.
@@ -69,47 +72,43 @@ export function WelcomeDialogProvider({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="gap-5">
           <div className="flex flex-col gap-1 pr-6">
-            <DialogTitle>Welcome to The Daily Derby ⚽</DialogTitle>
-            <DialogDescription>
-              A daily football prediction game. Here&apos;s the quick version.
-            </DialogDescription>
+            <DialogTitle>{t.title}</DialogTitle>
+            <DialogDescription>{t.description}</DialogDescription>
           </div>
 
           <ul className="flex flex-col gap-3">
-            <Fact icon={ListChecks} title="One pick a day">
-              Back a single team to win from your five real matches — or sit the
-              day out. Change your mind any time before the daily lock.
+            <Fact icon={ListChecks} title={t.fact1Title}>
+              {t.fact1Body}
             </Fact>
-            <Fact icon={Coins} title="Manage your F$">
-              Start with{" "}
+            <Fact icon={Coins} title={t.fact2Title}>
+              {t.fact2Pre}
               <strong className="text-foreground font-semibold">
                 {formatFootballMoney(STARTING_BALANCE)}
-              </strong>{" "}
-              and earn{" "}
+              </strong>
+              {t.fact2Mid}
               <strong className="text-foreground font-semibold">
                 +{formatFootballMoney(DAILY_INCOME)}
-              </strong>{" "}
-              daily. Stronger favourites cost less to back.
+              </strong>
+              {t.fact2Post}
             </Fact>
-            <Fact icon={Trophy} title="Earn trophies">
+            <Fact icon={Trophy} title={t.fact3Title}>
               <span className="mt-1 flex flex-wrap gap-1.5">
-                {SCORING_RULES.filter((r) => r.outcome !== "New mission").map(
-                  (rule) => (
-                    <span
-                      key={rule.outcome}
-                      className={cn(
-                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums",
-                        rule.trophies > 0
-                          ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
-                          : rule.trophies < 0
-                            ? "bg-destructive/15 text-destructive"
-                            : "bg-muted text-muted-foreground"
-                      )}
-                    >
-                      {rule.outcome} {formatTrophyDelta(rule.trophies)}
-                    </span>
-                  )
-                )}
+                {SCORING_RULES.filter((r) => r.id !== "mission").map((rule) => (
+                  <span
+                    key={rule.id}
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums",
+                      rule.trophies > 0
+                        ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                        : rule.trophies < 0
+                          ? "bg-destructive/15 text-destructive"
+                          : "bg-muted text-muted-foreground"
+                    )}
+                  >
+                    {dict.scoring[rule.id].outcome}{" "}
+                    {formatTrophyDelta(rule.trophies)}
+                  </span>
+                ))}
               </span>
             </Fact>
           </ul>
@@ -122,10 +121,10 @@ export function WelcomeDialogProvider({
               className={cn(buttonVariants({ variant: "outline" }), "gap-2")}
             >
               <BookOpen className="size-4" aria-hidden />
-              Read the full guide
+              {t.readGuide}
             </Link>
             <DialogClose className={cn(buttonVariants(), "px-6")}>
-              Got it
+              {t.gotIt}
             </DialogClose>
           </div>
         </DialogContent>

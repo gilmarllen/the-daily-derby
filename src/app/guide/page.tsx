@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
+import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { buttonVariants } from "@/components/ui/button";
 import {
   DAILY_INCOME,
@@ -21,6 +22,7 @@ import {
   formatTrophyDelta,
 } from "@/lib/game/constants";
 import { DAILY_LOOP, SCORING_RULES } from "@/lib/game/rules";
+import { getServerDictionary } from "@/lib/i18n/server";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -51,7 +53,10 @@ function Section({
   );
 }
 
-export default function GuidePage() {
+export default async function GuidePage() {
+  const dict = await getServerDictionary();
+  const t = dict.guide;
+
   return (
     <main className="flex flex-1 flex-col">
       <header className="bg-background/80 sticky top-0 z-20 border-b backdrop-blur">
@@ -61,14 +66,17 @@ export default function GuidePage() {
             className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-sm font-medium transition-colors"
           >
             <ArrowLeft className="size-4" aria-hidden />
-            Home
+            {t.home}
           </Link>
-          <Link
-            href="/login"
-            className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-          >
-            Log in
-          </Link>
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <Link
+              href="/login"
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+            >
+              {dict.common.login}
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -77,57 +85,55 @@ export default function GuidePage() {
         <div className="animate-in fade-in slide-in-from-bottom-3 flex flex-col items-center gap-4 text-center duration-500">
           <Logo className="size-16 drop-shadow-sm" />
           <span className="bg-card text-muted-foreground ring-foreground/10 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium tracking-widest uppercase ring-1">
-            Game guide
+            {t.badge}
           </span>
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            How to play
+            {t.heroTitle}
           </h1>
-          <p className="text-muted-foreground max-w-md text-lg">
-            One pick a day. Back a winner, spend smart, and climb the global
-            leaderboard. Here&apos;s everything you need to know.
-          </p>
+          <p className="text-muted-foreground max-w-md text-lg">{t.heroDesc}</p>
         </div>
 
         {/* Overview */}
-        <Section icon={Target} title="The gist">
+        <Section icon={Target} title={t.gistTitle}>
           <p className="text-muted-foreground leading-relaxed">
-            The Daily Derby is a daily football prediction game. Every day you
-            get five real matches and pick one team to win. Good calls earn{" "}
-            <span className="text-foreground font-medium">trophies</span> and
-            push you up the leaderboard; you manage a stash of in-game{" "}
+            {t.gistP1a}
             <span className="text-foreground font-medium">
-              Football Money (F$)
-            </span>{" "}
-            along the way. It&apos;s a game — F$ is not real money.
+              {t.gistTrophies}
+            </span>
+            {t.gistP1b}
+            <span className="text-foreground font-medium">{t.gistMoney}</span>
+            {t.gistP1c}
           </p>
           <p className="text-muted-foreground leading-relaxed">
-            You start with{" "}
+            {t.gistP2a}
             <span className="text-foreground font-semibold">
               {formatFootballMoney(STARTING_BALANCE)}
-            </span>{" "}
-            and earn{" "}
+            </span>
+            {t.gistP2b}
             <span className="text-foreground font-semibold">
               +{formatFootballMoney(DAILY_INCOME)}
-            </span>{" "}
-            every day.
+            </span>
+            {t.gistP2c}
           </p>
         </Section>
 
         {/* Daily loop */}
-        <Section icon={ListOrdered} title="The daily loop">
+        <Section icon={ListOrdered} title={t.loopTitle}>
           <ol className="flex flex-col gap-3">
-            {DAILY_LOOP.map((step, i) => (
+            {DAILY_LOOP.map((id, i) => (
               <li
-                key={step.title}
+                key={id}
                 className="bg-card ring-foreground/10 flex gap-4 rounded-xl p-4 ring-1"
               >
                 <span className="bg-primary text-primary-foreground flex size-7 shrink-0 items-center justify-center rounded-full text-sm font-bold tabular-nums">
                   {i + 1}
                 </span>
                 <div className="flex flex-col gap-0.5">
-                  <span className="font-semibold">{step.title}</span>
+                  <span className="font-semibold">
+                    {dict.dailyLoop[id].title}
+                  </span>
                   <span className="text-muted-foreground text-sm">
-                    {step.detail}
+                    {dict.dailyLoop[id].detail}
                   </span>
                 </div>
               </li>
@@ -136,16 +142,13 @@ export default function GuidePage() {
         </Section>
 
         {/* Money */}
-        <Section icon={Coins} title="Football Money (F$)">
+        <Section icon={Coins} title={t.moneyTitle}>
           <p className="text-muted-foreground leading-relaxed">
-            Every team option has an F$ price set by its odds — a strong
-            favourite is cheaper, a long shot costs more (the formula is{" "}
+            {t.moneyP1a}
             <code className="bg-muted rounded px-1 py-0.5 text-xs">
               10 / odds
             </code>
-            ). Picking a team spends that amount from your balance; switching
-            picks refunds the old one and charges the new. Options you
-            can&apos;t afford are disabled.
+            {t.moneyP1b}
           </p>
           <div className="bg-card ring-foreground/10 flex items-center gap-3 rounded-xl p-4 ring-1">
             <CircleSlash
@@ -153,23 +156,23 @@ export default function GuidePage() {
               aria-hidden
             />
             <p className="text-muted-foreground text-sm">
-              <span className="text-foreground font-medium">No selection</span>{" "}
-              is always free and selected by default — but sitting a day out
-              costs you trophies (see below).
+              <span className="text-foreground font-medium">
+                {t.moneyNoSel}
+              </span>
+              {t.moneyCalloutBody}
             </p>
           </div>
         </Section>
 
         {/* Scoring */}
-        <Section icon={Trophy} title="Scoring">
+        <Section icon={Trophy} title={t.scoringTitle}>
           <p className="text-muted-foreground leading-relaxed">
-            Trophies are your score and your leaderboard rank. They can go
-            negative. Each settled day moves your total:
+            {t.scoringIntro}
           </p>
           <div className="ring-foreground/10 overflow-hidden rounded-xl ring-1">
             {SCORING_RULES.map((rule, i) => (
               <div
-                key={rule.outcome}
+                key={rule.id}
                 className={cn(
                   "bg-card flex items-center gap-4 p-4",
                   i > 0 && "border-t"
@@ -188,9 +191,11 @@ export default function GuidePage() {
                   {formatTrophyDelta(rule.trophies)}
                 </span>
                 <div className="flex flex-col gap-0.5">
-                  <span className="font-semibold">{rule.outcome}</span>
+                  <span className="font-semibold">
+                    {dict.scoring[rule.id].outcome}
+                  </span>
                   <span className="text-muted-foreground text-sm">
-                    {rule.detail}
+                    {dict.scoring[rule.id].detail}
                   </span>
                 </div>
               </div>
@@ -199,40 +204,35 @@ export default function GuidePage() {
         </Section>
 
         {/* Streak & leaderboard */}
-        <Section icon={Flame} title="Win streak & leaderboard">
+        <Section icon={Flame} title={t.streakTitle}>
           <p className="text-muted-foreground leading-relaxed">
-            Win on consecutive days to build a{" "}
-            <span className="text-foreground font-medium">win streak</span> —
-            only a loss resets it, while draws and sat-out days leave it
-            untouched. The global leaderboard ranks every player by total
-            trophies, alongside their money spent and best streak.
+            {t.streakA}
+            <span className="text-foreground font-medium">{t.streakLabel}</span>
+            {t.streakB}
           </p>
         </Section>
 
         {/* Reset */}
-        <Section icon={CalendarSync} title="Daily reset">
+        <Section icon={CalendarSync} title={t.resetTitle}>
           <p className="text-muted-foreground leading-relaxed">
-            Everything resets at{" "}
+            {t.resetA}
             <span className="text-foreground font-semibold">
               {DAILY_RESET_LABEL}
             </span>
-            : a fresh set of matches, your daily income, and a clean slate to
-            make the next pick. Miss a day and it counts as No selection.
+            {t.resetB}
           </p>
         </Section>
 
         {/* CTA */}
         <div className="bg-card ring-foreground/10 flex flex-col items-center gap-4 rounded-2xl p-8 text-center ring-1">
-          <h2 className="text-2xl font-bold tracking-tight">Ready to play?</h2>
-          <p className="text-muted-foreground max-w-sm">
-            Make your first pick today and start climbing the table.
-          </p>
+          <h2 className="text-2xl font-bold tracking-tight">{t.ctaTitle}</h2>
+          <p className="text-muted-foreground max-w-sm">{t.ctaDesc}</p>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
               href="/signup"
               className={cn(buttonVariants({ size: "lg" }), "px-8")}
             >
-              Sign up
+              {dict.common.signup}
             </Link>
             <Link
               href="/login"
@@ -241,7 +241,7 @@ export default function GuidePage() {
                 "px-8"
               )}
             >
-              Log in
+              {dict.common.login}
             </Link>
           </div>
         </div>

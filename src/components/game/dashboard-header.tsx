@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Coins, Flame, Trophy } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
+import { LanguageSwitcher } from "@/components/i18n/language-switcher";
+import { useDictionary } from "@/components/i18n/locale-provider";
 import {
   Tooltip,
   TooltipContent,
@@ -17,6 +19,7 @@ import { UserMenu } from "./user-menu";
 
 export function DashboardHeader() {
   const { player } = useGame();
+  const t = useDictionary().header;
 
   return (
     <header className="bg-background/80 sticky top-0 z-20 border-b backdrop-blur">
@@ -32,7 +35,7 @@ export function DashboardHeader() {
         <div className="flex items-center gap-2">
           <StatPill
             icon={Trophy}
-            label="Trophies"
+            label={t.trophies}
             value={player.trophies}
             iconClassName="text-amber-500"
           />
@@ -40,23 +43,23 @@ export function DashboardHeader() {
             <TooltipTrigger className="cursor-help rounded-full border-0 bg-transparent p-0">
               <StatPill
                 icon={Coins}
-                label="Football Money"
+                label={t.footballMoney}
                 value={formatFootballMoney(player.balance)}
                 iconClassName="text-emerald-500"
               />
             </TooltipTrigger>
             <TooltipContent>
-              Daily income: +{formatFootballMoney(DAILY_INCOME)} added every day
-              between 00:00 UTC - 01:00 UTC
+              {t.dailyIncomeTooltip(formatFootballMoney(DAILY_INCOME))}
             </TooltipContent>
           </Tooltip>
           <StatPill
             icon={Flame}
-            label="Win streak"
+            label={t.winStreak}
             value={player.winStreak}
             iconClassName="text-orange-500"
             className="hidden sm:flex"
           />
+          <LanguageSwitcher />
           <UserMenu />
         </div>
       </div>

@@ -6,6 +6,8 @@ import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react";
 
 import { login, signup, type AuthState } from "@/app/auth/actions";
 import { Logo } from "@/components/brand/logo";
+import { LanguageSwitcher } from "@/components/i18n/language-switcher";
+import { useDictionary } from "@/components/i18n/locale-provider";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,32 +20,18 @@ import { Input } from "@/components/ui/input";
 
 type Mode = "login" | "signup";
 
-const COPY = {
-  login: {
-    title: "Welcome back",
-    description: "Log in to make today's pick.",
-    submit: "Log in",
-    cta: "New here?",
-    ctaHref: "/signup",
-    ctaLabel: "Create an account",
-  },
-  signup: {
-    title: "Join the Derby",
-    description: "Create an account and start with F$ 10.00.",
-    submit: "Sign up",
-    cta: "Already playing?",
-    ctaHref: "/login",
-    ctaLabel: "Log in",
-  },
-} as const;
-
 export function AuthForm({ mode }: { mode: Mode }) {
   const action = mode === "login" ? login : signup;
   const [state, formAction, isPending] = useActionState<AuthState, FormData>(
     action,
     null
   );
-  const copy = COPY[mode];
+  const dict = useDictionary();
+  const t = dict.auth;
+  const copy = {
+    ...t[mode],
+    ctaHref: mode === "login" ? "/signup" : "/login",
+  };
 
   // Controlled so values survive React 19's post-action form reset (and so
   // base-ui doesn't warn about a changing uncontrolled default value).
@@ -63,13 +51,16 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-3 flex w-full max-w-sm flex-col gap-3 duration-500">
-      <Link
-        href="/"
-        className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 self-start text-sm font-medium transition-colors"
-      >
-        <ArrowLeft className="size-4" />
-        Back to home
-      </Link>
+      <div className="flex items-center justify-between gap-2">
+        <Link
+          href="/"
+          className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 self-start text-sm font-medium transition-colors"
+        >
+          <ArrowLeft className="size-4" />
+          {t.backToHome}
+        </Link>
+        <LanguageSwitcher />
+      </div>
 
       <Card>
         <CardHeader className="items-center text-center">
@@ -84,10 +75,10 @@ export function AuthForm({ mode }: { mode: Mode }) {
               <Field
                 id="username"
                 name="username"
-                label="Username"
+                label={t.usernameLabel}
                 type="text"
                 autoComplete="username"
-                placeholder="goal_machine"
+                placeholder={t.usernamePlaceholder}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -97,10 +88,10 @@ export function AuthForm({ mode }: { mode: Mode }) {
             <Field
               id="email"
               name="email"
-              label="Email"
+              label={t.emailLabel}
               type="email"
               autoComplete="email"
-              placeholder="you@example.com"
+              placeholder={t.emailPlaceholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -109,7 +100,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
             <Field
               id="password"
               name="password"
-              label="Password"
+              label={t.passwordLabel}
               type="password"
               autoComplete={
                 mode === "login" ? "current-password" : "new-password"
@@ -124,7 +115,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
                 href="/forgot-password"
                 className="text-muted-foreground hover:text-foreground -mt-2 self-end text-sm underline-offset-4 hover:underline"
               >
-                Forgot password?
+                {t.forgotPassword}
               </Link>
             )}
 

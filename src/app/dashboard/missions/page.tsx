@@ -3,6 +3,7 @@ import { Loader } from "lucide-react";
 import { ComingSoonWatermark } from "@/components/layout/coming-soon-watermark";
 import { Badge } from "@/components/ui/badge";
 import { missions } from "@/lib/game/mock-data";
+import { getServerDictionary } from "@/lib/i18n/server";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
@@ -13,24 +14,22 @@ export const metadata = {
 // locally to develop the real page.
 const COMING_SOON = process.env.NEXT_PUBLIC_MISSIONS_COMING_SOON === "true";
 
-export default function MissionsPage() {
+export default async function MissionsPage() {
+  const t = (await getServerDictionary()).missions;
   const completedCount = missions.filter((m) => m.completed).length;
 
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold tracking-tight">Missions</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t.title}</h1>
         <p className="text-muted-foreground text-sm">
-          {completedCount} of {missions.length} completed
+          {t.progress(completedCount, missions.length)}
         </p>
       </div>
 
-      <ComingSoonWatermark
-        enabled={COMING_SOON}
-        description="Missions are under development — check back soon."
-      >
+      <ComingSoonWatermark enabled={COMING_SOON} description={t.comingSoon}>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {missions.map(({ id, title, description, icon: Icon, completed }) => (
+          {missions.map(({ id, icon: Icon, completed }) => (
             <div
               key={id}
               className={cn(
@@ -60,12 +59,14 @@ export default function MissionsPage() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <h2 className="text-sm font-semibold">{title}</h2>
-                <p className="text-muted-foreground text-xs">{description}</p>
+                <h2 className="text-sm font-semibold">{t.items[id].title}</h2>
+                <p className="text-muted-foreground text-xs">
+                  {t.items[id].description}
+                </p>
               </div>
 
               <Badge variant={completed ? "default" : "outline"}>
-                {completed ? "Completed" : "Open"}
+                {completed ? t.completed : t.open}
               </Badge>
             </div>
           ))}

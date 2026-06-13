@@ -3,6 +3,7 @@
 import { Check, CircleSlash, Clock, Coins, Lock, Shield } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { useDictionary } from "@/components/i18n/locale-provider";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -137,6 +138,7 @@ export function MatchSelection() {
     highlightSignal,
     consumeHighlight,
   } = useGame();
+  const t = useDictionary().selection;
   const noPick = selection.kind === "none";
 
   // When the in-progress banner requests it, scroll the current selection into
@@ -161,13 +163,14 @@ export function MatchSelection() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold tracking-tight">
-          Tomorrow&apos;s Match Pool
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t.title}</h1>
         <p className="text-muted-foreground text-sm">
-          Pick one team to win from your five matches. Each option shows its{" "}
-          <span className="text-foreground font-medium">F$ price</span> — you
-          can change your pick until <ResetLocalTime /> ({DAILY_RESET_LABEL}).
+          {t.descA}
+          <span className="text-foreground font-medium">
+            {t.descPriceLabel}
+          </span>
+          {t.descB}
+          <ResetLocalTime /> ({DAILY_RESET_LABEL}).
         </p>
       </div>
 
@@ -204,7 +207,7 @@ export function MatchSelection() {
         />
         <span className="flex flex-col">
           <span className="flex items-center gap-2 font-semibold">
-            No selection
+            {t.noSelection}
             <span
               className={cn(
                 "bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full transition-all",
@@ -216,8 +219,7 @@ export function MatchSelection() {
             </span>
           </span>
           <span className="text-muted-foreground text-xs">
-            Sit today out — costs {formatFootballMoney(0)} but skipping a day is
-            −2 trophies.
+            {t.noSelectionDesc(formatFootballMoney(0))}
           </span>
         </span>
         <span className="text-muted-foreground ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-semibold tabular-nums">
@@ -230,10 +232,8 @@ export function MatchSelection() {
         <Card>
           <CardContent className="text-muted-foreground flex flex-col items-center gap-1 py-12 text-center text-sm">
             <CircleSlash className="mb-1 size-6" aria-hidden />
-            <span className="text-foreground font-medium">
-              No matches yet for tomorrow
-            </span>
-            <span>The pool is filled daily — check back soon.</span>
+            <span className="text-foreground font-medium">{t.emptyTitle}</span>
+            <span>{t.emptyDesc}</span>
           </CardContent>
         </Card>
       ) : (
@@ -269,7 +269,7 @@ export function MatchSelection() {
                     className="text-muted-foreground bg-muted/60 m-auto hidden size-7 items-center justify-center rounded-full text-[10px] font-bold sm:flex"
                     aria-hidden
                   >
-                    VS
+                    {t.vs}
                   </span>
                   <OptionButton
                     option={m.away}

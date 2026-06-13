@@ -4,6 +4,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { Footer } from "@/components/layout/footer";
+import { LocaleProvider } from "@/components/i18n/locale-provider";
+import { getLocale } from "@/lib/i18n/server";
 import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
@@ -39,19 +41,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <div className="flex flex-1 flex-col">{children}</div>
-        <Footer />
+        <LocaleProvider locale={locale}>
+          <div className="flex flex-1 flex-col">{children}</div>
+          <Footer />
+        </LocaleProvider>
         <Analytics />
       </body>
     </html>

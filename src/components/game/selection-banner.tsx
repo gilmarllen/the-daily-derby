@@ -2,6 +2,7 @@
 
 import { ChevronRight, CircleCheck, Clock, Hourglass } from "lucide-react";
 
+import { useDictionary } from "@/components/i18n/locale-provider";
 import { formatFootballMoney } from "@/lib/game/constants";
 import { cn } from "@/lib/utils";
 
@@ -10,13 +11,14 @@ import { ResetCountdown } from "./reset-countdown";
 
 export function SelectionBanner() {
   const { selectedOption, selectedCost, requestHighlight } = useGame();
+  const t = useDictionary().selectionBanner;
   const hasPick = selectedOption !== null;
 
   return (
     <button
       type="button"
       onClick={requestHighlight}
-      aria-label="Go to your pick"
+      aria-label={t.goToPick}
       className={cn(
         "group focus-visible:ring-ring relative w-full cursor-pointer overflow-hidden border-b text-sm transition-colors focus-visible:ring-2 focus-visible:-outline-offset-2 focus-visible:outline-none",
         hasPick
@@ -34,7 +36,7 @@ export function SelectionBanner() {
           ) : (
             <Hourglass className="size-4 text-amber-600" aria-hidden />
           )}
-          {hasPick ? "Picking" : "No selection"}
+          {hasPick ? t.picking : t.noSelection}
         </span>
 
         {/* Message + arrow: forced onto its own (second) row on mobile, inline
@@ -48,9 +50,7 @@ export function SelectionBanner() {
               {formatFootballMoney(selectedCost)}
             </span>
           ) : (
-            <span className="text-muted-foreground">
-              Pick a team to enter today&apos;s derby.
-            </span>
+            <span className="text-muted-foreground">{t.pickPrompt}</span>
           )}
 
           <ChevronRight
@@ -61,7 +61,7 @@ export function SelectionBanner() {
 
         <span className="text-muted-foreground flex w-full items-center gap-1.5 text-xs sm:ml-auto sm:w-auto">
           <Clock className="size-3.5 shrink-0" aria-hidden />
-          Locks in <ResetCountdown />
+          {t.locksIn} <ResetCountdown />
         </span>
       </div>
     </button>
