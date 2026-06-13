@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, CircleCheck, Clock, Hourglass } from "lucide-react";
+import { ChevronRight, CircleCheck, LockOpen, Hourglass } from "lucide-react";
 
 import { useDictionary } from "@/components/i18n/locale-provider";
 import { formatFootballMoney } from "@/lib/game/constants";
@@ -67,7 +67,7 @@ export function SelectionBanner() {
         </span>
 
         <span className="text-muted-foreground flex w-full items-center gap-1.5 text-xs sm:ml-auto sm:w-auto">
-          <Clock className="size-3.5 shrink-0" aria-hidden />
+          <LockOpen className="size-3.5 shrink-0" aria-hidden />
           {t.locksIn} <ResetCountdown />
         </span>
       </div>
