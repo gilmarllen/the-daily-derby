@@ -58,10 +58,6 @@ export default async function GuidePage() {
   const dict = await getServerDictionary();
   const t = dict.guide;
 
-  // The guide is reachable both logged out (from the home page) and logged in
-  // (from the user menu). Reading the session lets us show the right CTA rather
-  // than always offering log in / sign up, which makes a signed-in player look
-  // logged out.
   const supabase = await createClient();
   const {
     data: { user },

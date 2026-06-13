@@ -12,8 +12,6 @@ export default async function Home() {
   const dict = await getServerDictionary();
   const t = dict.home;
 
-  // Server-rendered, so the correct CTA ships in the HTML — no logged-in player
-  // ever sees the sign up / log in pair flash before correcting.
   const supabase = await createClient();
   const {
     data: { user },
