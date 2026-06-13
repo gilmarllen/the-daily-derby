@@ -5,8 +5,16 @@ import "./globals.css";
 
 import { Footer } from "@/components/layout/footer";
 import { LocaleProvider } from "@/components/i18n/locale-provider";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 import { getLocale } from "@/lib/i18n/server";
+import { getTheme } from "@/lib/theme/server";
+import { THEME_COOKIE } from "@/lib/theme/config";
 import { SITE_URL } from "@/lib/site";
+
+// Runs before paint to set the `.dark` class from the cookie (or the OS
+// preference when "system"/unset), avoiding a light-mode flash. Inlined as a
+// string because the server can't read `prefers-color-scheme`.
+const NO_FLASH_SCRIPT = `(function(){try{var m=document.cookie.match(/(?:^|; )${THEME_COOKIE}=([^;]*)/);var t=m?decodeURIComponent(m[1]):"system";var d=t==="dark"||((t==="light")?false:window.matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);}catch(e){}})();`;
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -46,18 +54,24 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = await getLocale();
+  const [locale, theme] = await Promise.all([getLocale(), getTheme()]);
 
   return (
     <html
       lang={locale}
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: NO_FLASH_SCRIPT }} />
+      </head>
       <body className="flex min-h-full flex-col">
-        <LocaleProvider locale={locale}>
-          <div className="flex flex-1 flex-col">{children}</div>
-          <Footer />
-        </LocaleProvider>
+        <ThemeProvider theme={theme}>
+          <LocaleProvider locale={locale}>
+            <div className="flex flex-1 flex-col">{children}</div>
+            <Footer />
+          </LocaleProvider>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

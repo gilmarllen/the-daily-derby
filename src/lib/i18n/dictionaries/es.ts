@@ -41,6 +41,7 @@ const es: Dictionary = {
     trophies: "Trofeos",
     footballMoney: "Football Money",
     winStreak: "Racha de victorias",
+    help: "Cómo jugar",
     dailyIncomeTooltip: (income: string) =>
       `Ingreso diario: +${income} cada día entre las 00:00 UTC y la 01:00 UTC`,
   },
@@ -50,7 +51,18 @@ const es: Dictionary = {
     signedInAs: "Sesión iniciada como",
     howToPlay: "Cómo jugar",
     gameGuide: "Guía del juego",
+    settings: "Ajustes",
     logout: "Cerrar sesión",
+  },
+
+  settings: {
+    title: "Ajustes",
+    description: "Elige tu idioma y apariencia.",
+    language: "Idioma",
+    appearance: "Apariencia",
+    themeSystem: "Sistema",
+    themeLight: "Claro",
+    themeDark: "Oscuro",
   },
 
   selection: {

@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Coins, Flame, Trophy } from "lucide-react";
+import { CircleHelp, Coins, Flame, Trophy } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
-import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { useDictionary } from "@/components/i18n/locale-provider";
 import {
   Tooltip,
@@ -16,9 +15,11 @@ import { DAILY_INCOME, formatFootballMoney } from "@/lib/game/constants";
 import { useGame } from "./game-provider";
 import { StatPill } from "./stat-pill";
 import { UserMenu } from "./user-menu";
+import { useWelcomeDialog } from "./welcome-dialog";
 
 export function DashboardHeader() {
   const { player } = useGame();
+  const { openWelcome } = useWelcomeDialog();
   const t = useDictionary().header;
 
   return (
@@ -59,7 +60,14 @@ export function DashboardHeader() {
             iconClassName="text-orange-500"
             className="hidden sm:flex"
           />
-          <LanguageSwitcher />
+          <button
+            type="button"
+            onClick={openWelcome}
+            aria-label={t.help}
+            className="text-muted-foreground hover:text-foreground hover:bg-muted focus-visible:ring-ring flex size-9 cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:ring-2 focus-visible:outline-none"
+          >
+            <CircleHelp className="size-5" aria-hidden />
+          </button>
           <UserMenu />
         </div>
       </div>

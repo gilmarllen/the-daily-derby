@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, ChevronDown, HelpCircle, LogOut } from "lucide-react";
+import {
+  BookOpen,
+  ChevronDown,
+  HelpCircle,
+  LogOut,
+  Settings,
+} from "lucide-react";
 
 import { signOut } from "@/app/auth/actions";
 import { useDictionary } from "@/components/i18n/locale-provider";
@@ -16,11 +22,13 @@ import {
 } from "@/components/ui/menu";
 
 import { useGame } from "./game-provider";
+import { useSettingsDialog } from "./settings-dialog";
 import { useWelcomeDialog } from "./welcome-dialog";
 
 export function UserMenu() {
   const { player } = useGame();
   const { openWelcome } = useWelcomeDialog();
+  const { openSettings } = useSettingsDialog();
   const t = useDictionary().userMenu;
   const initial = (player.name.trim()[0] ?? "?").toUpperCase();
 
@@ -55,6 +63,10 @@ export function UserMenu() {
           <BookOpen />
           {t.gameGuide}
         </MenuLinkItem>
+        <MenuItem onClick={openSettings}>
+          <Settings />
+          {t.settings}
+        </MenuItem>
         <MenuSeparator />
         <MenuItem
           onClick={() => {

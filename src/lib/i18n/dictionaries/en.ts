@@ -42,6 +42,7 @@ const en = {
     trophies: "Trophies",
     footballMoney: "Football Money",
     winStreak: "Win streak",
+    help: "How to play",
     dailyIncomeTooltip: (income: string) =>
       `Daily income: +${income} added every day between 00:00 UTC - 01:00 UTC`,
   },
@@ -51,7 +52,18 @@ const en = {
     signedInAs: "Signed in as",
     howToPlay: "How to play",
     gameGuide: "Game guide",
+    settings: "Settings",
     logout: "Log out",
+  },
+
+  settings: {
+    title: "Settings",
+    description: "Choose your language and appearance.",
+    language: "Language",
+    appearance: "Appearance",
+    themeSystem: "System",
+    themeLight: "Light",
+    themeDark: "Dark",
   },
 
   selection: {
