@@ -24,7 +24,7 @@ const es: Dictionary = {
       pickTitle: "Elige un ganador",
       pickText: "Una elección al día entre cinco partidos reales.",
       moneyTitle: "Gestiona tus F$",
-      moneyText: "Gasta con cabeza — cuotas más bajas, más riesgo.",
+      moneyText: "Gasta con cabeza — opciones más baratas, más riesgo.",
       climbTitle: "Escala en la tabla",
       climbText: "Gana trofeos y lidera la clasificación global.",
     },
@@ -209,7 +209,7 @@ const es: Dictionary = {
     fact2Title: "Gestiona tus F$",
     fact2Pre: "Empieza con ",
     fact2Mid: " y gana ",
-    fact2Post: " al día. Los favoritos más fuertes cuestan menos.",
+    fact2Post: " al día. Los favoritos más fuertes cuestan más.",
     fact3Title: "Gana trofeos",
     readGuide: "Leer la guía completa",
     gotIt: "Entendido",
@@ -235,7 +235,7 @@ const es: Dictionary = {
     loopTitle: "El ciclo diario",
     moneyTitle: "Football Money (F$)",
     moneyP1a:
-      "Cada equipo tiene un precio en F$ según sus cuotas — un gran favorito es más barato, un tapado cuesta más (la fórmula es ",
+      "Cada equipo tiene un precio en F$ según sus cuotas — un gran favorito cuesta más, un tapado es más barato (la fórmula es ",
     moneyP1b:
       "). Elegir un equipo descuenta esa cantidad de tu saldo; cambiar de elección reembolsa la anterior y cobra la nueva. Las opciones que no puedes pagar quedan deshabilitadas.",
     moneyNoSel: "Sin elección",
@@ -294,7 +294,7 @@ const es: Dictionary = {
     payPrice: {
       title: "Paga el precio",
       detail:
-        "Cada equipo cuesta F$ según sus cuotas (los equipos más baratos son mayores favoritos). El coste sale de tu saldo al elegir.",
+        "Cada equipo cuesta F$ según sus cuotas (los equipos más caros son mayores favoritos). El coste sale de tu saldo al elegir.",
     },
     matchesPlay: {
       title: "Los partidos se juegan",

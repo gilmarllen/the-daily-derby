@@ -25,7 +25,7 @@ const en = {
       pickTitle: "Pick a winner",
       pickText: "One pick a day from five real matches.",
       moneyTitle: "Manage your F$",
-      moneyText: "Spend smart — cheaper odds, bigger risk.",
+      moneyText: "Spend smart — cheaper picks, bigger risk.",
       climbTitle: "Climb the table",
       climbText: "Earn trophies and top the global board.",
     },
@@ -206,7 +206,7 @@ const en = {
     fact2Title: "Manage your F$",
     fact2Pre: "Start with ",
     fact2Mid: " and earn ",
-    fact2Post: " daily. Stronger favourites cost less to back.",
+    fact2Post: " daily. Stronger favourites cost more to back.",
     fact3Title: "Earn trophies",
     readGuide: "Read the full guide",
     gotIt: "Got it",
@@ -231,7 +231,7 @@ const en = {
     loopTitle: "The daily loop",
     moneyTitle: "Football Money (F$)",
     moneyP1a:
-      "Every team option has an F$ price set by its odds — a strong favourite is cheaper, a long shot costs more (the formula is ",
+      "Every team option has an F$ price set by its odds — a strong favourite costs more, a long shot is cheaper (the formula is ",
     moneyP1b:
       "). Picking a team spends that amount from your balance; switching picks refunds the old one and charges the new. Options you can't afford are disabled.",
     moneyNoSel: "No selection",
@@ -287,7 +287,7 @@ const en = {
     payPrice: {
       title: "Pay the price",
       detail:
-        "Each team costs F$ based on its odds (cheaper teams are bigger favourites). The cost leaves your balance when you pick.",
+        "Each team costs F$ based on its odds (pricier teams are bigger favourites). The cost leaves your balance when you pick.",
     },
     matchesPlay: {
       title: "Matches play out",

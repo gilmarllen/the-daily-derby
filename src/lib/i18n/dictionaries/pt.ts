@@ -24,7 +24,7 @@ const pt: Dictionary = {
       pickTitle: "Escolha um vencedor",
       pickText: "Um palpite por dia entre cinco partidas reais.",
       moneyTitle: "Gerencie seus F$",
-      moneyText: "Gaste com cabeça — odds menores, mais risco.",
+      moneyText: "Gaste com cabeça — opções mais baratas, mais risco.",
       climbTitle: "Suba na tabela",
       climbText: "Ganhe troféus e lidere o ranking global.",
     },
@@ -206,7 +206,7 @@ const pt: Dictionary = {
     fact2Title: "Gerencie seus F$",
     fact2Pre: "Comece com ",
     fact2Mid: " e ganhe ",
-    fact2Post: " por dia. Favoritos mais fortes custam menos para apostar.",
+    fact2Post: " por dia. Favoritos mais fortes custam mais para apostar.",
     fact3Title: "Ganhe troféus",
     readGuide: "Ler o guia completo",
     gotIt: "Entendi",
@@ -232,7 +232,7 @@ const pt: Dictionary = {
     loopTitle: "O ciclo diário",
     moneyTitle: "Football Money (F$)",
     moneyP1a:
-      "Cada time tem um preço em F$ definido por suas odds — um grande favorito é mais barato, um azarão custa mais (a fórmula é ",
+      "Cada time tem um preço em F$ definido por suas odds — um grande favorito custa mais, um azarão é mais barato (a fórmula é ",
     moneyP1b:
       "). Escolher um time gasta esse valor do seu saldo; trocar de palpite devolve o antigo e cobra o novo. As opções que você não pode pagar ficam desabilitadas.",
     moneyNoSel: "Sem palpite",
@@ -292,7 +292,7 @@ const pt: Dictionary = {
     payPrice: {
       title: "Pague o preço",
       detail:
-        "Cada time custa F$ conforme suas odds (times mais baratos são maiores favoritos). O custo sai do seu saldo ao palpitar.",
+        "Cada time custa F$ conforme suas odds (times mais caros são maiores favoritos). O custo sai do seu saldo ao palpitar.",
     },
     matchesPlay: {
       title: "As partidas acontecem",
