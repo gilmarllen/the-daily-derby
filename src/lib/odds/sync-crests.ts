@@ -43,11 +43,16 @@ export async function syncTeamCrests(
   const supabase = options.client ?? createAdminClient();
 
   // 1. Teams needing a crest that carry an odds-api id to fetch it with.
+  //    Only recently-added teams (created within the last 2 days); older teams
+  //    without a crest are stale (e.g. a dead external_id) and re-fetched each
+  //    run would waste the batch budget.
+  const cutoff = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString();
   const { data: teams, error } = await supabase
     .from("teams")
     .select("id, external_id")
     .is("crest_url", null)
     .not("external_id", "is", null)
+    .gte("created_at", cutoff)
     .limit(CREST_BATCH_LIMIT);
   if (error) throw new Error(`Failed to read teams: ${error.message}`);
 
