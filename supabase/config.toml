@@ -124,6 +124,14 @@ file_size_limit = "50MiB"
 # allowed_mime_types = ["image/png", "image/jpeg"]
 # objects_path = "./images"
 
+# Team crests downloaded from odds-api by the sync-team-crests cron. Public so
+# crest_url resolves to a directly-usable image URL. Mirrors the migration
+# 20260615150000_team_crests_bucket.sql for local `supabase start`.
+[storage.buckets.team-crests]
+public = true
+file_size_limit = "5MiB"
+allowed_mime_types = ["image/png", "image/jpeg", "image/svg+xml", "image/webp"]
+
 # Allow connections via S3 compatible clients
 [storage.s3_protocol]
 enabled = true

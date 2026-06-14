@@ -14,6 +14,24 @@ export const MATCH_POOL_TARGET = 25;
 /** The 1X2 / moneyline market name in odds-api responses. */
 export const MONEYLINE_MARKET = "ML";
 
+/** Map an image content type to a file extension for a stored crest object. */
+export function extensionForContentType(contentType: string): string {
+  const type = contentType.split(";")[0].trim().toLowerCase();
+  switch (type) {
+    case "image/png":
+      return "png";
+    case "image/jpeg":
+    case "image/jpg":
+      return "jpg";
+    case "image/svg+xml":
+      return "svg";
+    case "image/webp":
+      return "webp";
+    default:
+      return "png";
+  }
+}
+
 /**
  * The UTC date (YYYY-MM-DD) we should be syncing, given the current instant.
  * Days are delimited by UTC midnight, so `now` June 8 → "2026-06-10".

@@ -75,6 +75,32 @@ export async function fetchEvents(opts: {
   );
 }
 
+export type FetchedLogo = { bytes: ArrayBuffer; contentType: string };
+
+/**
+ * Fetch a participant's (team's) logo image. Unlike the JSON endpoints this
+ * returns raw image bytes, so it bypasses {@link getJson}. `externalId` is the
+ * odds-api participant id (stored as `teams.external_id`).
+ */
+export async function fetchParticipantLogo(
+  externalId: string
+): Promise<FetchedLogo> {
+  const url = new URL(`${BASE_URL}/participants/${externalId}/logo`);
+  url.searchParams.set("apiKey", apiKey());
+
+  const res = await fetch(url, { headers: { accept: "image/*" } });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(
+      `odds-api participant logo failed: ${res.status} ${res.statusText} ${body}`.trim()
+    );
+  }
+  return {
+    bytes: await res.arrayBuffer(),
+    contentType: res.headers.get("content-type") ?? "image/png",
+  };
+}
+
 /**
  * Fetch odds for up to {@link ODDS_MULTI_BATCH_SIZE} events in one call.
  * `bookmakers` is a comma-separated list of bookmaker names.
