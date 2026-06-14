@@ -1,7 +1,7 @@
 import "server-only";
 
 import { pickableDay } from "@/lib/game/day";
-import { toPastPick } from "@/lib/game/past-pick";
+import { pastPickDays, toPastPick } from "@/lib/game/past-pick";
 import type { PastPick, Selection, Side, TodayPick } from "@/lib/game/types";
 import { createClient } from "@/lib/supabase/server";
 import { utcDateString } from "@/lib/time";
@@ -101,9 +101,11 @@ export async function getTodayPick(
 }
 
 /**
- * Loads the player's picks for days that have fully passed (match_day < today
- * UTC), newest first, for the history page. A no-selection (no match) counts as
- * a skipped day (-2); a team pick still awaiting its result shows as "pending".
+ * Loads the player's history for days that have fully passed (match_day < today
+ * UTC), newest first. Every day from the player's first pick through yesterday
+ * is shown: a team pick keeps its result (or "pending" if unsettled), and a day
+ * with no pick row — an explicit sat-out or a day the daily-default job missed —
+ * renders as a skipped no-selection (-2), so the list matches the trophy total.
  */
 export async function getPastPicks(
   now: Date = new Date()
@@ -115,20 +117,56 @@ export async function getPastPicks(
   } = await supabase.auth.getUser();
   if (!user) return [];
 
+  const today = utcDateString(now, 0);
+
+  // Earliest fully-passed pick day bounds the history; none means no past yet.
+  const { data: firstRow, error: firstError } = await supabase
+    .from("picks")
+    .select("match_day")
+    .eq("user_id", user.id)
+    .lt("match_day", today)
+    .order("match_day", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  if (firstError) {
+    throw new Error(`Failed to load first pick: ${firstError.message}`);
+  }
+
+  const days = pastPickDays(now, firstRow?.match_day ?? null, PAST_PICKS_LIMIT);
+  if (days.length === 0) return [];
+
+  // Fetch the real picks across the window; missing days are filled below.
   const { data, error } = await supabase
     .from("picks")
     .select(
       "id, match_day, picked_side, cost, result, matches(home_ref:teams!matches_home_team_id_fkey(name, crest_url), away_ref:teams!matches_away_team_id_fkey(name, crest_url), league_ref:leagues!matches_league_id_fkey(name, crest_url))"
     )
     .eq("user_id", user.id)
-    .lt("match_day", utcDateString(now, 0))
-    .order("match_day", { ascending: false })
-    .limit(PAST_PICKS_LIMIT);
+    .gte("match_day", days[days.length - 1])
+    .lt("match_day", today)
+    .order("match_day", { ascending: false });
   if (error) {
     throw new Error(`Failed to load past picks: ${error.message}`);
   }
 
-  return (data ?? []).map((row): PastPick => {
+  const byDay = new Map((data ?? []).map((row) => [row.match_day, row]));
+
+  // Walk the day series (newest first), mapping each day to its pick or, when
+  // absent, a synthetic sat-out (null team → toPastPick yields a skipped day).
+  return days.map((day): PastPick => {
+    const row = byDay.get(day);
+    if (!row) {
+      return toPastPick({
+        id: `satout-${day}`,
+        match_day: day,
+        picked_side: null,
+        cost: 0,
+        result: null,
+        home_team: null,
+        away_team: null,
+        league: null,
+      });
+    }
     const match = embedOne(row.matches);
     const home = embedOne(match?.home_ref);
     const away = embedOne(match?.away_ref);

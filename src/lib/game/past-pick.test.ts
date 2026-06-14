@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { TROPHY_DELTAS } from "@/lib/game/constants";
 
-import { toPastPick, type PickRow } from "./past-pick";
+import { pastPickDays, toPastPick, type PickRow } from "./past-pick";
 
 const base: PickRow = {
   id: "p1",
@@ -62,5 +62,37 @@ describe("toPastPick", () => {
 
   it("coerces a string cost to a number", () => {
     expect(toPastPick({ ...base, cost: "6.66" }).cost).toBe(6.66);
+  });
+});
+
+describe("pastPickDays", () => {
+  const now = new Date("2026-06-14T10:00:00Z"); // today = 2026-06-14
+
+  it("returns [] when the player has no history", () => {
+    expect(pastPickDays(now, null, 30)).toEqual([]);
+  });
+
+  it("covers first day through yesterday, newest first", () => {
+    expect(pastPickDays(now, "2026-06-12", 30)).toEqual([
+      "2026-06-13",
+      "2026-06-12",
+    ]);
+  });
+
+  it("caps at the limit of most-recent days", () => {
+    expect(pastPickDays(now, "2026-01-01", 3)).toEqual([
+      "2026-06-13",
+      "2026-06-12",
+      "2026-06-11",
+    ]);
+  });
+
+  it("returns [] when the first day is today or later (no passed days)", () => {
+    expect(pastPickDays(now, "2026-06-14", 30)).toEqual([]);
+    expect(pastPickDays(now, "2026-06-20", 30)).toEqual([]);
+  });
+
+  it("yields a single day when the first pick was yesterday", () => {
+    expect(pastPickDays(now, "2026-06-13", 30)).toEqual(["2026-06-13"]);
   });
 });
