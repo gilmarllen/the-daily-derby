@@ -193,7 +193,7 @@ const pt: Dictionary = {
     bestLeagueSub: (wins: number) =>
       `${wins} ${wins === 1 ? "vitória" : "vitórias"}`,
     noSettledPicksSub: "sem palpites resolvidos",
-    pastPicksTitle: "Palpites anteriores",
+    pastPicksTitle: "Palpites",
     emptyPicks: "Ainda não há palpites resolvidos.",
   },
 

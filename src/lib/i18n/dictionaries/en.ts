@@ -193,7 +193,7 @@ const en = {
     bestLeague: "Best league",
     bestLeagueSub: (wins: number) => `${wins} ${wins === 1 ? "win" : "wins"}`,
     noSettledPicksSub: "no settled picks",
-    pastPicksTitle: "Past picks",
+    pastPicksTitle: "Picks",
     emptyPicks: "No settled picks yet.",
   },
 

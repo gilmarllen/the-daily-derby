@@ -395,6 +395,9 @@ export type Database = {
           home_team: string | null;
           away_team: string | null;
           league: string | null;
+          home_crest: string | null;
+          away_crest: string | null;
+          league_crest: string | null;
         }[];
       };
       settle_match: {

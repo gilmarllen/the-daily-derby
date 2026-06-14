@@ -195,7 +195,7 @@ const es: Dictionary = {
     bestLeagueSub: (wins: number) =>
       `${wins} ${wins === 1 ? "victoria" : "victorias"}`,
     noSettledPicksSub: "sin elecciones resueltas",
-    pastPicksTitle: "Elecciones anteriores",
+    pastPicksTitle: "Elecciones",
     emptyPicks: "Aún no hay elecciones resueltas.",
   },
 
