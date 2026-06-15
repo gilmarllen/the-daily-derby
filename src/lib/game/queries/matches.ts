@@ -3,7 +3,7 @@ import "server-only";
 import { pickDaily } from "@/lib/game/daily-pool";
 import { pickableDay } from "@/lib/game/day";
 import type { Match } from "@/lib/game/types";
-import { weightForLeague } from "@/lib/odds/league-weights";
+import { DEFAULT_LEAGUE_WEIGHT } from "@/lib/odds/league-weights";
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/supabase/types";
 import { utcDayStart } from "@/lib/time";
@@ -18,7 +18,7 @@ const DAILY_POOL_SIZE = 5;
  * catalog row exists / is filled.
  */
 const MATCH_COLUMNS =
-  "id, league_slug, kickoff, home_odds, away_odds, home_ref:teams!matches_home_team_id_fkey(name, crest_url, primary_color, secondary_color), away_ref:teams!matches_away_team_id_fkey(name, crest_url, primary_color, secondary_color), league_ref:leagues!matches_league_id_fkey(name, crest_url, primary_color)";
+  "id, kickoff, home_odds, away_odds, home_ref:teams!matches_home_team_id_fkey(name, crest_url, primary_color, secondary_color), away_ref:teams!matches_away_team_id_fkey(name, crest_url, primary_color, secondary_color), league_ref:leagues!matches_league_id_fkey(name, crest_url, primary_color, weight)";
 
 type TeamRef = Pick<
   Tables<"teams">,
@@ -26,12 +26,12 @@ type TeamRef = Pick<
 > | null;
 type LeagueRef = Pick<
   Tables<"leagues">,
-  "name" | "crest_url" | "primary_color"
+  "name" | "crest_url" | "primary_color" | "weight"
 > | null;
 
 type MatchRow = Pick<
   Tables<"matches">,
-  "id" | "league_slug" | "kickoff" | "home_odds" | "away_odds"
+  "id" | "kickoff" | "home_odds" | "away_odds"
 > & {
   home_ref: TeamRef;
   away_ref: TeamRef;
@@ -152,8 +152,8 @@ async function loadFrozenPool(
   // 2. Not frozen yet: draw deterministically from the whole day's pool, in a
   // stable order so the seeded draw is reproducible (kickoff, then id). The draw
   // is league-weighted, so marquee leagues are likelier to land in a player's
-  // five — keyed on the slug stored at sync time (legacy/unmapped rows fall back
-  // to the default weight).
+  // five — weight comes from the embedded league row (unmapped rows fall back to
+  // the default weight).
   const { data, error } = await supabase
     .from("matches")
     .select(MATCH_COLUMNS)
@@ -169,8 +169,8 @@ async function loadFrozenPool(
     (data ?? []) as unknown as MatchRow[],
     `${userId}:${dayKey}`,
     DAILY_POOL_SIZE,
-    // weightForLeague defaults when the slug is null (legacy/unmapped rows).
-    (row) => weightForLeague(row.league_slug)
+    // Default weight when the league ref is null (legacy/unmapped rows).
+    (row) => one(row.league_ref)?.weight ?? DEFAULT_LEAGUE_WEIGHT
   );
   if (picked.length === 0) return [];
 

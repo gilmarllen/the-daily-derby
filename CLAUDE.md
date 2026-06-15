@@ -82,15 +82,16 @@ while spending `< F$ 5.00`).
   `/events?status=settled` — **not** `/odds/multi`, which only returns
   pending/live matches and silently omits finished ones.
   `ODDS_API_BOOKMAKER` is a **singular** param (the API rejects CSV).
-  The pool pick is **league-weighted** at two stages, both using
-  `src/lib/odds/league-weights.json` (slug → relevancy weight) so marquee
-  leagues are likelier and obscure ones (women/youth/reserves/amateur/regional/
-  simulated) are down-weighted: the nightly sync (keyed on the API slug) and the
-  per-player draw of 5. Sync stores both the display name (`matches.league`) and
-  the API slug (`matches.league_slug`); the per-player draw weights on the stored
-  slug, falling back to name-derived slugging (`leagueNameToSlug`) only for
-  legacy rows synced before the column existed. Weights are static JSON for
-  zero-latency lookups; tune a league's priority by editing its number there.
+  The pool pick is **league-weighted** at two stages so marquee leagues are
+  likelier and obscure ones (women/youth/reserves/amateur/regional/simulated)
+  are down-weighted: the nightly sync (loads weights into a slug→weight map and
+  ranks the day's fixtures) and the per-player draw of 5 (weights off each
+  match's embedded league row). Weights live in **`leagues.weight`** (seeded for
+  every curated slug by `20260616120000_add_leagues_weight.sql`, default `3` for
+  anything unlisted = `DEFAULT_LEAGUE_WEIGHT`); tune a league's priority by
+  editing its row in the DB — no redeploy. The seed names rows with the slug as a
+  placeholder; `syncLeagues` (a nightly cron hitting `GET /leagues`) overwrites
+  them with the real display name while leaving `weight` untouched.
 - **Vercel** — hosting + cron jobs. The Hobby plan caps each cron at once per
   day; the hourly settle-matches job is replicated 24 times in `vercel.json`.
 

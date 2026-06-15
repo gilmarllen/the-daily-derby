@@ -2,7 +2,7 @@
 // and must never reach the browser. Docs: https://docs.odds-api.io/llms-full.txt
 import "server-only";
 
-import type { OddsApiEvent, OddsApiEventOdds } from "./types";
+import type { OddsApiEvent, OddsApiEventOdds, OddsApiLeague } from "./types";
 
 const BASE_URL = "https://api.odds-api.io/v3";
 
@@ -72,6 +72,22 @@ export async function fetchEvents(opts: {
   if (opts.skip != null) params.skip = String(opts.skip);
   return unwrap(
     await getJson<OddsApiEvent[] | { data: OddsApiEvent[] }>("/events", params)
+  );
+}
+
+/**
+ * Fetch every league for a sport (`all: true` includes inactive ones), so the
+ * leagues catalog can be populated with real display names. The odds-api keys
+ * leagues by slug; the row shape is `{ name, slug, eventsCount }`.
+ */
+export async function fetchLeagues(
+  sport = "football"
+): Promise<OddsApiLeague[]> {
+  return unwrap(
+    await getJson<OddsApiLeague[] | { data: OddsApiLeague[] }>("/leagues", {
+      sport,
+      all: "true",
+    })
   );
 }
 

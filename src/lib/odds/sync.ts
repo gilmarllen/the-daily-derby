@@ -6,8 +6,8 @@
 //   1. Count how many matches that day already has in `matches`.
 //   2. Work out how many more are needed to reach MATCH_POOL_TARGET (<= 25).
 //   3. Fetch that day's fixtures from odds-api, drop any already stored, pick a
-//      league-weighted random subset (marquee leagues are likelier — see
-//      league-weights.json), attach 1X2 odds, and insert them.
+//      league-weighted random subset (marquee leagues are likelier — weights
+//      from `leagues.weight`), attach 1X2 odds, and insert them.
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -15,8 +15,13 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Database, TablesInsert } from "@/lib/supabase/types";
 
-import { fetchEvents, fetchOddsMulti, ODDS_MULTI_BATCH_SIZE } from "./client";
-import { weightForLeague } from "./league-weights";
+import {
+  fetchEvents,
+  fetchLeagues,
+  fetchOddsMulti,
+  ODDS_MULTI_BATCH_SIZE,
+} from "./client";
+import { DEFAULT_LEAGUE_WEIGHT } from "./league-weights";
 import {
   MATCH_POOL_TARGET,
   dayWindow,
@@ -112,12 +117,16 @@ async function attachCatalogIds(
   }
   const leagueIdBySlug = new Map<string, string>();
   if (leagueBySlug.size > 0) {
+    // Upsert names (no ignoreDuplicates) so a fixture's real league name
+    // overwrites the slug placeholder seeded by the weights migration. `weight`
+    // is absent from the payload, so it is preserved on update.
     const { error } = await supabase.from("leagues").upsert(
       [...leagueBySlug].map(([slug, name]) => ({ slug, name })),
-      { onConflict: "slug", ignoreDuplicates: true }
+      {
+        onConflict: "slug",
+      }
     );
     if (error) throw new Error(`Failed to upsert leagues: ${error.message}`);
-    // ignoreDuplicates omits pre-existing rows, so read back the full set.
     const { data, error: readError } = await supabase
       .from("leagues")
       .select("id, slug")
@@ -196,6 +205,53 @@ async function attachCatalogIds(
   }
 }
 
+/** Load the league relevancy weights keyed by slug from the catalog. */
+async function loadLeagueWeights(
+  supabase: SupabaseClient<Database>
+): Promise<Map<string, number>> {
+  const { data, error } = await supabase.from("leagues").select("slug, weight");
+  if (error) throw new Error(`Failed to read league weights: ${error.message}`);
+  return new Map((data ?? []).map((l) => [l.slug, l.weight]));
+}
+
+export type SyncLeaguesResult = {
+  /** Leagues returned by odds-api. */
+  fetched: number;
+  /** Rows upserted into the catalog (names refreshed; weights preserved). */
+  upserted: number;
+};
+
+export type SyncLeaguesOptions = {
+  /** Defaults to the admin (service-role) client. */
+  client?: SupabaseClient<Database>;
+};
+
+/**
+ * Refresh league display names from odds-api `GET /leagues`. Upserts on slug so
+ * the real names overwrite the slug placeholders seeded by the weights
+ * migration; `weight` is left out of the payload, so it is preserved on update
+ * (and brand-new leagues insert with the column default).
+ */
+export async function syncLeagues(
+  options: SyncLeaguesOptions = {}
+): Promise<SyncLeaguesResult> {
+  const supabase = options.client ?? createAdminClient();
+
+  const leagues = await fetchLeagues(SPORT);
+  const rows = leagues
+    .filter((l) => l.slug)
+    .map((l) => ({ slug: l.slug, name: l.name }));
+  if (rows.length === 0) return { fetched: leagues.length, upserted: 0 };
+
+  const { data, error } = await supabase
+    .from("leagues")
+    .upsert(rows, { onConflict: "slug" })
+    .select("id");
+  if (error) throw new Error(`Failed to upsert leagues: ${error.message}`);
+
+  return { fetched: leagues.length, upserted: data?.length ?? 0 };
+}
+
 export async function syncMatches(
   options: SyncMatchesOptions = {}
 ): Promise<SyncMatchesResult> {
@@ -245,12 +301,13 @@ export async function syncMatches(
   );
 
   // 3b. Order candidates by a league-weighted random shuffle so marquee leagues
-  // are likelier to be picked (weights in league-weights.json). We walk the full
+  // are likelier to be picked (weights from `leagues.weight`). We walk the full
   // list (not just `requested`) because a fixture can still lack a clean 1X2
   // line; the odds loop early-stops once enough rows are built.
+  const weightBySlug = await loadLeagueWeights(supabase);
   const shortlist = weightedShuffle(
     candidates,
-    (e) => weightForLeague(e.league.slug),
+    (e) => weightBySlug.get(e.league.slug) ?? DEFAULT_LEAGUE_WEIGHT,
     rng
   );
 

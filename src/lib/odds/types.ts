@@ -21,6 +21,13 @@ export type OddsApiEvent = {
   };
 };
 
+/** A league as returned by `GET /leagues`. */
+export type OddsApiLeague = {
+  name: string;
+  slug: string;
+  eventsCount: number;
+};
+
 /** A single market line, e.g. the moneyline ("ML") 1X2 market. */
 export type OddsApiMarket = {
   name: string;

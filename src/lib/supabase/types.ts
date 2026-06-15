@@ -173,6 +173,7 @@ export type Database = {
           name: string;
           primary_color: string | null;
           slug: string;
+          weight: number;
         };
         Insert: {
           created_at?: string;
@@ -181,6 +182,7 @@ export type Database = {
           name: string;
           primary_color?: string | null;
           slug: string;
+          weight?: number;
         };
         Update: {
           created_at?: string;
@@ -189,6 +191,7 @@ export type Database = {
           name?: string;
           primary_color?: string | null;
           slug?: string;
+          weight?: number;
         };
         Relationships: [];
       };
