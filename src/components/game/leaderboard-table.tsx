@@ -161,7 +161,7 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
                             "flex min-w-0 items-center gap-1.5 font-medium",
                             entry.todayResult
                               ? TODAY_RESULT_STYLE[entry.todayResult]
-                              : "text-foreground"
+                              : "text-muted-foreground"
                           )}
                         >
                           <Crest
