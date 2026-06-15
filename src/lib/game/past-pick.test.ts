@@ -72,8 +72,9 @@ describe("pastPickDays", () => {
     expect(pastPickDays(now, null, 30)).toEqual([]);
   });
 
-  it("covers first day through yesterday, newest first", () => {
+  it("covers first day through today, newest first", () => {
     expect(pastPickDays(now, "2026-06-12", 30)).toEqual([
+      "2026-06-14",
       "2026-06-13",
       "2026-06-12",
     ]);
@@ -81,18 +82,24 @@ describe("pastPickDays", () => {
 
   it("caps at the limit of most-recent days", () => {
     expect(pastPickDays(now, "2026-01-01", 3)).toEqual([
+      "2026-06-14",
       "2026-06-13",
       "2026-06-12",
-      "2026-06-11",
     ]);
   });
 
-  it("returns [] when the first day is today or later (no passed days)", () => {
-    expect(pastPickDays(now, "2026-06-14", 30)).toEqual([]);
+  it("yields just today when the first pick was today", () => {
+    expect(pastPickDays(now, "2026-06-14", 30)).toEqual(["2026-06-14"]);
+  });
+
+  it("returns [] when the first day is in the future (no locked days)", () => {
     expect(pastPickDays(now, "2026-06-20", 30)).toEqual([]);
   });
 
-  it("yields a single day when the first pick was yesterday", () => {
-    expect(pastPickDays(now, "2026-06-13", 30)).toEqual(["2026-06-13"]);
+  it("yields two days when the first pick was yesterday", () => {
+    expect(pastPickDays(now, "2026-06-13", 30)).toEqual([
+      "2026-06-14",
+      "2026-06-13",
+    ]);
   });
 });

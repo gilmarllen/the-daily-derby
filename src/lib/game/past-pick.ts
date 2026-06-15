@@ -4,10 +4,11 @@ import { utcDateString } from "@/lib/time";
 
 /**
  * The UTC day strings (newest first) a past-picks history should cover: every
- * fully-passed day from `firstDay` through yesterday, capped at the `limit` most
- * recent. Days without a pick row are filled in by the caller as sat-outs, so a
- * missed day shows up like a real no-selection. Returns `[]` when there's no
- * history (`firstDay` null, or only today/future), so a new player sees nothing.
+ * locked day from `firstDay` through today (today's pick was locked yesterday),
+ * capped at the `limit` most recent. Days without a pick row are filled in by
+ * the caller as sat-outs, so a missed day shows up like a real no-selection.
+ * Returns `[]` when there's no history (`firstDay` null, or only the in-progress
+ * day/future), so a new player sees nothing.
  */
 export function pastPickDays(
   now: Date,
@@ -16,8 +17,8 @@ export function pastPickDays(
 ): string[] {
   if (!firstDay) return [];
   const days: string[] = [];
-  // Walk back from yesterday (-1); stop at the limit or the player's first day.
-  for (let i = 1; i <= limit; i++) {
+  // Walk back from today (0); stop at the limit or the player's first day.
+  for (let i = 0; i < limit; i++) {
     const day = utcDateString(now, -i);
     if (day < firstDay) break;
     days.push(day);

@@ -101,8 +101,9 @@ export async function getTodayPick(
 }
 
 /**
- * Loads the player's history for days that have fully passed (match_day < today
- * UTC), newest first. Every day from the player's first pick through yesterday
+ * Loads the player's history for locked days (match_day <= today UTC; today's
+ * pick was locked yesterday), newest first — mirroring the public profile, which
+ * also shows today's pick. Every day from the player's first pick through today
  * is shown: a team pick keeps its result (or "pending" if unsettled), and a day
  * with no pick row — an explicit sat-out or a day the daily-default job missed —
  * renders as a skipped no-selection (-2), so the list matches the trophy total.
@@ -119,12 +120,12 @@ export async function getPastPicks(
 
   const today = utcDateString(now, 0);
 
-  // Earliest fully-passed pick day bounds the history; none means no past yet.
+  // Earliest locked pick day bounds the history; none means no past yet.
   const { data: firstRow, error: firstError } = await supabase
     .from("picks")
     .select("match_day")
     .eq("user_id", user.id)
-    .lt("match_day", today)
+    .lte("match_day", today)
     .order("match_day", { ascending: true })
     .limit(1)
     .maybeSingle();
@@ -143,7 +144,7 @@ export async function getPastPicks(
     )
     .eq("user_id", user.id)
     .gte("match_day", days[days.length - 1])
-    .lt("match_day", today)
+    .lte("match_day", today)
     .order("match_day", { ascending: false });
   if (error) {
     throw new Error(`Failed to load past picks: ${error.message}`);
