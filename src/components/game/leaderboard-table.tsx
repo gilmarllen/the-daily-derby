@@ -27,7 +27,7 @@ const PAGE_SIZE = 10;
 // Colour the today pick by its settled result; pending (null) stays muted.
 const TODAY_RESULT_STYLE: Record<PickResult, string> = {
   win: "text-emerald-600 dark:text-emerald-400",
-  draw: "text-black",
+  draw: "text-black dark:text-white",
   loss: "text-destructive",
   none: "text-muted-foreground",
 };
@@ -99,6 +99,8 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
                   aria-label={t.ariaWinStreak}
                 />
               </th>
+              {/* Open-profile affordance. */}
+              <th className="w-9 px-2 py-2" aria-hidden />
             </tr>
           </thead>
           <tbody>
@@ -117,7 +119,7 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
                     : "hover:bg-muted/40"
                 )}
               >
-                <td className="px-3 py-3">
+                <td className="px-3 py-3 align-top sm:align-middle">
                   <span
                     className={cn(
                       "font-bold tabular-nums",
@@ -127,9 +129,10 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
                     {entry.rank}
                   </span>
                 </td>
-                <td className="px-3 py-3">
+                <td className="px-3 py-3 align-top sm:align-middle">
                   <Link
                     href={`/dashboard/players/${encodeURIComponent(entry.name)}`}
+                    onClick={(e) => e.stopPropagation()}
                     className="group flex items-center gap-2"
                   >
                     <Avatar className="size-7">
@@ -144,6 +147,51 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
                       </span>
                     )}
                   </Link>
+
+                  {/* Mobile: today pick on its own line, then streak + money. */}
+                  <div className="mt-1.5 flex flex-col gap-1 text-xs sm:hidden">
+                    <span className="flex min-w-0 items-center gap-1.5">
+                      <Goal
+                        className="text-muted-foreground size-3.5 shrink-0"
+                        aria-label={t.ariaTodayPick}
+                      />
+                      {entry.todayPick ? (
+                        <span
+                          className={cn(
+                            "flex min-w-0 items-center gap-1.5 font-medium",
+                            entry.todayResult
+                              ? TODAY_RESULT_STYLE[entry.todayResult]
+                              : "text-foreground"
+                          )}
+                        >
+                          <Crest
+                            url={entry.todayPickCrestUrl}
+                            alt={entry.todayPick}
+                            className="size-4"
+                          />
+                          <span className="truncate">{entry.todayPick}</span>
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </span>
+                    <span className="text-muted-foreground flex items-center gap-3">
+                      <span className="flex items-center gap-1.5 tabular-nums">
+                        <Flame
+                          className="size-3.5 shrink-0"
+                          aria-label={t.ariaWinStreak}
+                        />
+                        {entry.winStreak}
+                      </span>
+                      <span className="flex items-center gap-1.5 tabular-nums">
+                        <Coins
+                          className="size-3.5 shrink-0"
+                          aria-label={t.ariaMoneySpent}
+                        />
+                        {formatFootballMoney(entry.moneySpent)}
+                      </span>
+                    </span>
+                  </div>
                 </td>
                 <td
                   className={cn(
@@ -166,7 +214,7 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
                     "—"
                   )}
                 </td>
-                <td className="px-3 py-3 text-right font-semibold tabular-nums">
+                <td className="px-3 py-3 text-right align-top font-semibold tabular-nums sm:align-middle">
                   {entry.trophies}
                 </td>
                 <td className="text-muted-foreground hidden px-3 py-3 text-right tabular-nums sm:table-cell">
@@ -174,6 +222,13 @@ export function LeaderboardTable({ entries }: { entries: LeaderboardEntry[] }) {
                 </td>
                 <td className="hidden px-3 py-3 text-right tabular-nums sm:table-cell">
                   {entry.winStreak}
+                </td>
+                {/* Hints the row opens the player's profile. */}
+                <td className="px-2 py-3 text-right align-top sm:align-middle">
+                  <ChevronRight
+                    className="text-muted-foreground/50 inline size-4"
+                    aria-hidden
+                  />
                 </td>
               </tr>
             ))}
