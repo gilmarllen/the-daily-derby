@@ -117,7 +117,7 @@ function OptionButton({
         url={option.crestUrl}
         alt={option.team}
         color={option.primaryColor}
-        className="size-7"
+        className="size-8 sm:size-10"
       />
 
       <span className="flex min-w-0 flex-col">
@@ -268,19 +268,9 @@ export function MatchSelection() {
                 {/* Match meta header — league left, kickoff right on desktop;
                     stacked (kickoff under the league) on mobile. */}
                 <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-                  <Badge variant="outline" className="gap-1.5 pl-1">
-                    {m.leagueCrestUrl ? (
-                      <Crest
-                        url={m.leagueCrestUrl}
-                        alt={m.league}
-                        color={m.leagueColor}
-                        className="size-4"
-                      />
-                    ) : (
-                      <CircleStar className="size-3.5" aria-hidden />
-                    )}
+                  <span className="text-xs font-medium whitespace-nowrap">
                     {m.league}
-                  </Badge>
+                  </span>
                   <span className="text-muted-foreground flex items-center gap-1.5 text-xs font-medium">
                     <Clock className="size-3.5" aria-hidden />
                     <KickoffTime iso={m.kickoff} />
