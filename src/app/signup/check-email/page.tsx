@@ -26,7 +26,8 @@ export default async function CheckEmailPage() {
           <CardTitle className="text-xl">{t.title}</CardTitle>
           <CardDescription>{t.description}</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-col gap-4">
+          <p className="text-muted-foreground text-sm">{dict.auth.spamHint}</p>
           <Link
             href="/login"
             className={cn(buttonVariants({ variant: "outline" }), "w-full")}

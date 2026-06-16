@@ -351,6 +351,7 @@ const pt: Dictionary = {
       description:
         "Enviamos um link de confirmação. Clique nele para ativar sua conta e depois entre para fazer seu primeiro palpite.",
     },
+    spamHint: "Não encontrou? Verifique sua caixa de spam ou lixo eletrônico.",
     errors: {
       missingCredentials: "Informe seu e-mail e senha.",
       missingSignupCredentials:

@@ -354,6 +354,7 @@ const es: Dictionary = {
       description:
         "Te enviamos un enlace de confirmación. Haz clic para activar tu cuenta y luego inicia sesión para hacer tu primera elección.",
     },
+    spamHint: "¿No lo ves? Revisa tu carpeta de spam o correo no deseado.",
     errors: {
       missingCredentials: "Introduce tu correo y contraseña.",
       missingSignupCredentials:

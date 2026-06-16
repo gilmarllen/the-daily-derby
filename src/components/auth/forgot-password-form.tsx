@@ -47,6 +47,7 @@ export function ForgotPasswordForm() {
               </span>
               <CardTitle className="text-xl">{t.forgot.sentTitle}</CardTitle>
               <CardDescription>{t.forgot.sentDescription}</CardDescription>
+              <p className="text-muted-foreground text-sm">{t.spamHint}</p>
             </CardHeader>
           </>
         ) : (

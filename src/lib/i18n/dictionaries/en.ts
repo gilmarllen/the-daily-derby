@@ -345,6 +345,7 @@ const en = {
       description:
         "We sent you a confirmation link. Click it to activate your account, then log in to make your first pick.",
     },
+    spamHint: "Don't see it? Check your spam or junk folder.",
     errors: {
       missingCredentials: "Enter your email and password.",
       missingSignupCredentials:
