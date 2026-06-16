@@ -48,7 +48,6 @@ export type PickRow = {
   /** Crest urls; optional — only the history query embeds them. */
   home_crest?: string | null;
   away_crest?: string | null;
-  league_crest?: string | null;
 };
 
 /**
@@ -79,7 +78,6 @@ export function toPastPick(row: PickRow): PastPick {
     pick: row.picked_side === "home" ? row.home_team : row.away_team,
     crestUrl:
       (row.picked_side === "home" ? row.home_crest : row.away_crest) ?? null,
-    leagueCrestUrl: row.league_crest ?? null,
     cost: Number(row.cost),
     result,
     trophyDelta: result === "pending" ? 0 : TROPHY_DELTAS[result],

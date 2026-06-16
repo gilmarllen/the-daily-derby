@@ -62,7 +62,7 @@ export async function getTodayPick(
   const { data, error } = await supabase
     .from("picks")
     .select(
-      "picked_side, cost, result, matches(kickoff, status, home_score, away_score, home_ref:teams!matches_home_team_id_fkey(name, crest_url), away_ref:teams!matches_away_team_id_fkey(name, crest_url), league_ref:leagues!matches_league_id_fkey(name, crest_url))"
+      "picked_side, cost, result, matches(kickoff, status, home_score, away_score, home_ref:teams!matches_home_team_id_fkey(name, crest_url), away_ref:teams!matches_away_team_id_fkey(name, crest_url), league_ref:leagues!matches_league_id_fkey(name))"
     )
     .eq("user_id", user.id)
     .eq("match_day", utcDateString(now, 0))
@@ -91,7 +91,6 @@ export async function getTodayPick(
     pickedSide,
     crestUrl:
       (pickedSide === "home" ? home?.crest_url : away?.crest_url) ?? null,
-    leagueCrestUrl: league?.crest_url ?? null,
     cost: Number(data.cost),
     status: match.status,
     result: data.result,
@@ -140,7 +139,7 @@ export async function getPastPicks(
   const { data, error } = await supabase
     .from("picks")
     .select(
-      "id, match_day, picked_side, cost, result, matches(home_ref:teams!matches_home_team_id_fkey(name, crest_url), away_ref:teams!matches_away_team_id_fkey(name, crest_url), league_ref:leagues!matches_league_id_fkey(name, crest_url))"
+      "id, match_day, picked_side, cost, result, matches(home_ref:teams!matches_home_team_id_fkey(name, crest_url), away_ref:teams!matches_away_team_id_fkey(name, crest_url), league_ref:leagues!matches_league_id_fkey(name))"
     )
     .eq("user_id", user.id)
     .gte("match_day", days[days.length - 1])
@@ -183,7 +182,6 @@ export async function getPastPicks(
       league: league?.name ?? null,
       home_crest: home?.crest_url ?? null,
       away_crest: away?.crest_url ?? null,
-      league_crest: league?.crest_url ?? null,
     });
   });
 }

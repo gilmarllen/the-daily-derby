@@ -168,28 +168,22 @@ export type Database = {
       leagues: {
         Row: {
           created_at: string;
-          crest_url: string | null;
           id: string;
           name: string;
-          primary_color: string | null;
           slug: string;
           weight: number;
         };
         Insert: {
           created_at?: string;
-          crest_url?: string | null;
           id?: string;
           name: string;
-          primary_color?: string | null;
           slug: string;
           weight?: number;
         };
         Update: {
           created_at?: string;
-          crest_url?: string | null;
           id?: string;
           name?: string;
-          primary_color?: string | null;
           slug?: string;
           weight?: number;
         };
@@ -400,7 +394,6 @@ export type Database = {
           league: string | null;
           home_crest: string | null;
           away_crest: string | null;
-          league_crest: string | null;
         }[];
       };
       settle_match: {

@@ -27,10 +27,6 @@ export type Match = {
   kickoff: string;
   home: TeamOption;
   away: TeamOption;
-  /** League crest URL; null until filled in the `leagues` table. */
-  leagueCrestUrl?: string | null;
-  /** League primary colour (hex); null until filled. */
-  leagueColor?: string | null;
 };
 
 /** A player picks at most one team per day; "none" is the default skip. */
@@ -96,8 +92,6 @@ export type PastPick = {
   pick: string | null;
   /** Picked team's crest URL; null until filled / for sat-out days. */
   crestUrl?: string | null;
-  /** League crest URL; null until filled. */
-  leagueCrestUrl?: string | null;
   /** "pending" when a team pick's match hasn't been settled yet. */
   result: PickResult | "pending";
   cost: number;
@@ -121,8 +115,6 @@ export type TodayPick =
       pickedSide: Side;
       /** Picked team's crest URL; null until filled. */
       crestUrl?: string | null;
-      /** League crest URL; null until filled. */
-      leagueCrestUrl?: string | null;
       cost: number;
       status: "scheduled" | "finished";
       /** Settlement result; null until the match is settled. */

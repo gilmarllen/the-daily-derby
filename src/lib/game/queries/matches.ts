@@ -18,16 +18,13 @@ const DAILY_POOL_SIZE = 5;
  * catalog row exists / is filled.
  */
 const MATCH_COLUMNS =
-  "id, kickoff, home_odds, away_odds, home_ref:teams!matches_home_team_id_fkey(name, crest_url, primary_color, secondary_color), away_ref:teams!matches_away_team_id_fkey(name, crest_url, primary_color, secondary_color), league_ref:leagues!matches_league_id_fkey(name, crest_url, primary_color, weight)";
+  "id, kickoff, home_odds, away_odds, home_ref:teams!matches_home_team_id_fkey(name, crest_url, primary_color, secondary_color), away_ref:teams!matches_away_team_id_fkey(name, crest_url, primary_color, secondary_color), league_ref:leagues!matches_league_id_fkey(name, weight)";
 
 type TeamRef = Pick<
   Tables<"teams">,
   "name" | "crest_url" | "primary_color" | "secondary_color"
 > | null;
-type LeagueRef = Pick<
-  Tables<"leagues">,
-  "name" | "crest_url" | "primary_color" | "weight"
-> | null;
+type LeagueRef = Pick<Tables<"leagues">, "name" | "weight"> | null;
 
 type MatchRow = Pick<
   Tables<"matches">,
@@ -53,8 +50,6 @@ function rowToMatch(m: MatchRow): Match {
   return {
     id: m.id,
     league: league?.name ?? "",
-    leagueCrestUrl: league?.crest_url ?? null,
-    leagueColor: league?.primary_color ?? null,
     // Raw ISO timestamp — formatted to the viewer's timezone on the client.
     kickoff: m.kickoff,
     home: {

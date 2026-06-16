@@ -66,7 +66,6 @@ export async function getPlayerPicks(username: string): Promise<PastPick[]> {
       league: row.league,
       home_crest: row.home_crest,
       away_crest: row.away_crest,
-      league_crest: row.league_crest,
     })
   );
 }
