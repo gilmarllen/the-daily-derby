@@ -1,9 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "crons": [
-    { "path": "/api/cron/sync-leagues", "schedule": "0 22 * * *" },
-    { "path": "/api/cron/sync-matches", "schedule": "30 22 * * *" },
-    { "path": "/api/cron/sync-team-crests", "schedule": "0 12 * * *" },
+    { "path": "/api/cron/sync-leagues", "schedule": "0 20 * * *" },
+    { "path": "/api/cron/sync-matches", "schedule": "00 22 * * *" },
+    { "path": "/api/cron/sync-team-crests", "schedule": "0 23 * * *" },
     { "path": "/api/cron/generate-default-picks", "schedule": "0 12 * * *" },
     { "path": "/api/cron/apply-daily-income", "schedule": "0 0 * * *" },
     { "path": "/api/cron/settle-matches", "schedule": "0 0 * * *" },
