@@ -21,10 +21,18 @@ export function OAuthButtons({ providers }: { providers: OAuthProvider[] }) {
   async function signIn(provider: OAuthProvider) {
     setPending(provider);
     const supabase = createClient();
+    // Force the account chooser instead of silently reusing the provider's
+    // existing session. `prompt=select_account` is the Google/Azure param;
+    // other providers use different ones, so only send it where supported.
+    const queryParams =
+      provider === "google" || provider === "azure"
+        ? { prompt: "select_account" }
+        : undefined;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: SUPABASE_PROVIDER_ID[provider] as Provider,
       options: {
         redirectTo: `${window.location.origin}/auth/confirm?next=/dashboard`,
+        queryParams,
       },
     });
     // On success the browser is already navigating to the provider; only reset
