@@ -47,21 +47,16 @@ export async function signup(
   formData: FormData
 ): Promise<AuthState> {
   const { email, password } = readCredentials(formData);
-  const username = String(formData.get("username") ?? "").trim();
 
-  if (!username || !email || !password) {
+  // Username is no longer collected here — every new player picks it on the
+  // /onboarding/username screen after their first login (see handle_new_user).
+  if (!email || !password) {
     const errors = (await getServerDictionary()).auth.errors;
-    return {
-      error: errors.missingSignupCredentials,
-      values: { username, email },
-    };
+    return { error: errors.missingCredentials, values: { email } };
   }
   if (password.length < 6) {
     const errors = (await getServerDictionary()).auth.errors;
-    return {
-      error: errors.passwordTooShort,
-      values: { username, email },
-    };
+    return { error: errors.passwordTooShort, values: { email } };
   }
 
   const origin = (await headers()).get("origin") ?? "";
@@ -70,13 +65,12 @@ export async function signup(
     email,
     password,
     options: {
-      data: { username },
       emailRedirectTo: `${origin}/auth/confirm`,
     },
   });
 
   if (error) {
-    return { error: error.message, values: { username, email } };
+    return { error: error.message, values: { email } };
   }
 
   // When email confirmation is required, Supabase returns a user with no
@@ -148,6 +142,49 @@ export async function updatePassword(
 
   const { error } = await supabase.auth.updateUser({ password });
   if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/", "layout");
+  redirect("/dashboard");
+}
+
+export type SetUsernameState = { error: string } | null;
+
+const USERNAME_RE = /^[a-zA-Z0-9_]{3,24}$/;
+
+export async function setUsername(
+  _prevState: SetUsernameState,
+  formData: FormData
+): Promise<SetUsernameState> {
+  const username = String(formData.get("username") ?? "").trim();
+  const errors = (await getServerDictionary()).auth.errors;
+
+  if (!username) {
+    return { error: errors.missingUsername };
+  }
+  if (!USERNAME_RE.test(username)) {
+    return { error: errors.invalidUsername };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    redirect("/login");
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ username, needs_username: false })
+    .eq("id", user.id);
+
+  if (error) {
+    // 23505 = unique_violation (username already taken).
+    if (error.code === "23505") {
+      return { error: errors.usernameTaken };
+    }
     return { error: error.message };
   }
 

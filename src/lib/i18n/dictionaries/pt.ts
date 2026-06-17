@@ -352,6 +352,20 @@ const pt: Dictionary = {
         "Enviamos um link de confirmação. Clique nele para ativar sua conta e depois entre para fazer seu primeiro palpite.",
     },
     spamHint: "Não encontrou? Verifique sua caixa de spam ou lixo eletrônico.",
+    orContinueWith: "ou continue com",
+    providers: {
+      apple: "Apple",
+      azure: "Microsoft",
+      discord: "Discord",
+      facebook: "Facebook",
+      google: "Google",
+      x: "X",
+    },
+    onboarding: {
+      title: "Escolha seu nome de usuário",
+      description: "É assim que os outros jogadores verão você no ranking.",
+      submit: "Continuar",
+    },
     errors: {
       missingCredentials: "Informe seu e-mail e senha.",
       missingSignupCredentials:
@@ -360,6 +374,9 @@ const pt: Dictionary = {
       passwordMismatch: "As senhas não coincidem.",
       invalidResetLink: "Seu link de redefinição é inválido ou expirou.",
       missingEmail: "Informe seu e-mail.",
+      missingUsername: "Informe um nome de usuário.",
+      invalidUsername: "Use de 3 a 24 letras, números ou sublinhados.",
+      usernameTaken: "Esse nome de usuário já existe. Tente outro.",
     },
   },
 

@@ -65,7 +65,10 @@ export default async function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: NO_FLASH_SCRIPT }} />
       </head>
-      <body className="flex min-h-full flex-col">
+      {/* suppressHydrationWarning: browser extensions (e.g. Grammarly) inject
+          attributes onto <body> before React hydrates, which would otherwise
+          trip a hydration mismatch warning. */}
+      <body className="flex min-h-full flex-col" suppressHydrationWarning>
         <ThemeProvider theme={theme}>
           <LocaleProvider locale={locale}>
             <div className="flex flex-1 flex-col">{children}</div>

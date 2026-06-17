@@ -346,6 +346,20 @@ const en = {
         "We sent you a confirmation link. Click it to activate your account, then log in to make your first pick.",
     },
     spamHint: "Don't see it? Check your spam or junk folder.",
+    orContinueWith: "or continue with",
+    providers: {
+      apple: "Apple",
+      azure: "Microsoft",
+      discord: "Discord",
+      facebook: "Facebook",
+      google: "Google",
+      x: "X",
+    },
+    onboarding: {
+      title: "Pick your username",
+      description: "This is how other players will see you on the leaderboard.",
+      submit: "Continue",
+    },
     errors: {
       missingCredentials: "Enter your email and password.",
       missingSignupCredentials:
@@ -354,6 +368,9 @@ const en = {
       passwordMismatch: "Those passwords don't match.",
       invalidResetLink: "Your reset link is invalid or has expired.",
       missingEmail: "Enter your email.",
+      missingUsername: "Enter a username.",
+      invalidUsername: "Use 3–24 letters, numbers, or underscores.",
+      usernameTaken: "That username is taken. Try another.",
     },
   },
 

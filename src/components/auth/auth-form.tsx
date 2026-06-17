@@ -5,6 +5,7 @@ import { useActionState, useState } from "react";
 import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react";
 
 import { login, signup, type AuthState } from "@/app/auth/actions";
+import { OAuthButtons } from "@/components/auth/oauth-buttons";
 import { Logo } from "@/components/brand/logo";
 import { LanguageSwitcher } from "@/components/i18n/language-switcher";
 import { useDictionary } from "@/components/i18n/locale-provider";
@@ -17,10 +18,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import type { OAuthProvider } from "@/lib/supabase/oauth-providers";
 
 type Mode = "login" | "signup";
 
-export function AuthForm({ mode }: { mode: Mode }) {
+export function AuthForm({
+  mode,
+  enabledProviders,
+}: {
+  mode: Mode;
+  enabledProviders: OAuthProvider[];
+}) {
   const action = mode === "login" ? login : signup;
   const [state, formAction, isPending] = useActionState<AuthState, FormData>(
     action,
@@ -35,7 +43,6 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
   // Controlled so values survive React 19's post-action form reset (and so
   // base-ui doesn't warn about a changing uncontrolled default value).
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
 
   // When the server echoes values back after a failed submit, repopulate the
@@ -44,8 +51,6 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const [syncedState, setSyncedState] = useState(state);
   if (state !== syncedState) {
     setSyncedState(state);
-    if (state?.values?.username !== undefined)
-      setUsername(state.values.username);
     if (state?.values?.email !== undefined) setEmail(state.values.email);
   }
 
@@ -71,20 +76,6 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
         <CardContent>
           <form action={formAction} className="flex flex-col gap-4">
-            {mode === "signup" && (
-              <Field
-                id="username"
-                name="username"
-                label={t.usernameLabel}
-                type="text"
-                autoComplete="username"
-                placeholder={t.usernamePlaceholder}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            )}
-
             <Field
               id="email"
               name="email"
@@ -139,6 +130,19 @@ export function AuthForm({ mode }: { mode: Mode }) {
               {copy.submit}
             </Button>
           </form>
+
+          {enabledProviders.length > 0 && (
+            <div className="mt-4 flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <span className="bg-border h-px flex-1" />
+                <span className="text-muted-foreground text-xs">
+                  {t.orContinueWith}
+                </span>
+                <span className="bg-border h-px flex-1" />
+              </div>
+              <OAuthButtons providers={enabledProviders} />
+            </div>
+          )}
 
           <p className="text-muted-foreground mt-4 text-center text-sm">
             {copy.cta}{" "}

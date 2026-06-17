@@ -276,6 +276,7 @@ export type Database = {
           created_at: string;
           id: string;
           last_income_on: string | null;
+          needs_username: boolean;
           updated_at: string;
           username: string;
         };
@@ -284,6 +285,7 @@ export type Database = {
           created_at?: string;
           id: string;
           last_income_on?: string | null;
+          needs_username?: boolean;
           updated_at?: string;
           username: string;
         };
@@ -292,6 +294,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           last_income_on?: string | null;
+          needs_username?: boolean;
           updated_at?: string;
           username?: string;
         };

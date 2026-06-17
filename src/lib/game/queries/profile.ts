@@ -5,6 +5,27 @@ import type { PastPick, PlayerProfile, Side } from "@/lib/game/types";
 import { createClient } from "@/lib/supabase/server";
 
 /**
+ * Whether the signed-in user still has a placeholder username and must pass
+ * through the /onboarding/username screen. Returns false when logged out (the
+ * dashboard gate handles unauthenticated users separately).
+ */
+export async function currentUserNeedsUsername(): Promise<boolean> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return false;
+
+  const { data } = await supabase
+    .from("profiles")
+    .select("needs_username")
+    .eq("id", user.id)
+    .single();
+
+  return data?.needs_username ?? false;
+}
+
+/**
  * Loads another player's public profile by username via the get_player_profile
  * RPC (SECURITY DEFINER — picks RLS is owner-only). Returns `null` when no such
  * player exists, so the route can 404. Money/balance exclude the in-progress

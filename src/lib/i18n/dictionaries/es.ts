@@ -355,6 +355,20 @@ const es: Dictionary = {
         "Te enviamos un enlace de confirmación. Haz clic para activar tu cuenta y luego inicia sesión para hacer tu primera elección.",
     },
     spamHint: "¿No lo ves? Revisa tu carpeta de spam o correo no deseado.",
+    orContinueWith: "o continúa con",
+    providers: {
+      apple: "Apple",
+      azure: "Microsoft",
+      discord: "Discord",
+      facebook: "Facebook",
+      google: "Google",
+      x: "X",
+    },
+    onboarding: {
+      title: "Elige tu nombre de usuario",
+      description: "Así te verán los demás jugadores en la clasificación.",
+      submit: "Continuar",
+    },
     errors: {
       missingCredentials: "Introduce tu correo y contraseña.",
       missingSignupCredentials:
@@ -364,6 +378,9 @@ const es: Dictionary = {
       invalidResetLink:
         "Tu enlace de restablecimiento no es válido o ha caducado.",
       missingEmail: "Introduce tu correo.",
+      missingUsername: "Introduce un nombre de usuario.",
+      invalidUsername: "Usa de 3 a 24 letras, números o guiones bajos.",
+      usernameTaken: "Ese nombre de usuario ya existe. Prueba con otro.",
     },
   },
 
