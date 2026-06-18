@@ -10,6 +10,7 @@ import {
   formatFootballMoney,
   formatTrophyDelta,
 } from "@/lib/game/constants";
+import { useHydrated } from "@/lib/hooks";
 import type { PickResult, TodayPick } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 
@@ -51,6 +52,8 @@ const RESULT_CLASS: Record<PickResult, string> = {
 
 export function TodayPickBanner({ pick }: { pick: TodayPick | null }) {
   const t = useDictionary().todayPick;
+  // Re-render after mount so kickoff times format in the browser's timezone.
+  useHydrated();
 
   // No pick row for today (e.g. a brand-new player) — nothing to show.
   if (!pick) return null;

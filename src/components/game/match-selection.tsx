@@ -18,6 +18,7 @@ import {
   costFromOdds,
   formatFootballMoney,
 } from "@/lib/game/constants";
+import { useHydrated } from "@/lib/hooks";
 import type { TeamOption } from "@/lib/game/types";
 import { utcDayStart } from "@/lib/time";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,8 @@ import { useGame } from "./game-provider";
 
 /** The next 00:00 UTC reset, rendered in the viewer's local time. */
 function ResetLocalTime() {
+  // Re-render after mount so the value is formatted in the browser's timezone.
+  useHydrated();
   const localTime = new Intl.DateTimeFormat(undefined, {
     hour: "2-digit",
     minute: "2-digit",
@@ -50,6 +53,8 @@ function formatLocal(iso: string): string {
  * value take over on hydration without a mismatch warning.
  */
 function KickoffTime({ iso }: { iso: string }) {
+  // Re-render after mount so the value is formatted in the browser's timezone.
+  useHydrated();
   return (
     <span className="tabular-nums" suppressHydrationWarning>
       {formatLocal(iso)}
