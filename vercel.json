@@ -2,10 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "crons": [
     { "path": "/api/cron/sync-leagues", "schedule": "30 16 * * *" },
-    { "path": "/api/cron/sync-matches", "schedule": "45 22 * * *" },
-    { "path": "/api/cron/sync-team-crests", "schedule": "30 5 * * *" },
+    { "path": "/api/cron/sync-matches", "schedule": "40 21 * * *" },
+    { "path": "/api/cron/sync-team-crests", "schedule": "50 22 * * *" },
     { "path": "/api/cron/generate-default-picks", "schedule": "30 12 * * *" },
-    { "path": "/api/cron/apply-daily-income", "schedule": "5 0 * * *" },
+    { "path": "/api/cron/apply-daily-income", "schedule": "0 0 * * *" },
     { "path": "/api/cron/settle-matches", "schedule": "0 0 * * *" },
     { "path": "/api/cron/settle-matches", "schedule": "0 1 * * *" },
     { "path": "/api/cron/settle-matches", "schedule": "0 2 * * *" },
