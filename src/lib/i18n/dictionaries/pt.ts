@@ -15,6 +15,14 @@ const pt: Dictionary = {
     label: "Idioma",
   },
 
+  error: {
+    reconnecting: "Reconectando…",
+    title: "Algo deu errado",
+    description:
+      "Não conseguimos carregar o jogo agora. Isso pode acontecer depois de um tempo de inatividade — tente novamente.",
+    retry: "Tentar de novo",
+  },
+
   home: {
     badge: "Palpites de futebol diários",
     tagline:

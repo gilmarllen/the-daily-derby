@@ -152,3 +152,48 @@
     animation: none;
   }
 }
+
+/* Bouncing football used by the brand loader (e.g. while the app re-syncs after
+   regaining focus). The ball and its ground shadow share one cadence — the ball
+   rises while the shadow shrinks. */
+@keyframes ball-bounce {
+  0% {
+    transform: translateY(-28%);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-28%);
+  }
+}
+
+@keyframes ball-shadow {
+  0% {
+    transform: scaleX(0.55);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scaleX(1);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scaleX(0.55);
+    opacity: 0.2;
+  }
+}
+
+.animate-ball-bounce {
+  animation: ball-bounce 0.6s ease-in-out infinite;
+}
+
+.animate-ball-shadow {
+  animation: ball-shadow 0.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ball-bounce,
+  .animate-ball-shadow {
+    animation: none;
+  }
+}

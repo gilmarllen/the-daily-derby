@@ -16,6 +16,14 @@ const en = {
     label: "Language",
   },
 
+  error: {
+    reconnecting: "Reconnecting…",
+    title: "Something went wrong",
+    description:
+      "We couldn't load the game just now. This can happen after the app has been idle for a while — try again.",
+    retry: "Try again",
+  },
+
   home: {
     badge: "Daily football predictions",
     tagline:
