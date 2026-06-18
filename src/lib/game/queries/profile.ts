@@ -26,6 +26,18 @@ export async function currentUserNeedsUsername(): Promise<boolean> {
 }
 
 /**
+ * The signed-in user's email, used by the settings dialog to confirm intent
+ * before account deletion. Returns null when logged out.
+ */
+export async function getCurrentUserEmail(): Promise<string | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user?.email ?? null;
+}
+
+/**
  * Loads another player's public profile by username via the get_player_profile
  * RPC (SECURITY DEFINER — picks RLS is owner-only). Returns `null` when no such
  * player exists, so the route can 404. Money/balance exclude the in-progress

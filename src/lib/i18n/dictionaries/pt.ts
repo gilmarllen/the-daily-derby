@@ -71,6 +71,18 @@ const pt: Dictionary = {
     themeSystem: "Sistema",
     themeLight: "Claro",
     themeDark: "Escuro",
+    deleteAccount: "Excluir conta",
+    deleteAccountTitle: "Excluir sua conta?",
+    deleteAccountWarning:
+      "Isso apaga permanentemente sua conta e todos os seus dados: palpites, troféus, missões e saldo. Não pode ser desfeito. Enviaremos um código por e-mail para confirmar.",
+    deleteAccountSendCode: "Enviar um código",
+    deleteAccountCodeSentBefore: "Enviamos um código de 6 dígitos para ",
+    deleteAccountCodeSentAfter:
+      ". Digite-o abaixo para excluir sua conta permanentemente.",
+    deleteAccountCodeLabel: "Código de confirmação",
+    deleteAccountResend: "Reenviar código",
+    deleteAccountConfirm: "Excluir minha conta",
+    cancel: "Cancelar",
   },
 
   selection: {
@@ -385,6 +397,7 @@ const pt: Dictionary = {
       missingUsername: "Informe um nome de usuário.",
       invalidUsername: "Use de 3 a 24 letras, números ou sublinhados.",
       usernameTaken: "Esse nome de usuário já existe. Tente outro.",
+      invalidCode: "Esse código está incorreto ou expirou.",
     },
   },
 

@@ -1,0 +1,16 @@
+<!--
+  Magic Link / email OTP template.
+
+  Intentionally code-only: this project uses signInWithOtp solely for confirming
+  account deletion (see src/app/auth/actions.ts), where the user types the code.
+  We deliberately omit {{ .ConfirmationURL }} because some email security
+  scanners pre-fetch links and consume the one-time token, invalidating the code
+  before the user can enter it. If magic-link *login* is ever added, revisit this.
+-->
+<h2>Your verification code</h2>
+<p>Enter this code to continue:</p>
+<p style="font-size: 28px; font-weight: bold; letter-spacing: 4px;">
+  {{ .Token }}
+</p>
+<p>This code expires shortly and can only be used once. If you didn't request
+  it, you can safely ignore this email.</p>

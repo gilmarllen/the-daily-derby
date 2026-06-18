@@ -72,6 +72,18 @@ const en = {
     themeSystem: "System",
     themeLight: "Light",
     themeDark: "Dark",
+    deleteAccount: "Delete account",
+    deleteAccountTitle: "Delete your account?",
+    deleteAccountWarning:
+      "This permanently erases your account and all your data — picks, trophies, missions, and balance. This cannot be undone. We'll email you a code to confirm.",
+    deleteAccountSendCode: "Email me a code",
+    deleteAccountCodeSentBefore: "We emailed a 6-digit code to ",
+    deleteAccountCodeSentAfter:
+      ". Enter it below to permanently delete your account.",
+    deleteAccountCodeLabel: "Confirmation code",
+    deleteAccountResend: "Resend code",
+    deleteAccountConfirm: "Delete my account",
+    cancel: "Cancel",
   },
 
   selection: {
@@ -379,6 +391,7 @@ const en = {
       missingUsername: "Enter a username.",
       invalidUsername: "Use 3–24 letters, numbers, or underscores.",
       usernameTaken: "That username is taken. Try another.",
+      invalidCode: "That code is incorrect or has expired.",
     },
   },
 

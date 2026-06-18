@@ -256,6 +256,13 @@ otp_expiry = 3600
 # subject = "You have been invited"
 # content_path = "./supabase/templates/invite.html"
 
+# Magic Link / email OTP template. Used by the account-deletion confirmation
+# flow (signInWithOtp), which needs the email to show the 6-digit {{ .Token }}
+# rather than only a link. See src/app/auth/actions.ts.
+[auth.email.template.magic_link]
+subject = "Your verification code"
+content_path = "./supabase/templates/magic_link.html"
+
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
 # enabled = true

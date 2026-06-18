@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import {
   getCurrentPick,
   getCurrentPlayer,
+  getCurrentUserEmail,
   getDailyMatches,
 } from "@/lib/game/queries";
 
@@ -21,10 +22,11 @@ export async function DashboardShell({
 }: {
   children: React.ReactNode;
 }) {
-  const [player, matches, currentPick] = await Promise.all([
+  const [player, matches, currentPick, email] = await Promise.all([
     getCurrentPlayer(),
     getDailyMatches(),
     getCurrentPick(),
+    getCurrentUserEmail(),
   ]);
   if (!player) {
     redirect("/login");
@@ -38,7 +40,7 @@ export async function DashboardShell({
         initialSelection={currentPick}
       >
         <WelcomeDialogProvider>
-          <SettingsDialogProvider>
+          <SettingsDialogProvider email={email}>
             <div className="flex min-h-full flex-1 flex-col">
               <DashboardHeader />
               <DashboardNav />

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getServerDictionary } from "@/lib/i18n/server";
 
 export type AuthState = {
@@ -194,6 +195,88 @@ export async function setUsername(
 
 export async function signOut() {
   const supabase = await createClient();
+  await supabase.auth.signOut();
+  revalidatePath("/", "layout");
+  redirect("/");
+}
+
+export type RequestDeletionState = { error?: string; sent?: boolean } | null;
+
+/**
+ * Step 1 of account deletion: emails the signed-in user a 6-digit confirmation
+ * code via Supabase's email OTP. Requires an active session, so the code always
+ * goes to the caller's own confirmed email — proving they control the inbox
+ * before the destructive step. (We use email OTP rather than reauthenticate()
+ * because the reauthentication nonce cannot be securely verified for a non
+ * password operation — see confirmAccountDeletion.)
+ *
+ * Note: the code only appears in the email if the Supabase "Magic Link" template
+ * includes `{{ .Token }}` — the default template is link-only.
+ */
+export async function requestAccountDeletion(): Promise<RequestDeletionState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user?.email) {
+    redirect("/login");
+  }
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email: user.email,
+    options: { shouldCreateUser: false },
+  });
+  if (error) {
+    return { error: error.message };
+  }
+  return { sent: true };
+}
+
+export type ConfirmDeletionState = { error: string } | null;
+
+/**
+ * Step 2 of account deletion: verifies the emailed OTP code, then permanently
+ * deletes the account. The delete target is the session-derived user id (never
+ * client input), so there is no IDOR vector — the code is verified against the
+ * caller's own email. Deleting the auth user cascades to profiles → picks /
+ * daily_pools / user_missions via ON DELETE CASCADE, erasing all of their data.
+ */
+export async function confirmAccountDeletion(
+  _prevState: ConfirmDeletionState,
+  formData: FormData
+): Promise<ConfirmDeletionState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user?.email) {
+    redirect("/login");
+  }
+
+  const errors = (await getServerDictionary()).auth.errors;
+  const code = String(formData.get("code") ?? "").trim();
+  if (!code) {
+    return { error: errors.invalidCode };
+  }
+
+  // Verify the email OTP from step 1. GoTrue rejects a wrong/expired code, so a
+  // successful verify proves the caller controls the account's inbox.
+  const { error: verifyError } = await supabase.auth.verifyOtp({
+    email: user.email,
+    token: code,
+    type: "email",
+  });
+  if (verifyError) {
+    return { error: errors.invalidCode };
+  }
+
+  const admin = createAdminClient();
+  const { error } = await admin.auth.admin.deleteUser(user.id);
+  if (error) {
+    return { error: error.message };
+  }
+
+  // Clear the now-orphaned session cookies, then send them home.
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
   redirect("/");
