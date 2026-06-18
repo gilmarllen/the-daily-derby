@@ -126,11 +126,11 @@ function OptionButton({
         className="size-8 sm:size-10"
       />
 
-      <span className="flex min-w-0 flex-col">
+      <span className="flex min-w-0 flex-1 flex-col">
         <span className="text-muted-foreground text-[10px] font-medium tracking-wide uppercase">
           {option.side}
         </span>
-        <span className="truncate leading-tight font-semibold">
+        <span className="line-clamp-2 leading-tight font-semibold [overflow-wrap:anywhere] break-words">
           {option.team}
         </span>
       </span>
