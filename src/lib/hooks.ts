@@ -1,8 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-
-const emptySubscribe = () => () => {};
+import { useEffect, useState } from "react";
 
 /**
  * Returns `false` during SSR and the first client render, then `true` after the
@@ -12,13 +10,16 @@ const emptySubscribe = () => () => {};
  * mutes the warning but React keeps the server markup until something triggers a
  * re-render.
  *
- * Built on `useSyncExternalStore` (server snapshot `false`, client snapshot
- * `true`) so the post-hydration re-render happens without a setState-in-effect.
+ * Implemented with a mount effect (not `useSyncExternalStore`, whose
+ * server/client snapshot difference does not reliably re-render after hydration
+ * in the App Router). Flipping state in a mount effect is the canonical way to
+ * guarantee that re-render.
  */
 export function useHydrated(): boolean {
-  return useSyncExternalStore(
-    emptySubscribe,
-    () => true,
-    () => false
-  );
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional one-shot flip on mount to re-render with browser-only values
+    setHydrated(true);
+  }, []);
+  return hydrated;
 }

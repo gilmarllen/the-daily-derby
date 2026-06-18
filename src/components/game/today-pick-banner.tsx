@@ -14,6 +14,8 @@ import { useHydrated } from "@/lib/hooks";
 import type { PickResult, TodayPick } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 
+import { TimePlaceholder } from "./time-placeholder";
+
 /** Trophy change chip, colored by sign. */
 function TrophyDelta({ delta }: { delta: number }) {
   return (
@@ -52,8 +54,8 @@ const RESULT_CLASS: Record<PickResult, string> = {
 
 export function TodayPickBanner({ pick }: { pick: TodayPick | null }) {
   const t = useDictionary().todayPick;
-  // Re-render after mount so kickoff times format in the browser's timezone.
-  useHydrated();
+  // UTC until mounted, then the viewer's timezone — see formatKickoff.
+  const hydrated = useHydrated();
 
   // No pick row for today (e.g. a brand-new player) — nothing to show.
   if (!pick) return null;
@@ -109,9 +111,13 @@ export function TodayPickBanner({ pick }: { pick: TodayPick | null }) {
           ) : (
             <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
               <Clock className="size-3.5 shrink-0" aria-hidden />
-              <span className="tabular-nums" suppressHydrationWarning>
-                {formatKickoff(pick.kickoff)}
-              </span>
+              {hydrated ? (
+                <span className="tabular-nums">
+                  {formatKickoff(pick.kickoff)}
+                </span>
+              ) : (
+                <TimePlaceholder className="w-24" />
+              )}
             </span>
           )}
         </div>

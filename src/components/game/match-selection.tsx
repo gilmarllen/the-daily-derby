@@ -25,16 +25,19 @@ import { cn } from "@/lib/utils";
 
 import { Crest } from "./crest";
 import { useGame } from "./game-provider";
+import { TimePlaceholder } from "./time-placeholder";
 
 /** The next 00:00 UTC reset, rendered in the viewer's local time. */
 function ResetLocalTime() {
-  // Re-render after mount so the value is formatted in the browser's timezone.
-  useHydrated();
+  // Local times depend on the browser timezone, so they are rendered only on
+  // the client (see TimePlaceholder). The server emits a placeholder.
+  const hydrated = useHydrated();
+  if (!hydrated) return <TimePlaceholder className="w-10" />;
   const localTime = new Intl.DateTimeFormat(undefined, {
     hour: "2-digit",
     minute: "2-digit",
   }).format(utcDayStart(new Date(), 1));
-  return <span suppressHydrationWarning>{localTime}</span>;
+  return <span>{localTime}</span>;
 }
 
 /** Kickoff date + time in the viewer's local timezone, e.g. "Jun 9, 21:00". */
@@ -48,18 +51,16 @@ function formatLocal(iso: string): string {
 }
 
 /**
- * Renders a kickoff time in the viewer's timezone. Server-rendered markup uses
- * the server timezone, so `suppressHydrationWarning` lets the client's local
- * value take over on hydration without a mismatch warning.
+ * Kickoff time in the viewer's timezone. Formatting needs the browser's
+ * timezone, which the server doesn't have, so we render nothing meaningful on
+ * the server (a placeholder) and fill in the real time after mount. This keeps
+ * server and first client render identical — no hydration mismatch and no stale
+ * timezone baked into the markup.
  */
 function KickoffTime({ iso }: { iso: string }) {
-  // Re-render after mount so the value is formatted in the browser's timezone.
-  useHydrated();
-  return (
-    <span className="tabular-nums" suppressHydrationWarning>
-      {formatLocal(iso)}
-    </span>
-  );
+  const hydrated = useHydrated();
+  if (!hydrated) return <TimePlaceholder className="w-24" />;
+  return <span className="tabular-nums">{formatLocal(iso)}</span>;
 }
 
 function OptionButton({
