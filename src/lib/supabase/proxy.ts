@@ -10,10 +10,20 @@ import type { Database } from "./types";
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
+  // Forward the real client IP so the per-request token refresh is rate-limited
+  // per user, not per Vercel server IP. See the note in server.ts.
+  const clientIp = request.headers
+    .get("x-forwarded-for")
+    ?.split(",")[0]
+    ?.trim();
+
   const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
+      ...(clientIp && {
+        global: { headers: { "Sb-Forwarded-For": clientIp } },
+      }),
       cookies: {
         getAll() {
           return request.cookies.getAll();
