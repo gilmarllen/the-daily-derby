@@ -337,6 +337,10 @@ const pt: Dictionary = {
     emailPlaceholder: "voce@exemplo.com",
     passwordLabel: "Senha",
     forgotPassword: "Esqueceu a senha?",
+    legalPrefix: "Ao se cadastrar, você concorda com nossos",
+    legalTerms: "Termos",
+    legalAnd: "e a",
+    legalPrivacy: "Política de Privacidade",
     login: {
       title: "Bem-vindo de volta",
       description: "Entre para fazer o palpite de hoje.",

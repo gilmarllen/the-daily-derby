@@ -153,6 +153,26 @@ export function AuthForm({
               {copy.ctaLabel}
             </Link>
           </p>
+
+          {mode === "signup" && (
+            <p className="text-muted-foreground mt-3 text-center text-xs">
+              {t.legalPrefix}{" "}
+              <Link
+                href="/terms"
+                className="text-primary font-medium underline-offset-4 hover:underline"
+              >
+                {t.legalTerms}
+              </Link>{" "}
+              {t.legalAnd}{" "}
+              <Link
+                href="/privacy"
+                className="text-primary font-medium underline-offset-4 hover:underline"
+              >
+                {t.legalPrivacy}
+              </Link>
+              .
+            </p>
+          )}
         </CardContent>
       </Card>
     </div>

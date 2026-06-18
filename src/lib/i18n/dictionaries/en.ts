@@ -331,6 +331,10 @@ const en = {
     emailPlaceholder: "you@example.com",
     passwordLabel: "Password",
     forgotPassword: "Forgot password?",
+    legalPrefix: "By signing up, you agree to our",
+    legalTerms: "Terms",
+    legalAnd: "and",
+    legalPrivacy: "Privacy Policy",
     login: {
       title: "Welcome back",
       description: "Log in to make today's pick.",
