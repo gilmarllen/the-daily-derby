@@ -159,6 +159,8 @@ export function AuthForm({
               {t.legalPrefix}{" "}
               <Link
                 href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-primary font-medium underline-offset-4 hover:underline"
               >
                 {t.legalTerms}
@@ -166,6 +168,8 @@ export function AuthForm({
               {t.legalAnd}{" "}
               <Link
                 href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-primary font-medium underline-offset-4 hover:underline"
               >
                 {t.legalPrivacy}

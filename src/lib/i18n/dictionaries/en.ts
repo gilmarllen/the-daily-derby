@@ -61,7 +61,16 @@ const en = {
     howToPlay: "How to play",
     gameGuide: "Game guide",
     settings: "Settings",
+    about: "About",
     logout: "Log out",
+  },
+
+  about: {
+    title: "About The Daily Derby",
+    description:
+      "A free daily football prediction game. F$ is in-game currency only — it has no real-world value.",
+    terms: "Terms of Use",
+    privacy: "Privacy Policy",
   },
 
   settings: {

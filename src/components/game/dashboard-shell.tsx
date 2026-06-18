@@ -9,6 +9,7 @@ import {
 
 import { ToastProvider } from "@/components/ui/toast";
 
+import { AboutDialogProvider } from "./about-dialog";
 import { DashboardHeader } from "./dashboard-header";
 import { DashboardNav } from "./dashboard-nav";
 import { GameProvider } from "./game-provider";
@@ -41,14 +42,16 @@ export async function DashboardShell({
       >
         <WelcomeDialogProvider>
           <SettingsDialogProvider email={email}>
-            <div className="flex min-h-full flex-1 flex-col">
-              <DashboardHeader />
-              <DashboardNav />
-              <SelectionBanner />
-              <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-6">
-                {children}
-              </main>
-            </div>
+            <AboutDialogProvider>
+              <div className="flex min-h-full flex-1 flex-col">
+                <DashboardHeader />
+                <DashboardNav />
+                <SelectionBanner />
+                <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-6">
+                  {children}
+                </main>
+              </div>
+            </AboutDialogProvider>
           </SettingsDialogProvider>
         </WelcomeDialogProvider>
       </GameProvider>

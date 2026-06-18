@@ -5,6 +5,7 @@ import {
   BookOpen,
   ChevronDown,
   HelpCircle,
+  Info,
   LogOut,
   Settings,
 } from "lucide-react";
@@ -21,6 +22,7 @@ import {
   MenuTrigger,
 } from "@/components/ui/menu";
 
+import { useAboutDialog } from "./about-dialog";
 import { useGame } from "./game-provider";
 import { useSettingsDialog } from "./settings-dialog";
 import { useWelcomeDialog } from "./welcome-dialog";
@@ -29,6 +31,7 @@ export function UserMenu() {
   const { player } = useGame();
   const { openWelcome } = useWelcomeDialog();
   const { openSettings } = useSettingsDialog();
+  const { openAbout } = useAboutDialog();
   const t = useDictionary().userMenu;
   const initial = (player.name.trim()[0] ?? "?").toUpperCase();
 
@@ -66,6 +69,10 @@ export function UserMenu() {
         <MenuItem onClick={openSettings}>
           <Settings />
           {t.settings}
+        </MenuItem>
+        <MenuItem onClick={openAbout}>
+          <Info />
+          {t.about}
         </MenuItem>
         <MenuSeparator />
         <MenuItem

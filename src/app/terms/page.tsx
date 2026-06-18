@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
 import { buttonVariants } from "@/components/ui/button";
@@ -42,13 +41,15 @@ export default function TermsPage() {
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-3 px-4 py-3">
           <Link
             href="/"
-            className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-sm font-medium transition-colors"
+            className="flex items-center gap-2 font-bold tracking-tight"
           >
-            <ArrowLeft className="size-4" aria-hidden />
-            Home
+            <Logo className="size-7" />
+            <span>The Daily Derby</span>
           </Link>
           <Link
             href="/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
             className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
           >
             Privacy Policy

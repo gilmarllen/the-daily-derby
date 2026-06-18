@@ -60,7 +60,16 @@ const pt: Dictionary = {
     howToPlay: "Como jogar",
     gameGuide: "Guia do jogo",
     settings: "Configurações",
+    about: "Sobre",
     logout: "Sair",
+  },
+
+  about: {
+    title: "Sobre o The Daily Derby",
+    description:
+      "Um jogo diário e gratuito de palpites de futebol. F$ é moeda do jogo apenas — não tem valor no mundo real.",
+    terms: "Termos de uso",
+    privacy: "Política de privacidade",
   },
 
   settings: {
