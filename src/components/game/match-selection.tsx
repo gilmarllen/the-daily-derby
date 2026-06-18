@@ -1,17 +1,9 @@
 "use client";
 
-import {
-  Check,
-  CircleSlash,
-  Clock,
-  Coins,
-  Lock,
-  CircleStar,
-} from "lucide-react";
+import { Check, CircleSlash, Clock, Coins, Lock } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { useDictionary } from "@/components/i18n/locale-provider";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   DAILY_RESET_LABEL,
