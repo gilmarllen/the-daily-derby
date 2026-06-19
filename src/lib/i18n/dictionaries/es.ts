@@ -26,15 +26,32 @@ const es: Dictionary = {
   home: {
     badge: "Predicciones de fútbol diarias",
     tagline:
-      "Elige ganadores, gestiona tu Football Money, gana trofeos y escala en la clasificación global. Una elección al día — ¡que cuente!",
-    howToPlay: "Cómo jugar",
+      "Acierta un ganador al día en partidos reales, haz crecer tu Football Money y escala en la clasificación global. Sin estrés, solo por diversión.",
+    playFree: "Jugar gratis",
+    playFreeSub:
+      "Sin tarjeta, sin trampa — crea una cuenta gratis y elige el partido de hoy.",
+    howToPlay: "Cómo funciona",
     features: {
       pickTitle: "Elige un ganador",
-      pickText: "Una elección al día entre cinco partidos reales.",
-      moneyTitle: "Gestiona tus F$",
-      moneyText: "Gasta con cabeza — opciones más baratas, más riesgo.",
+      pickText:
+        "Una elección al día entre cinco partidos reales. Fácil de empezar.",
+      moneyTitle: "Haz crecer tus F$",
+      moneyText:
+        "Football Money es dinero de juego — gasta con cabeza y arriésgate.",
       climbTitle: "Escala en la tabla",
-      climbText: "Gana trofeos y lidera la clasificación global.",
+      climbText:
+        "Gana trofeos y persigue lo más alto de la clasificación global.",
+    },
+    reassure: {
+      heading: "Solo un juego — seamos sinceros",
+      freeTitle: "100% gratis",
+      freeText: "Sin pagos, sin suscripciones, sin anuncios persiguiéndote.",
+      notBettingTitle: "No son apuestas",
+      notBettingText:
+        "Nada que apostar, nada que perder. Solo predicciones por diversión.",
+      playMoneyTitle: "Solo dinero de juego",
+      playMoneyText:
+        "F$ es moneda ficticia del juego. Nunca hay dinero real de por medio.",
     },
   },
 

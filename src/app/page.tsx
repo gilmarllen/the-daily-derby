@@ -1,5 +1,13 @@
 import Link from "next/link";
-import { BookOpen, Coins, Target, Trophy } from "lucide-react";
+import {
+  BookOpen,
+  Coins,
+  Gift,
+  PiggyBank,
+  ShieldCheck,
+  Target,
+  Trophy,
+} from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
 import { LanguageSwitcher } from "@/components/i18n/language-switcher";
@@ -21,6 +29,23 @@ export default async function Home() {
     { icon: Target, title: t.features.pickTitle, text: t.features.pickText },
     { icon: Coins, title: t.features.moneyTitle, text: t.features.moneyText },
     { icon: Trophy, title: t.features.climbTitle, text: t.features.climbText },
+  ];
+  const reassurances = [
+    {
+      icon: Gift,
+      title: t.reassure.freeTitle,
+      text: t.reassure.freeText,
+    },
+    {
+      icon: ShieldCheck,
+      title: t.reassure.notBettingTitle,
+      text: t.reassure.notBettingText,
+    },
+    {
+      icon: PiggyBank,
+      title: t.reassure.playMoneyTitle,
+      text: t.reassure.playMoneyText,
+    },
   ];
 
   return (
@@ -48,32 +73,42 @@ export default async function Home() {
 
         <p className="text-muted-foreground max-w-md text-lg">{t.tagline}</p>
 
-        <div className="flex flex-col gap-3 sm:flex-row">
-          {isLoggedIn ? (
-            <Link
-              href="/dashboard"
-              className={cn(buttonVariants({ size: "lg" }), "px-8")}
-            >
-              {dict.common.backToGame}
-            </Link>
-          ) : (
-            <>
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
+            {isLoggedIn ? (
               <Link
-                href="/signup"
+                href="/dashboard"
                 className={cn(buttonVariants({ size: "lg" }), "px-8")}
               >
-                {dict.common.signup}
+                {dict.common.backToGame}
               </Link>
-              <Link
-                href="/login"
-                className={cn(
-                  buttonVariants({ variant: "outline", size: "lg" }),
-                  "px-8"
-                )}
-              >
-                {dict.common.login}
-              </Link>
-            </>
+            ) : (
+              <>
+                <Link
+                  href="/signup"
+                  className={cn(
+                    buttonVariants({ size: "lg" }),
+                    "px-10 text-base shadow-lg shadow-emerald-500/20 transition-transform hover:scale-[1.03]"
+                  )}
+                >
+                  {t.playFree}
+                </Link>
+                <Link
+                  href="/login"
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "lg" }),
+                    "px-8"
+                  )}
+                >
+                  {dict.common.login}
+                </Link>
+              </>
+            )}
+          </div>
+          {!isLoggedIn && (
+            <p className="text-muted-foreground max-w-xs text-xs">
+              {t.playFreeSub}
+            </p>
           )}
         </div>
 
@@ -97,6 +132,22 @@ export default async function Home() {
             <p className="text-muted-foreground text-xs">{text}</p>
           </div>
         ))}
+      </div>
+
+      {/* Honesty band: free, not betting, only play money. */}
+      <div className="animate-in fade-in slide-in-from-bottom-4 mt-12 w-full max-w-3xl duration-700">
+        <h2 className="text-muted-foreground mb-4 text-xs font-medium tracking-widest uppercase">
+          {t.reassure.heading}
+        </h2>
+        <div className="grid gap-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5 sm:grid-cols-3">
+          {reassurances.map(({ icon: Icon, title, text }) => (
+            <div key={title} className="flex flex-col items-center gap-1.5">
+              <Icon className="size-6 text-emerald-500" aria-hidden />
+              <h3 className="text-sm font-semibold">{title}</h3>
+              <p className="text-muted-foreground text-xs">{text}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </main>
   );

@@ -27,15 +27,29 @@ const en = {
   home: {
     badge: "Daily football predictions",
     tagline:
-      "Pick winners, manage your Football Money, earn trophies, and climb the global leaderboard. One pick a day — make it count.",
-    howToPlay: "How to play",
+      "Call one winner a day from real matches, grow your Football Money, and climb the global leaderboard. No stress, just bragging rights.",
+    playFree: "Play free",
+    playFreeSub:
+      "No card, no catch — make a free account and pick today's match.",
+    howToPlay: "How it works",
     features: {
       pickTitle: "Pick a winner",
-      pickText: "One pick a day from five real matches.",
-      moneyTitle: "Manage your F$",
-      moneyText: "Spend smart — cheaper picks, bigger risk.",
+      pickText: "One pick a day from five real matches. Easy to start.",
+      moneyTitle: "Grow your F$",
+      moneyText: "Football Money is play money — spend smart, take fun risks.",
       climbTitle: "Climb the table",
-      climbText: "Earn trophies and top the global board.",
+      climbText: "Earn trophies and chase the top of the global board.",
+    },
+    reassure: {
+      heading: "Just a game — here's the honest part",
+      freeTitle: "100% free",
+      freeText: "No payments, no subscriptions, no ads chasing you.",
+      notBettingTitle: "Not sports betting",
+      notBettingText:
+        "Nothing to wager, nothing to lose. Just predictions for fun.",
+      playMoneyTitle: "Only play money",
+      playMoneyText:
+        "F$ is pretend in-game currency. No real money is ever involved.",
     },
   },
 

@@ -37,13 +37,13 @@ describe("Home page", () => {
     ).toBeInTheDocument();
   });
 
-  it("links sign up and log in to the auth pages", async () => {
+  it("links the play and log in CTAs to the auth pages", async () => {
     await renderHome();
 
-    const signUp = screen.getByRole("link", { name: /sign up/i });
+    const playFree = screen.getByRole("link", { name: /play free/i });
     const logIn = screen.getByRole("link", { name: /log in/i });
 
-    expect(signUp).toHaveAttribute("href", "/signup");
+    expect(playFree).toHaveAttribute("href", "/signup");
     expect(logIn).toHaveAttribute("href", "/login");
   });
 });

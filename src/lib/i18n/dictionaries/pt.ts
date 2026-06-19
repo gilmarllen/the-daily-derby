@@ -26,15 +26,31 @@ const pt: Dictionary = {
   home: {
     badge: "Palpites de futebol diários",
     tagline:
-      "Escolha vencedores, gerencie seu Football Money, ganhe troféus e suba no ranking global. Um palpite por dia — faça valer!",
-    howToPlay: "Como jogar",
+      "Acerte um vencedor por dia em partidas reais, faça seu Football Money crescer e suba no ranking global. Sem estresse, só diversão.",
+    playFree: "Jogar de graça",
+    playFreeSub:
+      "Sem cartão, sem pegadinha — crie uma conta grátis e escolha o jogo de hoje.",
+    howToPlay: "Como funciona",
     features: {
       pickTitle: "Escolha um vencedor",
-      pickText: "Um palpite por dia entre cinco partidas reais.",
-      moneyTitle: "Gerencie seus F$",
-      moneyText: "Gaste com cabeça — opções mais baratas, mais risco.",
+      pickText:
+        "Um palpite por dia entre cinco partidas reais. Fácil de começar.",
+      moneyTitle: "Faça seu F$ crescer",
+      moneyText:
+        "Football Money é dinheiro de brincadeira — gaste com cabeça e arrisque.",
       climbTitle: "Suba na tabela",
-      climbText: "Ganhe troféus e lidere o ranking global.",
+      climbText: "Ganhe troféus e busque o topo do ranking global.",
+    },
+    reassure: {
+      heading: "É só um jogo — falando sério",
+      freeTitle: "100% grátis",
+      freeText: "Sem pagamentos, sem assinaturas, sem anúncios te perseguindo.",
+      notBettingTitle: "Não é aposta",
+      notBettingText:
+        "Nada para apostar, nada para perder. Só palpites por diversão.",
+      playMoneyTitle: "Só dinheiro de brincadeira",
+      playMoneyText:
+        "F$ é moeda fictícia do jogo. Nunca há dinheiro real envolvido.",
     },
   },
 
