@@ -197,3 +197,26 @@
     animation: none;
   }
 }
+
+/* Down-arrow scroll cue (mobile home). Oscillates symmetrically around the
+   centre so the chevron stays visually centred in its button, unlike Tailwind's
+   `animate-bounce` which rests near the top. */
+@keyframes scroll-cue {
+  0%,
+  100% {
+    transform: translateY(-20%);
+  }
+  50% {
+    transform: translateY(20%);
+  }
+}
+
+.animate-scroll-cue {
+  animation: scroll-cue 1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-scroll-cue {
+    animation: none;
+  }
+}

@@ -11,6 +11,8 @@ import {
 
 import { Logo } from "@/components/brand/logo";
 import { LanguageSwitcher } from "@/components/i18n/language-switcher";
+import { HomePreview } from "@/components/marketing/home-preview";
+import { ScrollToPreview } from "@/components/marketing/scroll-to-preview";
 import { buttonVariants } from "@/components/ui/button";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
@@ -119,6 +121,8 @@ export default async function Home() {
           <BookOpen className="size-4" aria-hidden />
           {t.howToPlay}
         </Link>
+
+        <ScrollToPreview label={t.preview.scrollCta} />
       </div>
 
       <div className="animate-in fade-in slide-in-from-bottom-4 mt-16 grid w-full max-w-3xl gap-4 duration-700 sm:grid-cols-3">
@@ -133,6 +137,8 @@ export default async function Home() {
           </div>
         ))}
       </div>
+
+      <HomePreview t={t.preview} />
 
       {/* Honesty band: free, not betting, only play money. */}
       <div className="animate-in fade-in slide-in-from-bottom-4 mt-12 w-full max-w-3xl duration-700">

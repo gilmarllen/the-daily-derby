@@ -51,6 +51,16 @@ const en = {
       playMoneyText:
         "F$ is pretend in-game currency. No real money is ever involved.",
     },
+    preview: {
+      heading: "Take a peek inside",
+      subheading: "Here's what a day looks like.",
+      pickTitle: "Your daily pick",
+      pickCaption: "Pick one winner from five real matches.",
+      leaderboardTitle: "Global leaderboard",
+      leaderboardCaption: "Climb the table as your trophies stack up.",
+      sampleNote: "Sample preview — sign up to play for real.",
+      scrollCta: "See an example",
+    },
   },
 
   nav: {

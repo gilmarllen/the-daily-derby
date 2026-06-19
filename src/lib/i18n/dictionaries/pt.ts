@@ -52,6 +52,16 @@ const pt: Dictionary = {
       playMoneyText:
         "F$ é moeda fictícia do jogo. Nunca há dinheiro real envolvido.",
     },
+    preview: {
+      heading: "Como funciona",
+      subheading: "Veja como é um dia.",
+      pickTitle: "Seu palpite do dia",
+      pickCaption: "Escolha um vencedor entre cinco partidas reais.",
+      leaderboardTitle: "Ranking global",
+      leaderboardCaption: "Suba na tabela conforme acumula troféus.",
+      sampleNote: "Prévia de exemplo — cadastre-se para jogar de verdade.",
+      scrollCta: "Ver um exemplo",
+    },
   },
 
   nav: {
