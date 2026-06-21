@@ -352,6 +352,15 @@ export type Database = {
         Args: Record<string, never>;
         Returns: number;
       };
+      get_current_player: {
+        Args: Record<string, never>;
+        Returns: {
+          username: string;
+          balance: number;
+          trophies: number;
+          win_streak: number;
+        }[];
+      };
       generate_default_picks: {
         Args: Record<string, never>;
         Returns: number;

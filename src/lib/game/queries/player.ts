@@ -16,13 +16,15 @@ export async function getCurrentPlayer(): Promise<Player | null> {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  // trophies + win_streak are derived (see the player_stats view); balance is a
-  // real column surfaced through the same view.
-  const { data: stats } = await supabase
-    .from("player_stats")
-    .select("username, trophies, balance, win_streak")
-    .eq("user_id", user.id)
-    .single();
+  // Single RPC: credits today's daily income if the 00:00 UTC cron hasn't yet
+  // (idempotent, scoped to this user) and returns the stats reflecting it — so
+  // the on-the-spot top-up costs no extra round-trip. trophies + win_streak are
+  // derived (see the player_stats view); balance is a real column.
+  const { data: rows, error } = await supabase.rpc("get_current_player", {});
+  if (error) {
+    throw new Error(`get_current_player failed: ${error.message}`);
+  }
+  const stats = rows?.[0];
 
   // The user is authenticated but has no profile row. This shouldn't happen
   // (the handle_new_user trigger creates one on signup), so fail loudly rather
