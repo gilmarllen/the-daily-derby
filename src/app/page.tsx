@@ -155,6 +155,11 @@ export default async function Home() {
           ))}
         </div>
       </div>
+      <p className="text-muted-foreground mt-6 text-xs">
+        <Link href="/privacy" className="underline-offset-4 hover:underline">
+          {t.privacyPolicy}
+        </Link>
+      </p>
     </main>
   );
 }

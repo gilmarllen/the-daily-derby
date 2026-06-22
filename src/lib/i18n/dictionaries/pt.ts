@@ -62,6 +62,7 @@ const pt: Dictionary = {
       sampleNote: "Prévia de exemplo — cadastre-se para jogar de verdade.",
       scrollCta: "Ver um exemplo",
     },
+    privacyPolicy: "Política de Privacidade",
   },
 
   nav: {

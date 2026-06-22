@@ -61,6 +61,7 @@ const en = {
       sampleNote: "Sample preview — sign up to play for real.",
       scrollCta: "See an example",
     },
+    privacyPolicy: "Privacy Policy",
   },
 
   nav: {
