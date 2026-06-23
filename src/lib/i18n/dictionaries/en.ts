@@ -16,6 +16,17 @@ const en = {
     label: "Language",
   },
 
+  // Copy used for SEO metadata and the shared social cover image
+  // (`opengraph-image`). The brand name "The Daily Derby" is never translated.
+  seo: {
+    description:
+      "A daily football prediction game — pick winners, manage your Football Money, earn trophies, and climb the global leaderboard.",
+    ogEyebrow: "Daily Football Predictions",
+    ogSubtitle:
+      "Pick winners, manage your Football Money, earn trophies, and climb the global leaderboard.",
+    ogImageAlt: "The Daily Derby — daily football predictions",
+  },
+
   error: {
     reconnecting: "Reconnecting…",
     title: "Something went wrong",

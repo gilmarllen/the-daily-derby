@@ -17,6 +17,18 @@ export const localeNames: Record<Locale, string> = {
   pt: "Português",
 };
 
+/**
+ * Open Graph locale codes (`og:locale` / `og:locale:alternate`) for each app
+ * locale. Underscore-separated language_TERRITORY per the OG spec; the
+ * territories match the flavour each dictionary is written in (Spain Spanish,
+ * Brazilian Portuguese).
+ */
+export const ogLocales: Record<Locale, string> = {
+  en: "en_US",
+  es: "es_ES",
+  pt: "pt_BR",
+};
+
 export function isLocale(value: string): value is Locale {
   return (locales as readonly string[]).includes(value);
 }

@@ -15,6 +15,15 @@ const pt: Dictionary = {
     label: "Idioma",
   },
 
+  seo: {
+    description:
+      "Um jogo diário de palpites de futebol — acerte vencedores, gerencie seu Football Money, ganhe troféus e suba no ranking global.",
+    ogEyebrow: "Palpites de Futebol Diários",
+    ogSubtitle:
+      "Acerte vencedores, gerencie seu Football Money, ganhe troféus e suba no ranking global.",
+    ogImageAlt: "The Daily Derby — palpites de futebol diários",
+  },
+
   error: {
     reconnecting: "Reconectando…",
     title: "Algo deu errado",

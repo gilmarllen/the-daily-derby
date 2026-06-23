@@ -15,6 +15,15 @@ const es: Dictionary = {
     label: "Idioma",
   },
 
+  seo: {
+    description:
+      "Un juego diario de predicciones de fútbol — acierta ganadores, gestiona tu Football Money, gana trofeos y escala en la clasificación global.",
+    ogEyebrow: "Predicciones de Fútbol Diarias",
+    ogSubtitle:
+      "Acierta ganadores, gestiona tu Football Money, gana trofeos y escala en la clasificación global.",
+    ogImageAlt: "The Daily Derby — predicciones de fútbol diarias",
+  },
+
   error: {
     reconnecting: "Reconectando…",
     title: "Algo salió mal",

@@ -6,7 +6,8 @@ import "./globals.css";
 import { Footer } from "@/components/layout/footer";
 import { LocaleProvider } from "@/components/i18n/locale-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
-import { getLocale } from "@/lib/i18n/server";
+import { getLocale, getServerDictionary } from "@/lib/i18n/server";
+import { ogLocales, locales } from "@/lib/i18n/config";
 import { getTheme } from "@/lib/theme/server";
 import { THEME_COOKIE } from "@/lib/theme/config";
 import { SITE_URL } from "@/lib/site";
@@ -26,28 +27,43 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const DESCRIPTION =
-  "A daily football prediction game — pick winners, manage your F$, earn trophies, and climb the global leaderboard.";
+// Localized per request: the resolved locale's dictionary drives the meta
+// description, OG/Twitter copy, and `og:locale` (with the other locales listed
+// as `og:locale:alternate`). The brand title stays untranslated. Because the
+// locale comes from a cookie / Accept-Language rather than the URL, the same
+// canonical URL serves every language via content negotiation.
+export async function generateMetadata(): Promise<Metadata> {
+  const [locale, dict] = await Promise.all([
+    getLocale(),
+    getServerDictionary(),
+  ]);
+  const description = dict.seo.description;
+  const alternateLocale = locales
+    .filter((l) => l !== locale)
+    .map((l) => ogLocales[l]);
 
-export const metadata: Metadata = {
-  // Base for resolving the relative OG/Twitter image URLs to absolute ones.
-  metadataBase: new URL(SITE_URL),
-  title: "The Daily Derby",
-  description: DESCRIPTION,
-  openGraph: {
-    type: "website",
-    siteName: "The Daily Derby",
+  return {
+    // Base for resolving the relative OG/Twitter image URLs to absolute ones.
+    metadataBase: new URL(SITE_URL),
     title: "The Daily Derby",
-    description: DESCRIPTION,
-    url: SITE_URL,
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "The Daily Derby",
-    description: DESCRIPTION,
-  },
-};
+    description,
+    alternates: { canonical: SITE_URL },
+    openGraph: {
+      type: "website",
+      siteName: "The Daily Derby",
+      title: "The Daily Derby",
+      description,
+      url: SITE_URL,
+      locale: ogLocales[locale],
+      alternateLocale,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "The Daily Derby",
+      description,
+    },
+  };
+}
 
 export default async function RootLayout({
   children,

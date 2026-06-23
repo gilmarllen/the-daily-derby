@@ -1,11 +1,18 @@
 import { ImageResponse } from "next/og";
 
+import { getServerDictionary } from "@/lib/i18n/server";
+
 // Branded cover image shown when the site link is shared (Open Graph / Twitter).
+// Reading the dictionary pulls in the request-resolved locale (cookie /
+// Accept-Language), which opts this Route Handler out of static caching and
+// makes the cover localize per request.
 export const alt = "The Daily Derby — daily football predictions";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OpengraphImage() {
+export default async function OpengraphImage() {
+  const { seo } = await getServerDictionary();
+
   return new ImageResponse(
     <div
       style={{
@@ -32,7 +39,7 @@ export default function OpengraphImage() {
           color: "#6ee7b7",
         }}
       >
-        Daily Football Predictions
+        {seo.ogEyebrow}
       </div>
 
       <div
@@ -55,8 +62,7 @@ export default function OpengraphImage() {
           color: "#a1a1aa",
         }}
       >
-        Pick winners, manage your Football Money, earn trophies, and climb the
-        global leaderboard.
+        {seo.ogSubtitle}
       </div>
     </div>,
     size
