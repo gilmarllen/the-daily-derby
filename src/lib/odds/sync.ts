@@ -59,6 +59,8 @@ export type SyncMatchesOptions = {
   client?: SupabaseClient<Database>;
   /** Defaults to Math.random; injectable for deterministic selection. */
   rng?: () => number;
+  /** UTC days ahead of `now` to fill; defaults to TARGET_DAYS_AHEAD (2). */
+  daysAhead?: number;
 };
 
 /**
@@ -260,7 +262,7 @@ export async function syncMatches(
   const supabase = options.client ?? createAdminClient();
   const book = bookmaker();
 
-  const matchDay = targetMatchDay(now);
+  const matchDay = targetMatchDay(now, options.daysAhead);
   const { from, to } = dayWindow(matchDay);
 
   // 1. What's already stored for the day (matched by kickoff window, since the

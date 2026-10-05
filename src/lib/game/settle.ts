@@ -22,6 +22,14 @@ const SPORT = "football";
  */
 const SETTLE_AFTER_MS = 105 * 60 * 1000; // 1h45m
 
+/**
+ * How far back to keep retrying unsettled matches. Postponed/cancelled fixtures
+ * never show up as settled, and each distinct kickoff day costs an odds-api call
+ * every hourly run — retrying them forever exhausted the free plan's 500/day
+ * quota and starved the nightly match sync. Older ones are left unsettled.
+ */
+const SETTLE_LOOKBACK_MS = 3 * 24 * 60 * 60 * 1000; // 3 days
+
 type DueMatch = { id: string; external_id: string; kickoff: string };
 
 export type SettleMatchesResult = {
@@ -90,13 +98,15 @@ export async function settleMatches(
 ): Promise<SettleMatchesResult> {
   const supabase = createAdminClient();
   const cutoff = new Date(now.getTime() - SETTLE_AFTER_MS).toISOString();
+  const lookback = new Date(now.getTime() - SETTLE_LOOKBACK_MS).toISOString();
 
-  // 1. Matches that should be over but aren't settled yet.
+  // 1. Recent matches that should be over but aren't settled yet.
   const { data, error } = await supabase
     .from("matches")
     .select("id, external_id, kickoff")
     .eq("status", "scheduled")
     .not("external_id", "is", null)
+    .gte("kickoff", lookback)
     .lte("kickoff", cutoff)
     .order("kickoff", { ascending: true });
   if (error) {
