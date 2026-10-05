@@ -82,6 +82,10 @@ while spending `< F$ 5.00`).
   `/events?status=settled` — **not** `/odds/multi`, which only returns
   pending/live matches and silently omits finished ones.
   `ODDS_API_BOOKMAKER` is a **singular** param (the API rejects CSV).
+  The free plan caps the key at **500 requests/day** (resets 00:00 UTC), shared
+  by every cron. The hourly settle job runs 24×/day, so keep its per-run call
+  count small (it only retries matches from the last 3 days); once the quota is
+  gone, the 22:00 match sync 429s and the next days have no matches.
   The pool pick is **league-weighted** at two stages so marquee leagues are
   likelier and obscure ones (women/youth/reserves/amateur/regional/simulated)
   are down-weighted: the nightly sync (loads weights into a slug→weight map and
