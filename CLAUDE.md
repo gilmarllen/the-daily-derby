@@ -81,7 +81,10 @@ while spending `< F$ 5.00`).
   Match sync runs nightly via Vercel Cron. Settlement uses
   `/events?status=settled` — **not** `/odds/multi`, which only returns
   pending/live matches and silently omits finished ones.
-  `ODDS_API_BOOKMAKER` is a **singular** param (the API rejects CSV).
+  `ODDS_API_BOOKMAKER` is a **singular** param (the API rejects CSV), and must
+  be one of the account's selected bookmakers (`GET /bookmakers/selected`).
+  Bet365 is **paid-plan only**: `/events?bookmaker=Bet365` still lists fixtures,
+  but `/odds/multi` returns 403, so the sync fails. Use `1xbet` on the free plan.
   The free plan caps the key at **500 requests/day** (resets 00:00 UTC), shared
   by every cron. The hourly settle job runs 24×/day, so keep its per-run call
   count small (it only retries matches from the last 3 days); once the quota is
