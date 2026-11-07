@@ -37,7 +37,7 @@ const SPORT = "football";
 
 /** The single bookmaker to source fixtures + odds from. Override via env. */
 function bookmaker(): string {
-  return process.env.ODDS_API_BOOKMAKER?.trim() || "Bet365";
+  return process.env.ODDS_API_BOOKMAKER?.trim() || "1xbet";
 }
 
 export type SyncMatchesResult = {
